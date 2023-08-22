@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.stu.classroom.mapper.StuQstnMapper">
+    <insert id="insertQstn" parameterType="QstnVO">
+
+        INSERT INTO TB_QSTN(
+              SBJCT_CD
+            , QSTN_NO
+            , QSTN_CN
+            , QSTN_DT
+            , STU_NO
+            , QSTN_TTL)
+        VALUES (
+              #{sbjctCd}
+            , SEQ_TB_QSTN.NEXTVAL
+            , #{qstnCn}
+            , sysdate
+            , #{stuNo}
+            , #{qstnTtl}
+        )
+    </insert>
+
+    <select id="selectQstnList" resultType="qstnVO" parameterType="QstnVO">
+        SELECT
+              TB_QSTN.QSTN_NO AS QSTN_NO
+            , TO_CHAR(QSTN_DT, 'YYYY.MM.DD HH24:MI') AS QSTN_DT
+            , TB_QSTN.QSTN_ANS AS QSTN_ANS
+            , TO_CHAR(QSTN_ANS_DT, 'YYYY.MM.DD HH24:MI') AS QSTN_ANS_DT
+            , TB_QSTN.EMP_NO AS TB_QSTN
+            , TB_QSTN.STU_NO AS STU_NO
+            , TB_QSTN.QSTN_TTL AS QSTN_TTL
+            , TB_STU.USER_NM AS USER_NM
+        FROM TB_QSTN
+        JOIN TB_STU ON TB_STU.STU_NO = TB_QSTN.STU_NO
+        WHERE TB_QSTN.STU_NO = #{stuNo} AND TB_QSTN.SBJCT_CD = #{sbjctCd}
+        ORDER BY TB_QSTN.QSTN_DT DESC
+    </select>
+
+    <select id="selectQstn" resultType="QstnVO" parameterType="int">
+    	SELECT
+    		TB_QSTN.QSTN_NO AS QSTN_NO
+			, TB_QSTN.SBJCT_CD AS SBJCT_CD
+			, TB_QSTN.QSTN_TTL AS QSTN_TTL
+			, TB_QSTN.QSTN_CN AS QSTN_CN
+			, TB_QSTN.QSTN_DT AS QSTN_DT
+			, TB_QSTN.QSTN_ANS AS QSTN_ANS
+			, TB_QSTN.QSTN_ANS_DT AS QSTN_ANS_DT
+			, TB_EMP.USER_NM AS USER_NM
+			, TB_QSTN.STU_NO AS STU_NO
+            , TB_STU.USER_NM AS STU_NM
+    	FROM
+    		TB_QSTN
+        LEFT OUTER JOIN TB_EMP ON TB_EMP.EMP_NO = TB_QSTN.EMP_NO
+        LEFT OUTER JOIN TB_STU ON TB_STU.STU_NO = TB_QSTN.STU_NO
+        WHERE
+            TB_QSTN.QSTN_NO = #{qstnNo}
+    </select>
+
+    <select id="selectTch" resultType="TchVO" parameterType="String">
+		SELECT
+		    TB_EMP.USER_PROFILE AS USER_PROFILE
+		    , TB_EMP.USER_NM AS USER_NM
+		FROM
+		    TB_SBJCT
+		JOIN TB_EMP ON TB_EMP.EMP_NO = TB_SBJCT.EMP_NO
+		WHERE TB_SBJCT.SBJCT_CD = #{sbjctCd}
+    </select>
+
+    <update id="updateQstn" parameterType="QstnVO">
+		UPDATE
+			TB_QSTN
+		SET
+			QSTN_TTL = #{qstnTtl}
+			, QSTN_CN = #{qstnCn}
+		WHERE
+			QSTN_NO = #{qstnNo}
+    </update>
+    <delete id="deleteQstn" parameterType="int">
+    	DELETE
+    	FROM
+    		TB_QSTN
+    	WHERE
+    		QSTN_NO = #{qstnNo}
+    </delete>
+</mapper>

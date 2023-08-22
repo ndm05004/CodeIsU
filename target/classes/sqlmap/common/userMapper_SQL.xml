@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.common.user.mapper.UserMapper">
+
+	<resultMap type="userVO" id="userMap">
+		<id property="userNo" column="user_no"/>
+		<result property="userPswd" column="user_pswd"/>
+		<result property="userProfile" column="user_profile"/>
+		<result property="enabled" column="enabled"/>
+		<result property="userType" column="user_type"/>
+		<result property="userNm" column="user_nm"/>
+		<result property="userBrdt" column="user_brdt"/>
+		<result property="userGender" column="user_gender"/>
+		<result property="userEmlAddr" column="user_eml_addr"/>
+		<result property="userPhoneno" column="user_phoneno"/>
+		<result property="userZip" column="user_zip"/>
+		<result property="userAddr" column="user_addr"/>
+		<result property="userDaddr" column="user_daddr"/>
+		<collection property="authList" resultMap="roleMap"/>
+	</resultMap>
+
+	<resultMap type="userRoleVO" id="roleMap">
+		<result property="userNo" column="user_no"/>
+		<result property="roleCd" column="role_cd"/>
+	</resultMap>
+
+
+	<update id="signupUser" parameterType="UserVO">
+	UPDATE TB_STU
+	SET
+		USER_EML_ADDR = #{userEmlAddr}
+		, USER_ZIP = #{userZip}
+		, USER_ADDR = #{userAddr}
+		, USER_DADDR = #{userDaddr}
+		, JOIN_DT = sysdate
+		, USER_PRVC_YN = #{userPrvcYn}
+		, USER_GENDER = #{userGender}
+		, USER_PROFILE = #{userProfile}
+	WHERE STU_NO = #{userNo}
+
+	</update>
+
+	<update id="singupPs" parameterType="UserVO">
+	UPDATE TB_USER
+	SET
+		USER_PSWD = #{userPswd}
+	WHERE USER_NO = #{userNo}
+	</update>
+
+
+
+
+
+
+
+	<select id="read" parameterType="string" resultMap="userMap">
+		SELECT
+			  M.USER_NO AS USER_NO
+			, M.USER_PSWD AS USER_PSWD
+			, M.ENABLED AS ENABLED
+			, M.USER_TYPE AS USER_TYPE
+			, A.ROLE_CD AS ROLE_CD
+			, S.USER_NM AS USER_NM
+			, S.USER_BRDT AS USER_BRDT
+			, S.USER_GENDER AS USER_GENDER
+			, S.USER_EML_ADDR AS USER_EML_ADDR
+			, S.USER_PHONENO AS USER_PHONENO
+			, S.USER_ZIP AS USER_ZIP
+			, S.USER_ADDR AS USER_ADDR
+			, S.USER_DADDR AS USER_DADDR
+			, S.USER_PROFILE AS USER_PROFILE
+
+			FROM TB_USER M
+			LEFT OUTER JOIN TB_ROLE_ASSIGN A ON (M.USER_NO = A.USER_NO)
+			<if test="userType.startsWith('S')">
+			LEFT OUTER JOIN TB_STU S ON (M.USER_NO = S.STU_NO)
+			</if>
+			<if test="userType.startsWith('E')">
+			LEFT OUTER JOIN TB_EMP S ON (M.USER_NO = S.EMP_NO)
+			</if>
+			<if test="userType.startsWith('T')">
+			LEFT OUTER JOIN TB_EMP S ON (M.USER_NO = S.EMP_NO)
+			</if>
+
+		WHERE M.USER_NO = #{userNo}
+
+
+	</select>
+
+
+
+	<select id="phoneCheck" parameterType="hashmap" resultType="java.util.HashMap" >
+	SELECT
+		USER_NM
+		,JOIN_DT
+	FROM TB_STU
+	WHERE
+		USER_NM = #{joinName}
+		AND USER_PHONENO = #{joinPhone}
+	</select>
+
+	<insert id="insertSms" parameterType="SmsVO">
+	/* team.tttt.pms.common.user.mapper.UserMapper.insertSms(SmsVO) */
+	INSERT INTO TB_SMS (
+		SMS_NO
+		, SMS_CN
+		, SMS_RCVR
+		)
+	VALUES (
+		SEQ_SMS.NEXTVAL
+		, #{smsCn}
+		, #{smsRcvr}
+		)
+	</insert>
+
+	<select id="selectNum" parameterType="SmsVO" resultType="string">
+	SELECT
+		SMS_CN
+	FROM TB_SMS
+	WHERE
+		SNDNG_DT >= SYSDATE - INTERVAL '5' MINUTE
+		AND SMS_RCVR = #{smsRcvr} /* 수신자 연락처 */
+		AND SMS_CN = #{smsCn} /* 인증번호 */
+	</select>
+
+	<select id="readSvlfNm" parameterType="string" resultType="hashmap">
+	SELECT
+	    A.STU_NO
+	    , A.USER_BRDT
+	    , A.USER_GENDER
+	    , B.SVLF_NM
+	FROM TB_STU A INNER JOIN TB_SVLF B
+	ON A.SVLF_NO = B.SVLF_NO
+	WHERE A.USER_NM = #{userNm}
+		AND A.USER_PHONENO = #{userPhone}
+	</select>
+
+	<select id="findId" parameterType="hashmap" resultType="string">
+		SELECT
+			STU_NO AS USER_NO
+		FROM TB_STU
+		WHERE
+			USER_NM = #{userNm}
+			AND USER_EML_ADDR = #{userEmlAddr}
+			AND USER_BRDT = #{userBrdt}
+	UNION
+		SELECT
+			EMP_NO AS USER_NO
+		FROM TB_EMP
+		WHERE
+			USER_NM = #{userNm}
+			AND USER_EML_ADDR = #{userEmlAddr}
+			AND USER_BRDT = #{userBrdt}
+	</select>
+
+	<select id="findPs" parameterType="hashmap" resultType="hashmap">
+		SELECT
+			USER_NM AS USER_NM
+			, USER_PHONENO AS USER_PHONENO
+		FROM TB_STU
+		WHERE
+			STU_NO = #{userNo}
+			AND USER_PHONENO = #{userPhoneno}
+			AND USER_BRDT = #{userBrdt}
+	UNION
+		SELECT
+			USER_NM AS USER_NM
+			, USER_PHONENO AS USER_PHONENO
+		FROM TB_EMP
+		WHERE
+			EMP_NO = #{userNo}
+			AND USER_PHONENO = #{userPhoneno}
+			AND USER_BRDT = #{userBrdt}
+	</select>
+
+	<update id="updateTempPw" parameterType="string">
+		UPDATE TB_USER
+		SET	USER_PSWD = #{tempPw}
+		WHERE USER_NO = #{userNo}
+
+	</update>
+
+	<select id="readStuInfo" parameterType="string" resultType="StuVO" >
+	SELECT
+		STU_NO
+		, USER_NM
+		, SVLF_NO
+		, USER_EML_ADDR
+		, USER_PHONENO
+		, USER_ZIP
+		, USER_ADDR
+		, USER_DADDR
+		, REG_DT
+		, USER_BRDT
+		, USER_GENDER
+	FROM TB_STU
+	WHERE STU_NO = #{stuNo}
+	</select>
+
+
+</mapper>

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.Issue.mapper.PmsIssueMapper">
+
+   <sql id="boardSearch">
+      <if test="searchType != null and searchType == 'title'">
+         and (ISSUE_TTL like '%'||#{searchWord}||'%')
+      </if>
+      <if test="searchType != null and searchType == 'writer'">
+         and (USER_NM like '%'||#{searchWord}||'%')
+      </if>
+      <if test="searchType != null and searchType == 'titleWriter'" >
+         and (USER_NM like '%'||#{searchWord}||'%') or
+         (ISSUE_TTL like '%'||#{searchWord}||'%')
+      </if>
+   </sql>
+
+
+   <resultMap type="IssueVO" id="IssueMap">
+      <id    property="issueNo"          column="ISSUE_NO" />
+      <result property="issueNo"          column="ISSUE_NO"/>
+      <result property="issueCn"          column="ISSUE_CN"/>
+      <result property="issueSttsCd"       column="ISSUE_STTS_CD"/>
+      <result property="issueTtl"       column="ISSUE_TTL"/>
+      <result property="issueCd"          column="ISSUE_CD"/>
+      <result property="issueRegDt"       column="ISSUE_REG_DT"/>
+      <result property="stuNo"          column="STU_NO"/>
+      <result property="projNo"          column="PROJ_NO"/>
+      <result property="issueAsg"       column="ISSUE_ASG"/>
+      <collection property="cmntVoList"    resultMap="cmntMap"/>
+      <collection property="manageVoList" resultMap="manageMap"/>
+      <collection property="alarmVoList" resultMap="alarmMap"/>
+   </resultMap>
+
+   <resultMap type="CmntVO" id="cmntMap">
+      <result property="cmntNo"          column="CMNT_NO"/>
+      <result property="cmntCn"          column="CMNT_CN"/>
+      <result property="cmntBengDt"       column="CMNT_BENG_DT"/>
+      <result property="issueNo"          column="ISSUE_NO"/>
+      <result property="stuNo"          column="STU_NO"/>
+   </resultMap>
+
+   <resultMap type="MemManagementVO" id="manageMap">
+      <result property="stuNo"         column="STU_NO" />
+      <result property="userNm"          column="USER_NM" />
+      <result property="userEmlAddr"      column="USER_EML_ADDR" />
+      <result property="userPhoneno"      column="USER_PHONENO" />
+      <result property="projNo"         column="PROJ_NO" />
+      <result property="teamJoinDt"      column="TEAM_JOIN_DT" />
+      <result property="jbttlCd"         column="JBTTL_CD" />
+   </resultMap>
+
+   <resultMap type="AlarmVO" id="alarmMap">
+      <result property="alarmNo"         column="ALARM_NO" />
+      <result property="stuNo"         column="STU_NO" />
+      <result property="alarmCn"         column="ALARM_CN" />
+      <result property="alarmCd"         column="ALARM_CD" />
+      <result property="alarmDt"         column="ALARM_DT" />
+      <result property="alarmCheckCd"      column="ALARM_CHECK_CD" />
+   </resultMap>
+
+   <select id="getIssueList" parameterType="PaginationInfoVO" resultType="IssueVO">
+   /* team.tttt.pms.project.Issue.mapper.PmsIssueMapper.getIssueList */
+
+
+	  select
+	          PROJ_NO
+	          , STU_NO
+	          , STU_NO
+	          , ISSUE_REG_DT
+	          , ISSUE_CD
+	          , ISSUE_TTL
+	          , ISSUE_CN
+	          , ISSUE_STTS_CD
+	          , ISSUE_NO
+	          , user_nm
+	          , rnum
+	          , issue_asg
+	          , proj_nm
+	      from(
+	         select a.*
+	         , row_number() over (order by TO_NUMBER(a.ISSUE_NO) desc) rnum
+	         from(
+	             select
+	                a.PROJ_NO
+	                , a.STU_NO
+	                , TO_CHAR(a.ISSUE_REG_DT, 'yyyy-mm-dd') as ISSUE_REG_DT
+	                , d.CD_NM as ISSUE_CD
+	                , a.ISSUE_TTL
+	                , a.ISSUE_CN
+	                , c.CD_NM as ISSUE_STTS_CD
+	                , a.ISSUE_NO
+	                 , s.user_NM as user_nm
+	                    , s2.user_NM as issue_asg
+	                    ,p.proj_nm
+	             from
+	                tb_issue a
+	                 join tb_stu s on a.STU_NO  = s.STU_NO
+	                    join tb_stu s2 on s2.STU_NO = a.issue_asg
+
+	                join tb_cm_cd c on c.CD_TYPE_ID = SUBSTR(a.ISSUE_STTS_CD, 1, INSTR(a.ISSUE_STTS_CD, '-') -1)
+	                and c.CD_VL = SUBSTR(a.ISSUE_STTS_CD, INSTR(a.ISSUE_STTS_CD, '-') + 1)
+	                and c.CD_TYPE_ID = 'P006'
+	                and c.CD_C_USE_YN = 'Y'
+
+	                join tb_cm_cd d on d.CD_TYPE_ID = SUBSTR(a.ISSUE_CD, 1, INSTR(a.ISSUE_CD, '-') -1)
+	                and d.CD_VL = SUBSTR(a.ISSUE_CD, INSTR(a.ISSUE_CD, '-') + 1)
+	                and d.CD_TYPE_ID = 'P007'
+	                and d.CD_C_USE_YN = 'Y'
+	                join tb_proj p ON p.proj_no = a.proj_no
+	            where
+	                    a.proj_no = #{projNo}
+	                    <include refid="boardSearch"/>
+
+	          order by TO_NUMBER(a.ISSUE_NO) desc
+	            ) a
+	         ) b
+	      <![CDATA[
+	         where b.rnum >= #{startRow} and b.rnum <= #{endRow}
+	      ]]>
+   </select>
+
+
+   <select id="selectBoardCount" parameterType="PaginationInfoVO" resultType="int">
+      select
+         count(a.stu_no)
+            ,count(a.issue_no)
+      from
+         tb_issue a
+            join tb_stu b on a.stu_no = b.stu_no
+      where
+         proj_no = #{projNo}
+      <include refid="boardSearch"/>
+   </select>
+
+   <insert id="insertIssue" parameterType="IssueVO">
+       INSERT INTO TB_ISSUE(
+      ISSUE_NO
+      ,ISSUE_CN
+      ,ISSUE_STTS_CD
+      ,ISSUE_TTL
+      ,ISSUE_CD
+      ,ISSUE_REG_DT
+      ,STU_NO
+      ,PROJ_NO
+      ,ISSUE_ASG
+      )
+      VALUES(
+      seq_issue.nextval
+      , #{issueCn}
+      , #{issueSttsCd}
+      , #{issueTtl}
+      , #{issueCd}
+      , sysdate
+      , #{stuNo}
+      , #{projNo}
+      , #{issueAsg})
+
+
+   </insert>
+
+
+   <select id="Detail" parameterType="IssueVO" resultMap="IssueMap">
+   SELECT
+        A.ISSUE_NO
+        , A.ISSUE_CN
+        , C.CD_NM AS ISSUE_STTS_CD
+        , A.ISSUE_TTL
+        , D.CD_NM AS ISSUE_CD
+        , A.ISSUE_REG_DT
+        , A.STU_NO
+        , A.PROJ_NO
+        , S.USER_NM AS ISSUE_ASG
+   		, P.PROJ_NM AS PROJ_NM
+   FROM
+        TB_ISSUE A
+
+          JOIN TB_CM_CD C ON C.CD_TYPE_ID = SUBSTR(A.ISSUE_STTS_CD, 1, INSTR(A.ISSUE_STTS_CD, '-') -1)
+          AND C.CD_VL = SUBSTR(A.ISSUE_STTS_CD, INSTR(A.ISSUE_STTS_CD, '-') + 1)
+          AND C.CD_TYPE_ID = 'P006'
+          AND C.CD_C_USE_YN = 'Y'
+
+          JOIN TB_CM_CD D ON D.CD_TYPE_ID = SUBSTR(A.ISSUE_CD, 1, INSTR(A.ISSUE_CD, '-') -1)
+          AND D.CD_VL = SUBSTR(A.ISSUE_CD, INSTR(A.ISSUE_CD, '-') + 1)
+          AND D.CD_TYPE_ID = 'P007'
+          AND D.CD_C_USE_YN = 'Y'
+
+          JOIN TB_STU S ON S.STU_NO = A.STU_NO
+          JOIN TB_PROJ P ON P.PROJ_NO = A.PROJ_NO
+
+  		 WHERE A.ISSUE_NO =  #{issueNo}
+
+   </select>
+
+
+   <select id="cmntDetail" resultType="CmntVO" parameterType="CmntVO">
+        SELECT
+             A.PROJ_NO
+             , B.STU_NO
+             , S2.USER_NM as USER_NM
+             , A.ISSUE_REG_DT
+             , A.ISSUE_TTL
+             , A.ISSUE_CN
+             , A.ISSUE_NO
+             , B.CMNT_NO
+             , B.CMNT_CN
+             , B.CMNT_BENG_DT
+             , c.cd_nm as jbttl_cd
+         FROM
+        TB_ISSUE A
+         JOIN TB_STU S ON A.ISSUE_ASG = S.STU_NO
+         LEFT JOIN TB_CMNT B ON A.ISSUE_NO = B.ISSUE_NO
+         JOIN TB_STU S2 ON S2.STU_NO = B.STU_NO
+         JOIN TB_PRO_MEM M ON A.STU_NO = M.STU_NO
+
+
+         JOIN TB_CM_CD c ON c.CD_TYPE_ID = SUBSTR(M.jbttl_cd, 1, INSTR(M.jbttl_cd, '-') -1)
+                                 AND c.CD_VL = SUBSTR(M.jbttl_cd, INSTR(M.jbttl_cd, '-') + 1)
+                                 AND c.CD_TYPE_ID = 'P001'
+                                 AND c.CD_C_USE_YN = 'Y'
+
+         WHERE
+             A.ISSUE_NO = #{issueNo} and m.proj_no = #{projNo}
+
+         ORDER BY TO_NUMBER(B.CMNT_NO) DESC
+   </select>
+
+   <update id="update" parameterType="IssueVO">
+        UPDATE TB_ISSUE
+        SET
+        ISSUE_TTL = #{issueTtl}
+        , ISSUE_CD = #{issueCd}
+        , ISSUE_STTS_CD = #{issueSttsCd}
+        , ISSUE_CN = #{issueCn}
+        , ISSUE_ASG = #{issueAsg}
+        WHERE
+           ISSUE_NO = #{issueNo}
+   </update>
+
+
+   <delete id="del" parameterType="String">
+      DELETE FROM
+      TB_ISSUE
+      WHERE
+      ISSUE_NO =  #{issueNo}
+   </delete>
+
+   <insert id="insertComment" parameterType="CmntVO">
+      INSERT INTO TB_CMNT(
+      CMNT_NO
+      , CMNT_CN
+      , CMNT_BENG_DT
+      , ISSUE_NO
+      , STU_NO
+      , PROJ_NO)
+       VALUES(
+       SEQ_CMNT.nextval
+       , #{cmntCn}
+       , sysdate
+       , #{issueNo}
+       , #{stuNo}
+       , #{projNo})
+   </insert>
+
+
+   <select id="detailComment" resultType="CmntVO" parameterType="String">
+       SELECT
+        CMNT_NO
+        , CMNT_CN
+        , CMNT_BENG_DT
+        , ISSUE_NO
+        , STU_NO
+        FROM TB_CMNT
+        WHERE
+        CMNT_NO = #{cmntNo}
+
+   </select>
+
+   <update id="updateCommnet" parameterType="CmntVO">
+      UPDATE TB_CMNT SET
+        CMNT_CN = #{cmntCn}
+        , CMNT_BENG_DT = SYSDATE
+        WHERE CMNT_NO = #{cmntNo}
+   </update>
+
+   <delete id="deleteCommnet" parameterType="String">
+      DELETE FROM TB_CMNT
+      WHERE CMNT_NO = #{cmntNo}
+   </delete>
+
+   <!-- 일감 생성 시 실시간 알람 생성 -->
+  <!--  <insert id="insertAlarm" parameterType="AlarmVO">
+      INSERT INTO TB_ALARM
+      (ALARM_NO
+      ,STU_NO
+      ,ALARM_CN
+      ,ALARM_CD
+      ,ALARM_DT
+      ,ALARM_CHECK_CD
+      ,PROJ_NO) values (seq_alarm.nextval, #{stuNo},#{issueTtl},'이슈 게시판',sysdate,'N',#{projNo})
+   </insert> -->
+
+<!-- 해당 프로젝트를 가진 사람들 목록 가져오기 -->
+   <select id="selectUserNoList" parameterType="String" resultType="String">
+       SELECT
+           STU_NO
+       FROM
+           TB_PRO_MEM
+       WHERE
+           PROJ_NO = #{projNo}
+   </select>
+
+
+   <select id="getMemJbttlCd" parameterType="hashMap" resultType="MemManagementVO">
+      SELECT
+         JBTTL_CD
+      FROM
+         TB_PRO_MEM
+      WHERE
+         STU_NO = #{userNo} AND PROJ_NO = #{projNo}
+   </select>
+
+   <select id="getProjNm" parameterType="String" resultType="ProjVO">
+   	 SELECT
+   	 	PROJ_NM
+   	 FROM
+   	    TB_PROJ
+   	 WHERE PROJ_NO = #{projNo}
+   </select>
+</mapper>
+
+
+
+

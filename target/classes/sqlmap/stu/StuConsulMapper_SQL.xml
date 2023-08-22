@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.stu.hakup.mapper.StuConsulMapper">
+	<select id="selectEmpList" resultType="EmpVO" parameterType="String">
+SELECT
+		    TB_EMP.EMP_NO
+		    , TB_EMP.USER_NM
+		FROM
+		    TB_EMP
+
+        ORDER BY
+		    USER_NM
+	</select>
+
+	<insert id="insertConsul" parameterType="DscsnVO">
+		INSERT INTO TB_DSCSN(
+		    DSCSN_NO
+		    , DSCSN_RSLT_DT
+		    , DSCSN_DT
+		    , DSCSN_CN
+		    , DSCSN_YN
+		    , APRV_YN
+		    , DSCSN_CD
+		    , EMP_NO
+		    , STU_NO
+		) VALUES(
+		    SEQ_DSCSN.NEXTVAL
+		    , SYSDATE
+		    , #{dscsnDt}
+		    , #{dscsnCn}
+		    , 'D001-1'
+		    , 'D002-1'
+		    , #{dscsnCd}
+		    , #{empNo}
+		    , #{stuNo}
+		)
+	</insert>
+
+	<!-- 미승인 -->
+	<select id="selectConsulNoList" resultType="DscsnVO" parameterType="String">
+		SELECT
+		    A.DSCSN_NO
+		    , A.DSCSN_RSLT_DT
+		    , A.DSCSN_DT
+		    , A.DSCSN_CN
+		    , C.CD_NM AS DSCSN_YN
+		    , A.DSCSN_RSLT
+		    , D.CD_NM AS APRV_YN
+		    , E.CD_NM AS DSCSN_CD
+		    , A.DSCSNROOM_CD
+		    , F.USER_NM AS EMP_NO
+		    , B.USER_NM AS STU_NO
+		FROM TB_DSCSN A
+		LEFT OUTER JOIN TB_STU B ON A.STU_NO = B.STU_NO
+		INNER JOIN TB_CM_CD C on C.CD_TYPE_ID = SUBSTR(A.DSCSN_YN, 1, INSTR(A.DSCSN_YN, '-') -1)
+		                                            and C.CD_VL = SUBSTR(A.DSCSN_YN, INSTR(A.DSCSN_YN, '-') + 1)
+		                                            and C.CD_TYPE_ID = 'D001'
+		                                            and C.CD_C_USE_YN = 'Y'
+
+
+		INNER JOIN TB_CM_CD D on D.CD_TYPE_ID = SUBSTR(A.APRV_YN, 1, INSTR(A.APRV_YN, '-') -1)
+		                                            and D.CD_VL = SUBSTR(A.APRV_YN, INSTR(A.APRV_YN, '-') + 1)
+		                                            and D.CD_TYPE_ID = 'D002'
+		                                            and D.CD_C_USE_YN = 'Y'
+
+		INNER JOIN TB_CM_CD E on E.CD_TYPE_ID = SUBSTR(A.DSCSN_CD, 1, INSTR(A.DSCSN_CD, '-') -1)
+		                                            and E.CD_VL = SUBSTR(A.DSCSN_CD, INSTR(A.DSCSN_CD, '-') + 1)
+		                                            and E.CD_TYPE_ID = 'D003'
+		                                            and E.CD_C_USE_YN = 'Y'
+		LEFT OUTER JOIN TB_EMP F ON A.EMP_NO = F.EMP_NO
+		WHERE A.APRV_YN = 'D002-1' AND A.STU_NO = #{stuNo}
+		ORDER BY A.DSCSN_RSLT_DT DESC
+	</select>
+
+	<!-- 승인 -->
+	<select id="selectConsulApprovList" resultType="DscsnVO" parameterType="String">
+		SELECT
+		    A.DSCSN_NO
+		    , A.DSCSN_RSLT_DT
+		    , A.DSCSN_DT
+		    , A.DSCSN_CN
+		    , C.CD_NM AS DSCSN_YN
+		    , A.DSCSN_RSLT
+		    , D.CD_NM AS APRV_YN
+		    , E.CD_NM AS DSCSN_CD
+		    , A.DSCSNROOM_CD
+		    , F.USER_NM AS EMP_NO
+		    , B.USER_NM AS STU_NO
+		    , G.CONSUL_NM
+	        , R.CONSUL_BGNG_HR
+	        , R.CONSUL_DDLB_HR
+		FROM TB_DSCSN A
+		LEFT OUTER JOIN TB_STU B ON A.STU_NO = B.STU_NO
+		INNER JOIN TB_CM_CD C on C.CD_TYPE_ID = SUBSTR(A.DSCSN_YN, 1, INSTR(A.DSCSN_YN, '-') -1)
+		                                            and C.CD_VL = SUBSTR(A.DSCSN_YN, INSTR(A.DSCSN_YN, '-') + 1)
+		                                            and C.CD_TYPE_ID = 'D001'
+		                                            and C.CD_C_USE_YN = 'Y'
+
+
+		INNER JOIN TB_CM_CD D on D.CD_TYPE_ID = SUBSTR(A.APRV_YN, 1, INSTR(A.APRV_YN, '-') -1)
+		                                            and D.CD_VL = SUBSTR(A.APRV_YN, INSTR(A.APRV_YN, '-') + 1)
+		                                            and D.CD_TYPE_ID = 'D002'
+		                                            and D.CD_C_USE_YN = 'Y'
+
+		INNER JOIN TB_CM_CD E on E.CD_TYPE_ID = SUBSTR(A.DSCSN_CD, 1, INSTR(A.DSCSN_CD, '-') -1)
+		                                            and E.CD_VL = SUBSTR(A.DSCSN_CD, INSTR(A.DSCSN_CD, '-') + 1)
+		                                            and E.CD_TYPE_ID = 'D003'
+		                                            and E.CD_C_USE_YN = 'Y'
+		LEFT OUTER JOIN TB_EMP F ON A.EMP_NO = F.EMP_NO
+		LEFT OUTER JOIN TB_CONSULTING_ROOM G ON A.DSCSNROOM_CD = G.CONSUL_CD
+	    JOIN TB_CONSUL_RESERVATION R ON R.DSCSN_NO = A.DSCSN_NO
+		WHERE A.APRV_YN = 'D002-2'
+		AND A.DSCSN_YN = 'D001-1'
+	    AND A.STU_NO = #{stuNo}
+		ORDER BY A.DSCSN_RSLT_DT DESC
+	</select>
+
+	<!-- 반려 -->
+	<select id="selectConsulUnApprovList" resultType="DscsnVO" parameterType="String">
+		SELECT
+		    A.DSCSN_NO
+		    , A.DSCSN_RSLT_DT
+		    , A.DSCSN_DT
+		    , A.DSCSN_CN
+		    , C.CD_NM AS DSCSN_YN
+		    , A.DSCSN_RSLT
+		    , D.CD_NM AS APRV_YN
+		    , E.CD_NM AS DSCSN_CD
+		    , A.DSCSNROOM_CD
+		    , F.USER_NM AS EMP_NO
+		    , B.USER_NM AS STU_NO
+            , R.REJECT_CN
+		FROM TB_DSCSN A
+		LEFT OUTER JOIN TB_STU B ON A.STU_NO = B.STU_NO
+		INNER JOIN TB_CM_CD C on C.CD_TYPE_ID = SUBSTR(A.DSCSN_YN, 1, INSTR(A.DSCSN_YN, '-') -1)
+		                                            and C.CD_VL = SUBSTR(A.DSCSN_YN, INSTR(A.DSCSN_YN, '-') + 1)
+		                                            and C.CD_TYPE_ID = 'D001'
+		                                            and C.CD_C_USE_YN = 'Y'
+
+
+		INNER JOIN TB_CM_CD D on D.CD_TYPE_ID = SUBSTR(A.APRV_YN, 1, INSTR(A.APRV_YN, '-') -1)
+		                                            and D.CD_VL = SUBSTR(A.APRV_YN, INSTR(A.APRV_YN, '-') + 1)
+		                                            and D.CD_TYPE_ID = 'D002'
+		                                            and D.CD_C_USE_YN = 'Y'
+
+		INNER JOIN TB_CM_CD E on E.CD_TYPE_ID = SUBSTR(A.DSCSN_CD, 1, INSTR(A.DSCSN_CD, '-') -1)
+		                                            and E.CD_VL = SUBSTR(A.DSCSN_CD, INSTR(A.DSCSN_CD, '-') + 1)
+		                                            and E.CD_TYPE_ID = 'D003'
+		                                            and E.CD_C_USE_YN = 'Y'
+		LEFT OUTER JOIN TB_EMP F ON A.EMP_NO = F.EMP_NO
+        JOIN TB_REJECT R ON R.DSCSN_NO = A.DSCSN_NO
+		WHERE A.APRV_YN = 'D002-3' AND A.STU_NO = #{stuNo}
+		ORDER BY A.DSCSN_RSLT_DT DESC
+	</select>
+
+	<delete id="deleteDscsn" parameterType="int">
+		DELETE FROM
+			TB_DSCSN
+		WHERE DSCSN_NO = #{dscsnNo}
+	</delete>
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.emp.attd.mapper.AttdMapper">
+
+	<!-- 선택한 날짜에 해당하는 연수과정 가져오기 -->
+	<select id="findSvlfList" parameterType="String" resultType="SvlfVO">
+	<!-- team.tttt.pms.emp.attd.mapper.AttdMapper.findSvlfList -->
+	SELECT
+		A.SVLF_NO,
+		A.SVLF_BGNG_DT,
+		A.SVLF_DDLB_DT,
+		A.SVLF_NM,
+		A.SVLF_CN,
+		A.SVLF_DT,
+		A.EMP_NO,
+		A.LECTURE_ROOM_CD
+	FROM TB_SVLF A
+	WHERE A.SVLF_BGNG_DT &lt;= #{dateInfo}
+	AND A.SVLF_DDLB_DT &gt;= #{dateInfo}
+	ORDER BY A.SVLF_BGNG_DT ASC
+	</select>
+
+	<!-- 날짜와 연수과정에 해당하는 학생의 출결 정보 가져오기 -->
+	<select id="stuList" parameterType="AttdVO" resultType="AttdVO">
+	<!-- team.tttt.pms.emp.attd.mapper.AttdMapper.stuList -->
+	SELECT
+	    C.ATTD_DT
+	    , C.STU_NO
+	    , A.USER_NM
+	    , C.ATTD_ABMI_YMD
+	    , C.ATTD_LEAVE_YMD
+	    , C.ATTD_CD
+	    , D.CD_NM
+	FROM TB_STU A
+	LEFT OUTER JOIN TB_SVLF B ON A.SVLF_NO = B.SVLF_NO
+	LEFT OUTER JOIN TB_ATTD C ON A.STU_NO = C.STU_NO
+	LEFT OUTER JOIN TB_CM_CD D ON D.CD_TYPE_ID = SUBSTR(C.ATTD_CD, 1, INSTR(C.ATTD_CD, '-') - 1)
+                           	   AND D.CD_VL = SUBSTR(C.ATTD_CD, INSTR(C.ATTD_CD, '-') + 1)
+	WHERE A.SVLF_NO = #{svlfNo}
+	AND C.ATTD_DT = #{attdDt}
+	ORDER BY A.USER_NM ASC
+	</select>
+
+	<!-- 선택한 출석부의 출결 상태를 변경 -->
+	<update id="attdStatusUp" parameterType="AttdVO">
+	<!-- team.tttt.pms.emp.attd.mapper.AttdMapper.attdStatusUp -->
+	UPDATE TB_ATTD
+	SET
+	    ATTD_CD = #{attdCd}
+	WHERE ATTD_DT = #{attdDt}
+	AND STU_NO = #{stuNo}
+	</update>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<!-- 빈등록 -->
+	<bean id="customAccessDenied" class="team.tttt.pms.security.CustomAccessDeniedHandler"></bean>
+	<bean id="customLoginSuccess" class="team.tttt.pms.security.CustomLoginSuccessHandler"></bean>
+	<bean id="CustomLoginFailureHandler" class="team.tttt.pms.security.CustomLoginFailureHandler"></bean>
+
+
+	<!-- 사용자가 정의한 비밀번호  암호화 처리기를 빈으로 등록 -->
+	<bean id="customPasswordEncoder" class="team.tttt.pms.security.CustomNoOpPassword"/>
+	<!-- Bcrypt 클래스 자바빈 등록 -->
+<!-- 	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean> -->
+	<!-- 사용자 정의 사용자 상세 기능 -->
+	<bean id="customUserDetailsService" class="team.tttt.pms.security.CustomUserDetailsService"/>
+
+
+	<security:http>
+	<!-- 이제는 어노테이션에서 진행한다. -->
+
+	        <security:intercept-url pattern="/assets/**" access="permitAll"/>
+	        <security:intercept-url pattern="/dist/**" access="permitAll"/>
+	        <security:intercept-url pattern="/test/test" access="permitAll"/>
+	        <security:intercept-url pattern="/test/test" access="permitAll"/>
+	        <security:intercept-url pattern="/user/logout" access="permitAll"/>
+	        <security:intercept-url pattern="/stu/**" access="hasAuthority('S01')"/>
+	        <security:intercept-url pattern="/emp/**" access="hasAuthority('E11')"/>
+	        <security:intercept-url pattern="/tch/**" access="hasAuthority('E12')"/>
+	        <security:intercept-url pattern="/pms/**" access="hasAuthority('S01') or hasAuthority('E10')"/>
+
+
+
+
+		<!-- 기본적인 폼 인증 기반의 인증 기능을 사용한다. -->
+<!-- 		<security:form-login/> -->
+		<!-- 사용자 정의 로그인 페이지 작성 -->
+<!-- 		<security:form-login login-page="/login" /> -->
+		<!-- 로그인 성공 후 처리를 담당하는 처리자로 지정한다. -->
+        <security:form-login login-page="/user/login"
+                           username-parameter="userNo"
+                           password-parameter="userPswd"
+                           login-processing-url="/login"
+                           authentication-success-handler-ref="customLoginSuccess"
+                           authentication-failure-handler-ref="CustomLoginFailureHandler"/>
+
+
+
+
+
+    <security:logout	logout-url="/user/logout"
+                        logout-success-url="/"
+                        invalidate-session="true"
+                        delete-cookies="remember-me, JSESSION_ID" />
+
+
+		<!--
+			자동로그인
+			- 데이터 소스를 지정하고 테이블을 이용해서 기존 로그인 정보를 기록
+			- 쿠키의 유효시간을 지정한다. (604800: 7일)
+		 -->
+		<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800" />
+
+
+		<!-- 로그아웃 처리를 위한 URI를 지정하고, 로그아웃 한 후에 세션을 무효화하기 위한 설정을 true로 한다. -->
+		<!-- 로그아웃을 하면 자동로그인에 사용하는 쿠키도 삭제해 주도록 설정 (delete-cookies) -->
+<!-- 		<security:logout logout-url="/logout" invalidate-session="true" delete-cookies="remember-me, JSESSION_ID" /> -->
+
+		<!-- 로긴하고 권한이 없을때 이 페이지로 빠짐 -->
+<!-- 		<security:access-denied-handler error-page="/accessError" /> -->
+		<!-- 등록한 customAccessDeniedHandler 클래스를 활용한 적근 거부 처리자로 지정한다. -->
+<!-- 		<security:access-denied-handler ref="customAccessDenied" /> -->
+	</security:http>
+
+
+
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="customUserDetailsService">
+			<security:password-encoder ref="customPasswordEncoder"/>
+
+		</security:authentication-provider>
+	</security:authentication-manager>
+
+
+
+</beans>
+

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<!--  Tiles 설정 -->
+
+<tiles-definitions>
+<!-- 학생 신 템플릿 -->
+	<definition name="commonTemp" template="/WEB-INF/views/stu/layout/stuMainTemp.jsp">
+		<put-attribute name="headjs" value="/WEB-INF/views/common/layout/1headjs/common_headjs.jsp"/>
+		<put-attribute name="topbar" value="/WEB-INF/views/stu/layout/2topbar/stu_topbar.jsp"/>
+		<put-attribute name="footjs" value="/WEB-INF/views/common/layout/5footjs/footjs.jsp"/>
+	</definition>
+
+
+<!-- 학생 템플릿 -->
+	<definition name="stu/com/*" extends="commonTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_1hakup.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/stu/com/{1}.jsp"/>
+	</definition>
+<!-- 	<definition name="stu/com/*/*" extends="commonTemp"> -->
+<!-- 		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_1hakup.jsp"/> -->
+<!-- 		<put-attribute name="content" value="/WEB-INF/views/stu/com/{1}/{2}.jsp"/> -->
+<!-- 	</definition> -->
+<!-- 	<definition name="stu/com/*/*/*" extends="commonTemp"> -->
+<!-- 		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_1hakup.jsp"/> -->
+<!-- 		<put-attribute name="content" value="/WEB-INF/views/stu/com/{1}/{2}/{3}.jsp"/> -->
+<!-- 	</definition> -->
+
+<!-- 원생-학업 -->
+	<definition name="stu/com/main" extends="commonTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_0dashboard.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/stu/com/main.jsp"/>
+	</definition>
+	<definition name="stu/com/hakup/*" extends="commonTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_1hakup.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/stu/com/hakup/{1}.jsp"/>
+	</definition>
+	<definition name="stu/com/hakup/*/*" extends="commonTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_1hakup.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/stu/com/hakup/{1}/{2}.jsp"/>
+	</definition>
+<!-- 원생-클래스룸 -->
+	<!-- 클래스룸 - 메인화면 -->
+	<definition name="stu/com/classroom" extends="commonTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_2classroom_main.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/stu/com/classroom/main.jsp"/>
+	</definition>
+
+	<definition name="stu/com/classroom/*" extends="commonTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_2classroom.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/stu/com/classroom/{1}.jsp"/>
+	</definition>
+	<definition name="stu/com/classroom/*/*" extends="commonTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_2classroom.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/stu/com/classroom/{1}/{2}.jsp"/>
+	</definition>
+<!-- 원생-마이페이지 -->
+	<definition name="stu/com/mypage/*" extends="commonTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_5mypage.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/stu/com/mypage/{1}.jsp"/>
+	</definition>
+	<definition name="stu/com/mypage/*/*" extends="commonTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_5mypage.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/stu/com/mypage/{1}/{2}.jsp"/>
+	</definition>
+<!-- 원생- -->
+	<definition name="stu/com/notice/*" extends="commonTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/stu/layout/leftnav/stu_ln_4notice.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/stu/com/notice/{1}.jsp"/>
+	</definition>
+
+
+
+<!-- 강사 템플릿 -->
+<!-- 강사 신 템플릿 -->
+	<definition name="tchTemp" template="/WEB-INF/views/stu/layout/stuMainTemp.jsp">
+		<put-attribute name="headjs" value="/WEB-INF/views/common/layout/1headjs/common_headjs.jsp"/>
+		<put-attribute name="topbar" value="/WEB-INF/views/tch/layout/2topbar/tch_topbar.jsp"/>
+		<put-attribute name="footjs" value="/WEB-INF/views/common/layout/5footjs/footjs.jsp"/>
+	</definition>
+	<definition name="tch/com/*" extends="tchTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/tch/layout/3leftnav/tch_ln_1dam.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/tch/com/{1}.jsp"/>
+	</definition>
+<!-- 	메인 대시보드 -->
+	<definition name="tch/com/main" extends="tchTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/tch/layout/3leftnav/tch_ln_0dashboard.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/tch/com/main.jsp"/>
+	</definition>
+<!-- 강사 - 담당반 -->
+	<definition name="tch/com/damdang/*" extends="tchTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/tch/layout/3leftnav/tch_ln_1dam.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/tch/com/damdang/{1}.jsp"/>
+	</definition>
+	<definition name="tch/com/damdang/*/*" extends="tchTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/tch/layout/3leftnav/tch_ln_1dam.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/tch/com/damdang/{1}/{2}.jsp"/>
+	</definition>
+<!-- 강사 - 수업 -->
+	<definition name="tch/com/class" extends="tchTemp"> <!-- 메인화면 -->
+		<put-attribute name="leftnav" value="/WEB-INF/views/tch/layout/3leftnav/tch_ln_2class_main.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/tch/com/class/main.jsp"/>
+	</definition>
+	<definition name="tch/com/class/*" extends="tchTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/tch/layout/3leftnav/tch_ln_2class.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/tch/com/class/{1}.jsp"/>
+	</definition>
+	<definition name="tch/com/class/*/*" extends="tchTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/tch/layout/3leftnav/tch_ln_2class.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/tch/com/class/{1}/{2}.jsp"/>
+	</definition>
+<!-- 강사 - 원생상담 -->
+	<definition name="tch/com/dscsn/**" extends="tchTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/tch/layout/3leftnav/tch_ln_3sangdam.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/tch/com/dscsn/{1}.jsp"/>
+	</definition>
+
+
+
+<!-- 직원 신 템플릿 -->
+	<definition name="empTemp" template="/WEB-INF/views/stu/layout/stuMainTemp.jsp">
+		<put-attribute name="headjs" value="/WEB-INF/views/common/layout/1headjs/common_headjs.jsp"/>
+		<put-attribute name="topbar" value="/WEB-INF/views/emp/layout/2topbar/emp_topbar.jsp"/>
+		<put-attribute name="footjs" value="/WEB-INF/views/common/layout/5footjs/footjs.jsp"/>
+	</definition>
+<!-- 	메인 대시보드 -->
+	<definition name="emp/com/main" extends="empTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/emp/layout/3leftnav/emp_ln_0dashboard.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/emp/com/main.jsp"/>
+	</definition>
+<!-- 행정직원 - 2.공지사항(임시) -->
+	<definition name="emp/com/hntc/*" extends="empTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/emp/layout/3leftnav/emp_ln_1notice.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/emp/com/hntc/{1}.jsp"/>
+	</definition>
+	<definition name="emp/com/hntc/*/*" extends="empTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/emp/layout/3leftnav/emp_ln_1notice.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/emp/com/hntc/{1}/{2}.jsp"/>
+	</definition>
+<!-- 행정직원 - 2.원생관리 -->
+	<definition name="emp/com/stumanage/*" extends="empTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/emp/layout/3leftnav/emp_ln_2stuman.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/emp/com/stumanage/{1}.jsp"/>
+	</definition>
+	<definition name="emp/com/stumanage/*/*" extends="empTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/emp/layout/3leftnav/emp_ln_2stuman.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/emp/com/stumanage/{1}/{2}.jsp"/>
+	</definition>
+<!-- 직원 - 3.수업관리 -->
+	<definition name="emp/com/class/*" extends="empTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/emp/layout/3leftnav/emp_ln_3class.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/emp/com/class/{1}.jsp"/>
+	</definition>
+	<definition name="emp/com/class/*/*" extends="empTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/emp/layout/3leftnav/emp_ln_3class.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/emp/com/class/{1}/{2}.jsp"/>
+	</definition>
+<!-- 직원 - 4.공통코드 (임시)-->
+	<definition name="emp/com/cmcode/*" extends="empTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/emp/layout/3leftnav/emp_ln_4cmcode.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/emp/com/cmcode/{1}.jsp"/>
+	</definition>
+	<definition name="emp/com/cmcode/*/*" extends="empTemp">
+		<put-attribute name="leftnav" value="/WEB-INF/views/emp/layout/3leftnav/emp_ln_4cmcode.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/emp/com/cmcode/{1}/{2}.jsp"/>
+	</definition>
+
+
+
+
+<!-- PMS 템플릿 -->
+	<definition name="projectsTemp" template="/WEB-INF/views/pms/layout/projects_temp.jsp">
+	</definition>
+	<definition name="pms/com/createProj" extends="projectsTemp">
+		<put-attribute name="content" value="/WEB-INF/views/pms/com/createProj.jsp"/>
+	</definition>
+
+
+	<definition name="pmsTemplate" template="/WEB-INF/views/pms/layout/projectmenu_temp.jsp">
+	</definition>
+	<definition name="pms/com/*" extends="pmsTemplate">
+		<put-attribute name="content" value="/WEB-INF/views/pms/com/{1}.jsp"/>
+	</definition>
+	<definition name="pms/com/*/*" extends="pmsTemplate">
+		<put-attribute name="content" value="/WEB-INF/views/pms/com/{1}/{2}.jsp"/>
+	</definition>
+<!-- 테스트 템플릿 -->
+	<definition name="testTemplate" template="/WEB-INF/views/test/layout/template.jsp">
+		<put-attribute name="top" value="/WEB-INF/views/test/layout/top/test_top.jsp"/>
+		<put-attribute name="bottom" value="/WEB-INF/views/test/layout/bottom/test_bottom.jsp"/>
+	</definition>
+
+	<definition name="test/*/*" extends="testTemplate">
+		<put-attribute name="content" value="/WEB-INF/views/test/{2}.jsp"/>
+	</definition>
+
+</tiles-definitions>

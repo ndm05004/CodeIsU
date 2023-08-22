@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
+    <title>Code is U</title>
+    <!-- Custom CSS -->
+    <link href="../dist/css/style.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+
+<!-- :: Topjs 시작 :: -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css" integrity="sha512-ELV+xyi8IhEApPS/pSj66+Jiw+sOT1Mqkzlh8ExXihe4zfqbWkxPRi8wptXIO9g73FSlhmquFlUOuMSoXz5IRw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Bootstrap tether Core JavaScript -->
+<script src="../assets/libs/popper.js/dist/umd/popper.min.js"></script>
+<script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom $t Js -->
+<script>
+var $t = {
+	header : "${_csrf.headerName}",
+	token : "${_csrf.token}",
+	csrfq : "${_csrf.parameterName }=${_csrf.token}",
+	cpath : "${pageContext.request.contextPath}"
+};
+</script>
+<script src="../resources/common/js/common.js" type="text/javascript"></script>
+<!-- :: Topjs 끝 :: -->
+
+
+<!--해당 페이지 css-->
+<style>
+.stepcon1 {
+    width: 100%;
+    font-size: 14px;
+    margin-bottom: 30px;
+    color: #666;
+    border: 1px solid #DFE0E5;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.myperson_list {width:100%;  margin-bottom:15px; margin-left:0px; color:#666;}
+.myperson_list tr.ptit {border:1px solid #c4dbea; font-size:13px; text-align:center; color:#666;}
+.myperson_list th {margin-bottom:20px !important; padding: 20px 0px;  margin-left:0px; background-color:#f3f8fc; border:none; font-weight:500; color:#666; font-size:13px;}
+.myperson_list span.tnew {color:#e74249; font-weight:500;}
+.myperson_list span.tjnew {color:#e74249;}
+.myperson_list span.tma {color:#fd901b; font-weight:500;}
+
+.myperson_list tbody.form01 tr {border-bottom:1px solid #c2dae9;}
+.myperson_list tbody.form01 td {color:#333; font-size:14px;}
+.myperson_list tbody.form01 td.title {text-align:left;}
+.myperson_list tbody.form01 td.title a.tit01 {overflow:hidden; font-size:14px;font-weight:500;}
+.myperson_list tbody.form01 td a.tit02 {color:#84a7ca; font-size:14px; font-weight:500; text-decoration:underline;}
+.myperson_list tbody.form01 td.title a.tit03 {overflow:hidden; display:inline-block; color:#3689FF; font-weight:500; font-size:14px; text-decoration:underline; padding-bottom:5px;}
+.myperson_list tbody.form01 td.title .tit04{overflow:hidden; font-weight:500; font-size:14px;color:#000;}
+.myperson_list tbody.form01 td.title a.tit05 {overflow:hidden; display:inline-block; color:#638db8; font-weight:500; font-size:14px; padding-top:3px;}
+.myperson_list tbody.form01 td.title .tit06 {overflow:hidden; font-size:14px; color:#000;}
+.myperson_list tbody.form01 td.title .tit07 {overflow:hidden; font-size:14px; color:#777;}
+.myperson_list tbody.form01 td a.tit08 {color:#f26522; font-size:14px; text-decoration:underline;}
+.myperson_list tbody.form01 td a.tit09 {color:#666; font-weight:500; font-size:14px; text-decoration:underline;}
+.myperson_list tbody.form01 td .lijungic {background:#5CA1E6; font-size:11px; color:#fff; padding:2px 4px;font-family: "Malgun Gothic","맑은 고딕",sans-serif;letter-spacing:-1px; font-weight:500;}
+.myperson_list tbody.form01 span.redate {font-weight:bold; color:#f48d00;}
+
+.myperson_list tbody.form01 td.matchnum {padding:10px 0px 10px 10px; text-align:left; font-size:15px;  font-weight:bold;}
+.myperson_list tbody.form01 td.matchnum span {text-decoration:underline; color:#eb0000}
+
+
+
+.myperson_list .tabtit {border-bottom:2px solid #3689FF; width:100%; padding:0px;}
+.myperson_list .tabtit table {position:relative; width:100%; padding:0px;}
+
+.myperson_list .tabtit td.consec {border:2px solid #3689FF; background:#3689FF; text-align:center;color:#fff; font-size:15px; font-weight:500;}
+.myperson_list .tabtit td.consec span{color:#ffff00; }
+.myperson_list .tabtit td.con01 {border-left:1px solid #ccc; border-right:1px solid #ccc; border-top:1px solid #ccc; text-align:center; padding:0px;}
+.myperson_list .tabtit td.con02 {border-top:0px; padding:0px;}
+
+
+
+</style>
+
+
+<!-- 해당 페이지 css 끝-->
+
+
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+        <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <!-- ::: TOPbar 시작 ::: -->
+        <div class="center-wrap">
+            <header class="topbar center-wrap" data-navbarbg="skin6">
+                <nav class="navbar top-navbar navbar-expand-lg">
+                    <div class="navbar-header" data-logobg="skin6">
+                        <!-- This is for the sidebar toggle which is visible on mobile only -->
+                        <a class="nav-toggler waves-effect waves-light d-block d-lg-none" href="javascript:void(0)"><i
+                                class="ti-menu ti-close"></i></a>
+                        <!-- ============================================================== -->
+                        <!-- Logo -->
+                        <!-- ============================================================== -->
+                        <div class="navbar-brand">
+                            <!-- Logo icon -->
+                            <a href="index.html">
+                                <img src="../resources/common/img/nav_logo.png" alt="" class="img-fluid">
+                            </a>
+                        </div>
+                        <!-- ============================================================== -->
+                        <!-- End Logo -->
+                        <!-- ============================================================== -->
+                        <!-- ============================================================== -->
+                        <!-- Toggle which is visible on mobile only -->
+                        <!-- ============================================================== -->
+                        <a class="topbartoggler d-block d-lg-none waves-effect waves-light" href="javascript:void(0)"
+                            data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i
+                                class="ti-more"></i></a>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- End Logo -->
+                    <!-- ============================================================== -->
+                    <div class="navbar-collapse collapse" id="navbarSupportedContent">
+                        <!-- ============================================================== -->
+                        <!-- toggle and nav items -->
+                        <!-- ============================================================== -->
+                        <ul class="navbar-nav float-left me-auto ms-3 ps-1">
+                            <!-- ============================================================== -->
+                            <!-- create new -->
+                            <!-- ============================================================== -->
+                            <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav pt-0 py-md-0">
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold" href="/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Bootstrap');">Home</a></li>
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold active" aria-current="true" href="/docs/5.0/getting-started/introduction/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Docs');">학업지원</a></li>
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold" href="/docs/5.0/examples/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Examples');">클래스룸</a></li>
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold" href="https://icons.getbootstrap.com/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Icons');" target="_blank" rel="noopener">프로젝트</a></li>
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold" href="https://themes.getbootstrap.com/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Themes');" target="_blank" rel="noopener">공지사항</a></li>
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold" href="https://themes.getbootstrap.com/" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Themes');" target="_blank" rel="noopener">마이페이지</a></li>
+                            </ul>
+                            <!-- 언어 변경 -->
+                            <li class="nav-item d-none">
+                                <a class="nav-link" href="javascript:void(0)">
+                                    <div class="customize-input">
+                                        <select
+                                            class="custom-select form-control bg-white custom-radius custom-shadow border-0">
+                                            <option selected>EN</option>
+                                            <option value="1">AB</option>
+                                            <option value="2">AK</option>
+                                            <option value="3">BE</option>
+                                        </select>
+                                    </div>
+                                </a>
+                            </li>
+                            <!-- 언어 변경 끝-->
+                        </ul>
+                        <!-- ============================================================== -->
+                        <!-- Right side toggle and nav items -->
+                        <!-- ============================================================== -->
+                        <ul class="navbar-nav float-end">
+                            <!-- ============================================================== -->
+                            <!-- Search -->
+                            <!-- ============================================================== -->
+                            <li class="nav-item d-none">
+                                <a class="nav-link" href="javascript:void(0)">
+                                    <form>
+                                        <div class="customize-input">
+                                            <input class="form-control custom-shadow custom-radius border-0 bg-white"
+                                                type="search" placeholder="Search" aria-label="Search">
+                                            <i class="form-control-icon" data-feather="search"></i>
+                                        </div>
+                                    </form>
+                                </a>
+                            </li>
+                            <!-- ============================================================== -->
+                            <!-- User profile and search -->
+                            <!-- ============================================================== -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    <img src="../assets/images/users/profile-pic.jpg" alt="user" class="rounded-circle"
+                                        width="40">
+                                    <span class="ms-2 d-none d-lg-inline-block"><span class="text-dark"><sec:authentication property="principal.member.userNo"/></span><span>님 (<sec:authentication property="principal.member.userType"/>)</span> <i data-feather="chevron-down"
+                                            class="svg-icon"></i></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-right user-dd animated flipInY">
+                                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="user"
+                                            class="svg-icon me-2 ms-1"></i>
+                                        My Profile</a>
+                                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="credit-card"
+                                            class="svg-icon me-2 ms-1"></i>
+                                        My Balance</a>
+                                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="mail"
+                                            class="svg-icon me-2 ms-1"></i>
+                                        Inbox</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="settings"
+                                            class="svg-icon me-2 ms-1"></i>
+                                        Account Setting</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="power"
+                                            class="svg-icon me-2 ms-1"></i>
+                                        Logout</a>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="pl-4 p-3"><a href="javascript:void(0)" class="btn btn-sm btn-info">View
+                                            Profile</a></div>
+                                </div>
+                            </li>
+                            <!-- ============================================================== -->
+                            <!-- User profile and search -->
+                            <!-- ============================================================== -->
+                                                    <!-- Notification -->
+                                                    <li class="nav-item dropdown">
+                                                        <a class="nav-link dropdown-toggle pl-md-3 position-relative" href="javascript:void(0)"
+                                                            id="bell" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">
+                                                            <span><i data-feather="bell" class="svg-icon"></i></span>
+                                                            <span class="badge text-bg-primary notify-no rounded-circle">5</span>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-end mailbox animated bounceInDown">
+                                                            <ul class="list-style-none">
+                                                                <li>
+                                                                    <div class="message-center notifications position-relative">
+                                                                        <!-- Message -->
+                                                                        <a href="javascript:void(0)"
+                                                                            class="message-item d-flex align-items-center border-bottom px-3 py-2">
+                                                                            <div class="btn btn-danger rounded-circle btn-circle"><i
+                                                                                    data-feather="airplay" class="text-white"></i></div>
+                                                                            <div class="w-75 d-inline-block v-middle ps-2">
+                                                                                <h6 class="message-title mb-0 mt-1">Luanch Admin</h6>
+                                                                                <span class="font-12 text-nowrap d-block text-muted">Just see
+                                                                                    the my new
+                                                                                    admin!</span>
+                                                                                <span class="font-12 text-nowrap d-block text-muted">9:30 AM</span>
+                                                                            </div>
+                                                                        </a>
+                                                                        <!-- Message -->
+                                                                        <a href="javascript:void(0)"
+                                                                            class="message-item d-flex align-items-center border-bottom px-3 py-2">
+                                                                            <span class="btn btn-success text-white rounded-circle btn-circle"><i
+                                                                                    data-feather="calendar" class="text-white"></i></span>
+                                                                            <div class="w-75 d-inline-block v-middle ps-2">
+                                                                                <h6 class="message-title mb-0 mt-1">Event today</h6>
+                                                                                <span
+                                                                                    class="font-12 text-nowrap d-block text-muted text-truncate">Just
+                                                                                    a reminder that you have event</span>
+                                                                                <span class="font-12 text-nowrap d-block text-muted">9:10 AM</span>
+                                                                            </div>
+                                                                        </a>
+                                                                        <!-- Message -->
+                                                                        <a href="javascript:void(0)"
+                                                                            class="message-item d-flex align-items-center border-bottom px-3 py-2">
+                                                                            <span class="btn btn-info rounded-circle btn-circle"><i
+                                                                                    data-feather="settings" class="text-white"></i></span>
+                                                                            <div class="w-75 d-inline-block v-middle ps-2">
+                                                                                <h6 class="message-title mb-0 mt-1">Settings</h6>
+                                                                                <span
+                                                                                    class="font-12 text-nowrap d-block text-muted text-truncate">You
+                                                                                    can customize this template
+                                                                                    as you want</span>
+                                                                                <span class="font-12 text-nowrap d-block text-muted">9:08 AM</span>
+                                                                            </div>
+                                                                        </a>
+                                                                        <!-- Message -->
+                                                                        <a href="javascript:void(0)"
+                                                                            class="message-item d-flex align-items-center border-bottom px-3 py-2">
+                                                                            <span class="btn btn-primary rounded-circle btn-circle"><i
+                                                                                    data-feather="box" class="text-white"></i></span>
+                                                                            <div class="w-75 d-inline-block v-middle ps-2">
+                                                                                <h6 class="message-title mb-0 mt-1">Pavan kumar</h6> <span
+                                                                                    class="font-12 text-nowrap d-block text-muted">Just
+                                                                                    see the my admin!</span>
+                                                                                <span class="font-12 text-nowrap d-block text-muted">9:02 AM</span>
+                                                                            </div>
+                                                                        </a>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="nav-link pt-3 text-center text-dark" href="javascript:void(0);">
+                                                                        <strong>Check all notifications</strong>
+                                                                        <i class="fa fa-angle-right"></i>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </li>
+                                                    <!-- End Notification -->
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+        </div>
+    <!-- ::: TOPbar 끝 ::: -->
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+    <div class="center-wrap">
+        <!-- ::: LeftNav 시작 ::: -->
+        <aside class="left-sidebar" data-sidebarbg="skin6">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar" data-sidebarbg="skin6">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li class="sidebar-item d-flex justify-content-center"> <a class="sidebar-link sidebar-link" href="index.html"
+                                aria-expanded="false"><span
+                                    class="hide-menu" style="font-size: 28px; font-weight: 600;">마이페이지</span></a></li>
+                        <li class="list-divider"></li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="javascript:goToMenu()"
+                            aria-expanded="false"><span
+                                class="hide-menu">개인정보
+                            </span></a>
+                        </li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="ticket-list.html"
+                            aria-expanded="false"><span
+                                class="hide-menu">출결조회
+                            </span></a>
+                        </li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="ticket-list.html"
+                            aria-expanded="false"><span
+                                class="hide-menu">이력서
+                            </span></a>
+                        </li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="ticket-list.html"
+                            aria-expanded="false"><span
+                                class="hide-menu">수강포기
+                            </span></a>
+                        </li>
+
+
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+        <!-- ::: LeftNav 끝 ::: -->
+        <!-- ============================================================== -->
+        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="page-breadcrumb">
+                <div class="row">
+                    <div class="col-7 align-self-center">
+                        <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">메뉴제목이 들어갑니다</h4>
+                        <div class="d-flex align-items-center">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb m-0 p-0">
+                                    <li class="breadcrumb-item"><a href="index.html" class="text-muted">Home</a></li>
+                                    <li class="breadcrumb-item text-muted active" aria-current="page">Library</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+				<div class="row">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-body">
+                                        <!-- ::: Contents 시작 ::: -->
+									<h2>내 이력서 관리</h2>
+
+
+									<div id="divUpdatePopup"></div>
+									<div class="stepcon1">
+										<ul>
+											<li><b>·</b> 이력서를 작성하면 강사선생님 및 취업담당선생님이 확인이 가능합니다.</li>
+											<li><b>·</b> 상담이 진행시, 이력서가 상담 강사 선생님이 조회 가능해집니다. </a></li>
+										</ul>
+									</div>
+
+									<div class="stepcon7">
+										<ul>
+											<li><b>·</b> ~~~~</li>
+											<li><b>·</b> ~~~~~~~~.</li>
+										</ul>
+									</div>
+									<div class="myperson">
+										<div class="row">
+											<div class="col-6 d-flex flex-column justify-content-end">
+												<div class="myperson_ttit">
+													총 <font>2</font>건
+												</div>
+											</div>
+											<div class="col-6">
+												<a href="/stu/mypage/resume/write">
+													<div class="my-1" style="margin-top: -15px; float: right; color: white; font-weight: bold; font-size: 14px; border-radius: 5px; background-color: #eb3941; box-shadow: 0 1px 2px 0px silver; width: 100px !important; height: 37px; text-align: center; line-height: 37px;">
+														<i class="ion-plus-round"></i> 이력서등록
+													</div>
+												</a>
+											</div>
+
+										</div>
+
+										<div class="d-flex align-items-end" style="width: 100%;"></div>
+
+
+										<table class="myperson_list" id="ResumeTable">
+											<colgroup>
+												<col width="10%">
+												<col width="*%">
+												<col width="10%">
+												<col width="20%">
+											</colgroup>
+											<thead>
+												<tr class="ptit">
+													<th scope="col">순번</th>
+													<th scope="col">이력서</th>
+													<th scope="col">수정일</th>
+													<th scope="col">미리보기/수정/삭제</th>
+												</tr>
+											</thead>
+											<tbody class="form01">
+
+												<tr>
+													<td class="text-center">순번</td>
+													<td class="title py-2">
+														<ul>
+															<li><a href="#" onclick="GoNewPreviewForm(290726, 'preview');return false;" class="tit03 1ResumeDetails">이력서 제목입니다</a></li>
+															<li><span class="tit06">자기소개 내용 살짜악</span></li>
+														</ul>
+													</td>
+													<td class="text-center">2023-07-24</td>
+													<td class="text-center"><a href="javascript:void(0);" class="white2" style="padding: 4px 8px 1px 8px; background-color: #f9f9f9; border: 1px solid #bbb; font-weight: bold; font-size: 11px; font-family:" 돋움",="" gulim,="" sans-serif;"="" onclick="document.getElementById('ifmTemp').src ='/MyPage/ResumeHtmlDownload/290726';return false;"> 미리보기 </a> <a href="javascript:void(0);" class="white2"
+														style="padding: 4px 8px 1px 8px; background-color: #f9f9f9; border: 1px solid #bbb; font-weight: bold; font-size: 11px; font-family:" 돋움",="" gulim,="" sans-serif;"="" onclick="document.getElementById('ifmTemp').src ='/MyPage/ResumeHtmlDownload/290726';return false;"> 수정 </a> <a href="javascript:void(0);" class="white2" style="padding: 4px 8px 1px 8px; background-color: #f9f9f9; border: 1px solid #bbb; font-weight: bold; font-size: 11px; font-family:" 돋움",="" gulim,=""
+														sans-serif;"="" onclick="document.getElementById('ifmTemp').src ='/MyPage/ResumeHtmlDownload/290726';return false;"> 삭제 </a></td>
+
+												</tr>
+
+											</tbody>
+										</table>
+
+
+
+										<div style="width: 100%;">
+											<div style="font-family: 'Nanum Gothic', sans-serif; font-weight: bold; font-size: 14px; color: #292929; letter-spacing: -0.5px; margin-top: -3px;">
+												이력서 <span style="color: #355abb;">대표</span> 설정
+
+											</div>
+											<div style="clear: both;"></div>
+										</div>
+
+										<div style="background: #e6f2fb; padding: 20px; margin: 15px 0px 30px 0px; border: 1px solid #c3d4e0; color: #666;">
+
+											<span style="font-weight: 500; padding-bottom: 10px; display: block; font-size: 15px; color: #4480ae;">이력서는! </span> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+										</div>
+
+									</div>
+									<!-- ::: Contents 끝 ::: -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End PAge Content -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Right sidebar -->
+                <!-- ============================================================== -->
+                <!-- .right-sidebar -->
+                <!-- ============================================================== -->
+                <!-- End Right sidebar -->
+                <!-- ============================================================== -->
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+            <footer class="footer text-center text-muted">
+                All Rights Reserved by <a
+                    href="https://adminmart.com/">TTTT</a>.
+            </footer>
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+        </div>
+    </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <!-- ::: Footjs 시작 ::: -->
+    <!-- apps -->
+    <!-- apps -->
+    <script src="../dist/js/app-style-switcher.js"></script>
+    <script src="../dist/js/feather.min.js"></script>
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="../assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="../assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <!-- themejs -->
+    <!--Menu sidebar -->
+    <script src="../dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="../dist/js/custom.min.js"></script>
+    <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.all.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- ::: Footjs 끝 ::: -->
+</body>
+
+</html>

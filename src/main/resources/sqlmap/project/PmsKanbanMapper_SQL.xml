@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.kanban.mapper.PmsKanbanMapper">
+
+<update id="moveBoard" parameterType="TaskVO">
+	update
+		tb_task
+	set
+		task_stts= #{taskStts}
+	where
+		task_no = #{taskNo}
+</update>
+
+<select id="getMemJbttlCd" parameterType="hashMap" resultType="MemManagementVO">
+	SELECT
+		JBTTL_CD
+	FROM
+		TB_PRO_MEM
+	WHERE
+		STU_NO = #{userNo} AND PROJ_NO = #{projNo}
+</select>
+
+</mapper>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.stu.main.mapper.StuMainMapper">
+
+	<resultMap 	type="StorageVO" 			id="storageMap">
+		<id 	property="strNo" 			column="STR_NO"/>
+		<result property="strTitle" 		column="STR_TITLE"/>
+		<result property="strCn" 			column="STR_CN"/>
+		<result property="stuNo" 			column="STU_NO"/>
+		<result property="strRegDt" 		column="STR_REG_DT"/>
+		<result property="atchFileNo" 		column="ATCH_FILE_NO"/>
+		<result property="projNo" 			column="PROJ_NO"/>
+
+		<collection property="atchFileList" 	resultMap="atchFileMap"/>
+	</resultMap>
+
+
+	<resultMap type="AtchFileVO" 			id="atchFileMap">
+
+		<result property="atchFileNo" 		column="ATCH_FILE_NO"/>
+		<result property="atchFileSeq" 		column="ATCH_FILE_SEQ"/>
+		<result property="fileNm" 			column="FILE_NM"/>
+		<result property="fileExtn" 		column="FILE_EXTN"/>
+		<result property="fileRgtr" 		column="FILE_RGTR"/>
+		<result property="fileBengDt" 		column="FILE_BENG_DT"/>
+		<result property="filePath" 		column="FILE_PATH"/>
+		<result property="fileSize" 		column="FILE_SIZE"/>
+		<result property="fileUpdRgtr" 		column="FILE_UPD_RGTR"/>
+		<result property="fileUpdDate" 		column="FILE_UPD_DATE"/>
+		<result property="fileTbNm" 		column="FILE_TB_NM"/>
+		<result property="fileThumb" 		column="FILE_THUMB"/>
+
+	</resultMap>
+
+
+	<select id="projList" parameterType="String" resultType="ProjListVO">
+             SELECT
+			    PROJ_NM,
+			    PROJ_NO
+			FROM (
+			    SELECT
+			        B.PROJ_NM,
+			        B.PROJ_NO,
+			        ROWNUM AS RNUM
+			    FROM
+			        TB_PRO_MEM A
+			    JOIN
+			        TB_PROJ B ON A.PROJ_NO = B.PROJ_NO
+			    WHERE
+			    	A.STU_NO = #{stuNo}
+				) A
+				WHERE
+					RNUM <![CDATA[<=]]> 3
+	</select>
+
+
+	<select id="issueList" parameterType="String" resultType="IssueListVO">
+
+		SELECT
+			A.ISSUE_NO
+			, A.ISSUE_CN
+			, C.CD_NM AS ISSUE_STTS_CD
+			, A.ISSUE_TTL
+			, A.ISSUE_CD
+			, A.ISSUE_REG_DT
+			, A.PROJ_NO
+            , S.USER_NM AS STU_NO
+            , S2.USER_NM AS ISSUE_ASG
+		FROM (
+		    SELECT
+		        ISSUE_NO
+		        , ISSUE_CN
+		        , ISSUE_STTS_CD
+		        , ISSUE_TTL
+		        , ISSUE_CD
+		        , ISSUE_REG_DT
+		        , STU_NO
+		        , PROJ_NO
+		        , ISSUE_ASG,
+		        ROWNUM AS RNUM
+		    FROM
+		    	TB_ISSUE
+		    WHERE
+		    	STU_NO =  #{stuNo}
+		) A
+        JOIN TB_STU S ON S.STU_NO = A.STU_NO
+        JOIN TB_STU S2 ON A.ISSUE_ASG = S2.STU_NO
+		JOIN TB_CM_CD C ON C.CD_TYPE_ID = SUBSTR(A.ISSUE_STTS_CD, 1, INSTR(A.ISSUE_STTS_CD, '-') -1)
+						    AND C.CD_VL = SUBSTR(A.ISSUE_STTS_CD, INSTR(A.ISSUE_STTS_CD, '-') + 1)
+						    AND C.CD_TYPE_ID = 'P006'
+						    AND C.CD_C_USE_YN = 'Y'
+						    WHERE
+		RNUM <![CDATA[<=]]> 5
+
+	</select>
+
+<!-- 	<select id="storageList" resultMap="storageMap" parameterType="string">
+
+		SELECT
+		      A.STR_NO
+		    , A.STR_TITLE
+		    , A.STR_CN
+		    , A.STU_NO
+		    , A.STR_REG_DT
+		    , A.ATCH_FILE_NO
+		    , A.PROJ_NO
+		    , B.ATCH_FILE_NO
+		    , B.ATCH_FILE_SEQ
+		    , B.FILE_NM
+		    , B.FILE_EXTN
+		    , B.FILE_RGTR
+		    , B.FILE_BENG_DT
+		    , B.FILE_PATH
+		    , B.FILE_SIZE
+		    , B.FILE_UPD_RGTR
+		    , B.FILE_UPD_DATE
+		    , B.FILE_TB_NM
+		    , B.FILE_THUMB
+	        , C.user_nm
+		FROM
+		    TB_STORAGE A
+		RIGHT JOIN
+		    TB_ATCH_FILE B ON A.ATCH_FILE_NO = B.ATCH_FILE_NO
+	    JOIN
+	        TB_STU C ON A.STU_NO = C.STU_NO
+		WHERE
+		    A.STU_NO =  #{stuNo}
+	</select> -->
+	<select id="selectTimetableList" parameterType="String" resultType="SbjctVO">
+		SELECT
+		    TB_SBJCT.SBJCT_CD
+		    , TB_SBJCT.SBJCT_NM AS SBJCT_NM
+		    , TB_SBJCT.SBJCT_BGNG AS SBJCT_BGNG
+		    , TB_SBJCT.SBJCT_DDLB AS SBJCT_DDLB
+		    , TB_SBJCT.SCDU_HR AS SCDU_HR
+		    , TB_EMP.USER_NM AS EMP_NO
+		FROM TB_STU
+		JOIN TB_SVLF ON TB_SVLF.SVLF_NO = TB_STU.SVLF_NO
+		JOIN TB_SBJCT ON TB_SBJCT.SVLF_NO = TB_SVLF.SVLF_NO
+		JOIN TB_EMP ON TB_EMP.EMP_NO = TB_SBJCT.EMP_NO
+		WHERE TB_STU.STU_NO = #{stuNo}
+            AND SYSDATE BETWEEN TO_DATE(TB_SBJCT.SBJCT_BGNG, 'YYYY-MM-DD') - 1 AND TO_DATE(TB_SBJCT.SBJCT_DDLB, 'YYYY-MM-DD') + 1
+	</select>
+	<select id="selectAsmtList" parameterType="String" resultType="AsmtVO">
+		SELECT *
+		FROM (
+				SELECT
+				    TB_ASMT.ASMT_NO AS ASMT_NO
+				    , TB_ASMT.ASMT_TTL AS ASMT_TTL
+				    , TB_ASMT.ASMT_EXPLN AS ASMT_EXPLN
+				    , TO_CHAR(TB_ASMT.ASMT_DDLN, 'YYYY-MM-DD HH24:MI') AS ASMT_DDLN
+				    , TO_CHAR(TB_ASMT.ASMT_DT, 'YYYY-MM-DD HH24:MI') AS ASMT_DT
+				    , (
+		                SELECT
+		                    DISTINCT(TB_QST_SBMSN.QST_SBMSN_YN)
+		                FROM
+		                    TB_QST_SBMSN
+		                JOIN TB_QST ON TB_QST.QST_NO = TB_QST_SBMSN.QST_NO
+		                WHERE TB_QST.ASMT_NO = TB_ASMT.ASMT_NO AND TB_QST_SBMSN.STU_NO= #{stuNo}
+		            ) AS QST_SBMSN_YN
+		            , TB_SBJCT.SBJCT_CD
+				FROM TB_ASMT
+		        JOIN TB_SBJCT ON TB_SBJCT.SBJCT_CD = TB_ASMT.SBJCT_CD
+		        INNER JOIN TB_STU ON TB_STU.SVLF_NO = TB_SBJCT.SVLF_NO
+				WHERE TB_ASMT.ASMT_YN ='Y' AND STU_NO = #{stuNo}
+				ORDER BY TB_ASMT.ASMT_DT DESC
+			)
+		<![CDATA[
+		WHERE ROWNUM <= 5
+		]]>
+	</select>
+</mapper>

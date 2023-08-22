@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.stu.main.mapper.DongMapper">
+
+	<!-- 오늘 유저의 출석부가 있는지 없는지 확인 -->
+	<select id="userCheck" parameterType="AttdVO" resultType="AttdVO">
+	/* team.tttt.pms.stu.main.mapper.DongMapper.userCheck */
+	SELECT
+	    ATTD_DT
+	    , STU_NO
+	    , ATTD_ABMI_YMD
+	    , ATTD_LEAVE_YMD
+	    , ATTD_CD
+	FROM TB_ATTD
+	WHERE STU_NO = #{stuNo}
+	AND ATTD_DT = #{attdDt}
+	</select>
+
+	<!-- 유저의 오늘 출석부 생성 -->
+	<insert id="insertAttd" parameterType="AttdVO">
+	/* team.tttt.pms.stu.main.mapper.DongMapper.insertAttd */
+	INSERT INTO TB_ATTD(
+		ATTD_DT
+		, STU_NO
+	) VALUES (
+		#{attdDt}
+		, #{stuNo}
+	)
+	</insert>
+
+	<!-- 유저의 입실 시간 등록 -->
+	<update id="inClass" parameterType="AttdVO">
+	/* team.tttt.pms.stu.main.mapper.DongMapper.inClass */
+	UPDATE TB_ATTD
+	SET
+		ATTD_ABMI_YMD = #{attdAbmiYmd}
+		, ATTD_CD = 'S001-4'
+	WHERE ATTD_DT = #{attdDt}
+	AND STU_NO = #{stuNo}
+	</update>
+
+	<!-- 유저의 입실 시간 등록(지각인 경우) -->
+	<update id="inClassLate" parameterType="AttdVO">
+	/* team.tttt.pms.stu.main.mapper.DongMapper.inClass */
+	UPDATE TB_ATTD
+	SET
+		ATTD_ABMI_YMD = #{attdAbmiYmd}
+		, ATTD_CD = 'S001-5'
+	WHERE ATTD_DT = #{attdDt}
+	AND STU_NO = #{stuNo}
+	</update>
+
+	<!-- 유저의 퇴실 시간 등록 -->
+	<update id="outClass" parameterType="AttdVO">
+	/* team.tttt.pms.stu.main.mapper.DongMapper.outClass */
+	UPDATE TB_ATTD
+	SET
+		ATTD_LEAVE_YMD = #{attdLeaveYmd}
+	WHERE ATTD_DT = #{attdDt}
+	AND STU_NO = #{stuNo}
+	</update>
+
+	<!-- 유저의 오늘 출석부 조회 -->
+	<select id="searchAttd" parameterType="AttdVO" resultType="AttdVO">
+	/* team.tttt.pms.stu.main.mapper.DongMapper.searchAttd */
+	SELECT
+	    ATTD_DT
+	    , STU_NO
+	    , ATTD_ABMI_YMD
+	    , ATTD_LEAVE_YMD
+	   	, B.CD_NM AS ATTD_CD
+	FROM TB_ATTD A
+	INNER JOIN TB_CM_CD B on B.CD_TYPE_ID = SUBSTR(A.ATTD_CD, 1, INSTR(A.ATTD_CD, '-') -1)
+	                                                and B.CD_VL = SUBSTR(A.ATTD_CD, INSTR(A.ATTD_CD, '-') + 1)
+		                                            and B.CD_TYPE_ID = 'S001'
+		                                            and B.CD_C_USE_YN = 'Y'
+	WHERE STU_NO = #{stuNo}
+	AND ATTD_DT = #{attdDt}
+	</select>
+
+	<!-- 유저가 시간을 채웠을 경우 -->
+	<update id="attdOk" parameterType="AttdVO">
+	/* team.tttt.pms.stu.main.mapper.DongMapper.outClass */
+	UPDATE TB_ATTD
+	SET
+		ATTD_CD = 'S001-3'
+	WHERE ATTD_DT = #{attdDt}
+	AND STU_NO = #{stuNo}
+	</update>
+
+	<!-- 유저가 시간을 못 채웠을 경우 -->
+	<update id="attdFail" parameterType="AttdVO">
+	/* team.tttt.pms.stu.main.mapper.DongMapper.outClass */
+	UPDATE TB_ATTD
+	SET
+		ATTD_CD = 'S001-5'
+	WHERE ATTD_DT = #{attdDt}
+	AND STU_NO = #{stuNo}
+	</update>
+</mapper>
+

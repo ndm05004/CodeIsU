@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- DB에 QR코드 Token을 저장한다. -->
+<mapper namespace="team.tttt.pms.stu.mypage.mapper.QrCheckMapper">
+	<insert id="insertToken" parameterType="string" >
+		INSERT INTO TB_QR_TOKEN (
+			TOKEN_NO
+			,TOKEN_REG_DATE
+			,TOKEN_CODE
+			) VALUES (
+			QR_TOKEN_SEQ.NEXTVAL
+			, SYSDATE
+			, #{uuidToken}
+			)
+
+	</insert>
+
+
+	<select id="selectAttdVO" parameterType="AttdVO" resultType="AttdVO">
+			SELECT
+		    ATTD_DT
+		    , A.STU_NO
+		    , A.ATTD_ABMI_YMD
+		    , A.ATTD_LEAVE_YMD
+		    , V.CD_NM AS ATTD_CD
+		FROM V_CM_CD V RIGHT OUTER JOIN TB_ATTD A ON  A.ATTD_CD = V.CD_TYPE_VL
+		WHERE STU_NO = #{stuNo}
+		AND ATTD_DT = #{attdDt}
+	</select>
+
+
+	<insert id="insertAttd" parameterType="string">
+	INSERT INTO TB_ATTD(
+		ATTD_DT
+		, STU_NO
+	) VALUES (
+		#{attdDt}
+		, #{stuNo}
+	)
+	</insert>
+
+</mapper>

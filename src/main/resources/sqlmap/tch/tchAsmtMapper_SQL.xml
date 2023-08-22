@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.tch.classroom.mapper.TchAsmtMapper">
+	<resultMap type="AsmtVO" id="asmtMap">
+		<id property="asmtNo" column="asmt_no"/>
+		<result property="asmtNo" column="asmt_no"/>
+		<result property="asmtTtl" column="asmt_ttl"/>
+		<result property="asmtExpln" column="asmt_expln"/>
+		<result property="asmtDdln" column="asmt_ddln"/>
+		<result property="empNo" column="emp_no"/>
+		<result property="asmtDt" column="asmt_dt"/>
+		<result property="sbjctCd" column="sbjct_cd"/>
+		<result property="stuAllCnt" column="stu_all_cnt"/>
+		<result property="stuSbmsnCnt" column="stu_sbmsn_cnt"/>
+		<collection property="qstList" resultMap="qstMap"/>
+	</resultMap>
+	<resultMap type="QstVO" id="qstMap">
+		<id property="qstNo" column="qst_no"/>
+		<result property="qstNo" column="qst_no"/>
+		<result property="qstCn" column="qst_cn"/>
+		<result property="atchFileNo" column="atch_file_no"/>
+		<result property="qstCode" column="qst_code"/>
+		<result property="asmtNo" column="asmt_no"/>
+		<result property="qstAns" column="qst_ans"/>
+		<collection property="atchFileList" resultMap="atchFileMap"/>
+		<collection property="qstDtlList" resultMap="qstDtlMap"/>
+	</resultMap>
+	<resultMap type="AtchFileVO" id="atchFileMap">
+		<id property="atchFileNo" column="atch_file_no"/>
+		<result property="atchFileNo" column="atch_file_no"/>
+		<result property= "atchFileSeq" column="atch_file_seq"/>
+		<result property="fileNm" column="file_nm"/>
+		<result property="fileExtn" column="file_extn"/>
+		<result property="fileRgtr" column="file_rgtr"/>
+		<result property="fileBengDt" column="file_beng_dt"/>
+		<result property="filePath" column="file_path"/>
+		<result property="fileSize" column="file_size"/>
+		<result property="fileUpdRgtr" column="file_upd_rgtr"/>
+		<result property="fileUpdDate" column="file_upd_date"/>
+		<result property="fileTbNm" column="file_tb_nm"/>
+		<result property="fileThumb" column="file_thumb"/>
+	</resultMap>
+	<resultMap type="QstDtlVO" id="qstDtlMap">
+		<id property="qstDtlNo" column="qst_dtl_no"/>
+		<result property="qstNo" column="qst_no"/>
+		<result property="qstDtlCn" column="qst_dtl_cn"/>
+	</resultMap>
+
+
+	<insert id="insertAsmt" parameterType="AsmtVO">
+		<selectKey keyProperty="asmtNo" order="BEFORE" resultType="int">
+			select SEQ_ASMT.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO TB_ASMT(
+			ASMT_NO
+			, ASMT_TTL
+			, ASMT_EXPLN
+			, ASMT_DDLN
+			, EMP_NO
+			, ASMT_DT
+			, SBJCT_CD
+		) VALUES(
+			#{asmtNo}
+			, #{asmtTtl}
+			, #{asmtExpln}
+			, TO_DATE(#{asmtDdln}, 'YYYY-MM-DD HH24:MI')
+			, #{empNo}
+			, SYSDATE
+			, #{sbjctCd}
+		)
+	</insert>
+
+	<insert id="insertQst" parameterType="QstVO" useGeneratedKeys="true">
+		<selectKey keyProperty="qstNo" order="BEFORE" resultType="int">
+			select SEQ_QST.NEXTVAL from dual
+		</selectKey>
+		INSERT INTO TB_QST(
+			QST_NO
+			, QST_CN
+			, ATCH_FILE_NO
+			, QST_CODE
+			, ASMT_NO
+			, QST_ANS
+
+		) VALUES(
+			#{qstNo}
+			, #{qstCn}
+			, 'qstFile'|| SEQ_QSTFILE.NEXTVAL
+			, #{qstCode}
+			, #{asmtNo}
+			, #{qstAns}
+		)
+	</insert>
+
+	<insert id="insertQstDtl" parameterType="QstDtlVO">
+		INSERT INTO TB_QST_DTL(
+			QST_DTL_NO
+			, QST_NO
+			, QST_DTL_CN
+		) VALUES(
+			#{qstDtlNo}
+			, #{qstNo}
+			, #{qstDtlCn}
+		)
+	</insert>
+
+	<select id="selectAsmtList" parameterType="String" resultType="AsmtVO">
+		SELECT
+		    TB_ASMT.ASMT_NO AS ASMT_NO
+		    , TB_ASMT.ASMT_TTL AS ASMT_TTL
+		    , TB_ASMT.ASMT_EXPLN AS ASMT_EXPLN
+		    , TO_CHAR(TB_ASMT.ASMT_DDLN, 'YYYY-MM-DD HH24:MI') AS ASMT_DDLN
+		    , TO_CHAR(TB_ASMT.ASMT_DT, 'YYYY-MM-DD HH24:MI') AS ASMT_DT
+		    , TB_ASMT.SBJCT_CD AS SBJCT_CD
+		    , TB_SBJCT.SVLF_NO AS SVLF_NO
+		    , (
+		            SELECT
+                        COUNT(TB_STU.STU_NO)
+                    FROM
+                        TB_SBJCT
+                    JOIN TB_STU ON TB_SBJCT.SVLF_NO = TB_STU.SVLF_NO
+                    WHERE
+                        TB_SBJCT.SBJCT_CD = #{sbjctCd}
+
+		        ) AS STU_ALL_CNT
+		    , (
+		            SELECT
+		                COUNT(DISTINCT(TB_QST_SBMSN.STU_NO))
+		            FROM TB_QST_SBMSN
+		            JOIN TB_QST ON TB_QST.QST_NO = TB_QST_SBMSN.QST_NO
+		            WHERE TB_QST.ASMT_NO = TB_ASMT.ASMT_NO
+                        AND TB_QST_SBMSN.QST_SBMSN_YN != 'N'
+		    ) AS STU_SBMSN_CNT
+		FROM TB_ASMT
+		JOIN TB_SBJCT ON TB_SBJCT.SBJCT_CD = TB_ASMT.SBJCT_CD
+		WHERE TB_ASMT.SBJCT_CD = #{sbjctCd} AND TB_ASMT.ASMT_YN ='Y'
+		ORDER BY TB_ASMT.ASMT_DT DESC
+	</select>
+
+	<delete id="deleteAsmt" parameterType="int">
+		UPDATE TB_ASMT
+		SET ASMT_YN = 'N'
+		WHERE ASMT_NO = #{asmtNo}
+	</delete>
+
+	<select id="selectAsmt" parameterType="int" resultMap="asmtMap">
+		SELECT
+		    TB_ASMT.ASMT_NO AS ASMT_NO
+		    , TB_ASMT.ASMT_TTL AS ASMT_TTL
+		    , TB_ASMT.ASMT_EXPLN AS ASMT_EXPLN
+		    , TB_ASMT.ASMT_DDLN AS ASMT_DDLN
+		    , TB_ASMT.ASMT_DT AS ASMT_DT
+		    , TB_ASMT.SBJCT_CD AS SBJCT_CD
+		    , TB_QST.QST_NO AS QST_NO
+		    , TB_QST.QST_CN AS QST_CN
+		    , TB_QST.ATCH_FILE_NO AS ATCH_FILE_NO
+		    , TB_QST.QST_CODE AS QST_CODE
+		    , TB_QST.QST_ANS AS QST_ANS
+		    , TB_QST_DTL.QST_DTL_CN AS QST_DTL_CN
+		    , TB_QST_DTL.QST_DTL_NO AS QST_DTL_NO
+		    , TB_ATCH_FILE.FILE_PATH AS FILE_PATH
+		FROM
+		    TB_ASMT
+		JOIN
+		    TB_QST ON TB_QST.ASMT_NO = TB_ASMT.ASMT_NO
+		LEFT OUTER JOIN
+		    TB_QST_DTL ON TB_QST_DTL.QST_NO = TB_QST.QST_NO
+		LEFT OUTER JOIN
+		    TB_ATCH_FILE ON TB_QST.ATCH_FILE_NO = TB_ATCH_FILE.ATCH_FILE_NO
+		WHERE
+		    TB_ASMT.ASMT_NO = #{asmtNo} AND TB_ASMT.ASMT_YN = 'Y' AND TB_QST.QST_YN = 'Y'
+		ORDER BY TB_QST.QST_NO, TB_ATCH_FILE.ATCH_FILE_SEQ, TB_QST_DTL.QST_DTL_NO
+	</select>
+
+	<select id="selectAtchFileList" parameterType="int" resultType="AtchFileVO">
+		SELECT
+		    TB_ATCH_FILE.ATCH_FILE_NO AS ATCH_FILE_NO
+		    , TB_ATCH_FILE.ATCH_FILE_SEQ AS ATCH_FILE_SEQ
+		    , TB_ATCH_FILE.FILE_NM AS FILE_NM
+		    , TB_ATCH_FILE.FILE_EXTN AS FILE_EXTN
+		    , TB_ATCH_FILE.FILE_RGTR AS FILE_RGTR
+		    , TB_ATCH_FILE.FILE_BENG_DT AS FILE_BENG_DT
+		    , TB_ATCH_FILE.FILE_PATH AS FILE_PATH
+		    , TB_ATCH_FILE.FILE_SIZE AS FILE_SIZE
+		    , TB_ATCH_FILE.FILE_UPD_RGTR AS FILE_UPD_RGTR
+		    , TB_ATCH_FILE.FILE_UPD_DATE AS FILE_UPD_DATE
+		    , TB_ATCH_FILE.FILE_TB_NM AS FILE_TB_NM
+		    , TB_ATCH_FILE.FILE_THUMB AS FILE_THUMB
+		FROM TB_ATCH_FILE
+		JOIN TB_QST ON TB_QST.ATCH_FILE_NO =  TB_ATCH_FILE.ATCH_FILE_NO
+		JOIN TB_ASMT ON TB_ASMT.ASMT_NO = TB_QST.ASMT_NO
+		WHERE TB_ASMT.ASMT_NO = #{asmtNo}
+		ORDER BY ATCH_FILE_NO, ATCH_FILE_SEQ
+	</select>
+
+	<select id="selectSbmsnList" resultType="SbmsnResultVO" parameterType="int">
+		SELECT
+		    TB_QST.ASMT_NO AS ASMT_NO,
+		    TB_STU.STU_NO AS STU_NO,
+		    USER_NM,
+		    (
+		        SELECT COUNT(*)
+		        FROM TB_QST_SBMSN TB_QST_SBMSN LEFT OUTER JOIN TB_QST TB_QST ON(TB_QST_SBMSN.QST_NO = TB_QST.QST_NO)
+		        WHERE TB_QST_SBMSN.QST_SBMSN_ANS = TB_QST.QST_ANS
+		        AND TB_QST.ASMT_NO = #{asmtNo}
+		        AND TB_QST_SBMSN.STU_NO = TB_STU.STU_NO
+		    ) AS SCORE_CNT,
+		    COUNT(TB_STU.STU_NO) AS QST_CNT
+		FROM TB_QST TB_QST LEFT OUTER JOIN TB_QST_SBMSN TB_QST_SBMSN ON(TB_QST.QST_NO = TB_QST_SBMSN.QST_NO)
+		                    LEFT OUTER JOIN TB_STU TB_STU ON(TB_QST_SBMSN.STU_NO = TB_STU.STU_NO)
+		WHERE TB_QST.ASMT_NO = #{asmtNo}
+		GROUP BY TB_STU.STU_NO, USER_NM, TB_QST.ASMT_NO
+
+	</select>
+
+	<select id="selectSbmsnResultList" resultType="SbmsnVO">
+		SELECT
+		    TB_QST_SBMSN.QST_SBMSN_NO AS QST_SBMSN_NO
+            , TB_QST_SBMSN.QST_SBMSN_ANS AS QST_SBMSN_ANS
+            , TO_CHAR(TB_QST_SBMSN.QST_SBMSN_DT, 'YYYY-MM-DD HH24:MI') AS QST_SBMSN_DT
+            , TB_QST_SBMSN.STU_NO AS STU_NO
+            , TB_QST_SBMSN.SBJCT_CD AS SBJCT_CD
+            , TB_QST_SBMSN.QST_NO AS QST_NO
+            , TB_QST_SBMSN.QST_SBMSN_YN AS QST_SBMSN_YN
+		FROM
+		    TB_QST_SBMSN
+        JOIN TB_QST ON TB_QST.QST_NO = TB_QST_SBMSN.QST_NO
+		WHERE
+		    TB_QST_SBMSN.STU_NO = #{userNo}
+            AND TB_QST.ASMT_NO = #{asmtNo}
+            AND TB_QST_SBMSN.QST_SBMSN_YN = 'Y'
+	</select>
+</mapper>

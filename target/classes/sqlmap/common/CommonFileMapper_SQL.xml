@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.common.utils.cmFile.mapper.CommonFileMapper">
+
+<sql id="atchFileNo">
+	<if test="fileTbNm == 'TB_STORAGE'">
+		'fileNo'|| seq_fileNo.currval
+	</if>
+
+	<if test="fileTbNm == 'TB_QST'">
+		'qstFile'|| seq_qstfile.currval
+	</if>
+</sql>
+
+<sql id="UatchFileNo">
+	<if test="fileTbNm == 'TB_STORAGE'">
+		#{atchFileNo}
+	</if>
+
+	<if test="fileTbNm == 'TB_QST'">
+		#{atchFileNo}
+	</if>
+</sql>
+
+
+<insert id="fileUpload" parameterType="AtchFileVO">
+
+	insert into tb_atch_file(
+	    ATCH_FILE_NO
+	    , ATCH_FILE_SEQ
+	    , FILE_NM
+	    , FILE_EXTN
+	    , FILE_RGTR
+	    , FILE_BENG_DT
+	    , FILE_PATH
+	    , FILE_SIZE
+	    , FILE_TB_NM
+	    , FILE_THUMB
+	) values(
+		<include refid="atchFileNo"/>
+	    , 'fSeq'|| seq_file_seq.nextval
+	    , #{fileNm}
+	    , #{fileExtn}
+	    , #{fileRgtr}
+	    , sysdate
+	    , #{filePath}
+	    , #{fileSize}
+	    , #{fileTbNm}
+	    , #{fileThumb}
+	)
+
+</insert>
+
+
+<delete id="fileDelete" parameterType="string">
+
+	delete
+	from tb_atch_file
+	where
+	    ATCH_FILE_NO = #{atchFileNo}
+</delete>
+
+
+
+
+<insert id="fileUUpload" parameterType="AtchFileVO">
+
+	insert into tb_atch_file(
+	    ATCH_FILE_NO
+	    , ATCH_FILE_SEQ
+	    , FILE_NM
+	    , FILE_EXTN
+	    , FILE_RGTR
+	    , FILE_BENG_DT
+	    , FILE_PATH
+	    , FILE_SIZE
+	    , FILE_TB_NM
+	    , FILE_THUMB
+	) values(
+		<include refid="UatchFileNo"/>
+	    , 'fSeq'|| seq_file_seq.nextval
+	    , #{fileNm}
+	    , #{fileExtn}
+	    , #{fileRgtr}
+	    , sysdate
+	    , #{filePath}
+	    , #{fileSize}
+	    , #{fileTbNm}
+	    , #{fileThumb}
+	)
+
+</insert>
+
+
+
+<delete id="fileUDelete" parameterType="string">
+
+	delete
+	from tb_atch_file
+	where
+	    ATCH_FILE_SEQ = #{atchFileSeq}
+</delete>
+
+</mapper>

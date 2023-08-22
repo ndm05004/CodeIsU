@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.project.memManage.mapper.MemManagementMapper">
+
+<!-- 멤버관리  -->
+<select id="memList" resultType="memManagementVO" parameterType="String">
+select
+ 	c.CD_NM as JBTTL_CD
+	, B.STU_NO
+	, B.USER_NM
+	, B.USER_EML_ADDR
+	, a.TEAM_JOIN_DT
+	, B.USER_PHONENO
+	, a.JBTTL_CD as cd_nm
+from
+    TB_PRO_MEM a
+join TB_STU B on a.STU_NO = B.STU_NO
+join TB_CM_CD c on c.CD_TYPE_ID = SUBSTR(a.JBTTL_CD, 1, INSTR(a.JBTTL_CD, '-') - 1)
+    and c.CD_VL = SUBSTR(a.JBTTL_CD, INSTR(a.JBTTL_CD, '-') + 1)
+    and c.CD_TYPE_ID = 'P001'
+    and c.CD_C_USE_YN = 'Y'
+where
+    a.PROJ_NO = #{projNo}
+ORDER BY a.JBTTL_CD ASC, b.USER_NM ASC
+</select>
+
+<update id="positionModify" parameterType="MemManagementVO">
+UPDATE TB_PRO_MEM
+SET
+JBTTL_CD = #{jbttlCd}
+WHERE
+STU_NO = #{stuNo} AND PROJ_NO = #{projNo}
+<!--
+UPDATE TB_PRO_MEM
+SET
+JBTTL_CD =
+(select
+ 	 a.JBTTL_CD as cd_nm
+from
+    TB_PRO_MEM a
+join TB_STU B on a.STU_NO = B.STU_NO
+join TB_CM_CD c on c.CD_TYPE_ID = SUBSTR(a.JBTTL_CD, 1, INSTR(a.JBTTL_CD, '-') - 1)
+    and c.CD_VL = SUBSTR(a.JBTTL_CD, INSTR(a.JBTTL_CD, '-') + 1)
+    and c.CD_TYPE_ID = 'P001'
+    and c.CD_C_USE_YN = 'Y'
+    and CD_EXPLN = #{jbttlCd}
+    and a.STU_NO = #{stuNo})
+WHERE
+STU_NO = #{stuNo}
+and proj_no = #{projNo}
+ -->
+</update>
+
+<select id="memJoinAplyList" resultType="memJoinAplyVO" parameterType="String">
+SELECT
+B.USER_NM
+, A.APPLY_DATE
+, B.STU_NO
+, A.PROJ_NO
+, A.APLY_CN
+, A.APLY_TECH
+FROM TB_JOIN_APLY A
+JOIN TB_STU B ON A.STU_NO = B.STU_NO
+WHERE A.PROJ_NO = #{projNo}
+</select>
+
+<select id="memJoinDetail" resultType="memJoinAplyVO" parameterType="hashMap">
+SELECT
+APLY_CN
+, APLY_TECH
+FROM TB_JOIN_APLY
+WHERE STU_NO = #{stuNo} AND PROJ_NO = #{projNo}
+
+</select>
+
+<insert id="memInsert" parameterType="memManagementVO">
+INSERT INTO TB_PRO_MEM (
+STU_NO
+, TEAM_JOIN_DT
+, JBTTL_CD
+, PROJ_NO)
+VALUES(
+#{stuNo}
+, sysdate
+, 'P001-8'
+, #{projNo})
+</insert>
+
+<delete id="memDel" parameterType="String">
+DELETE
+FROM TB_JOIN_APLY
+WHERE STU_NO = #{stuNo} AND PROJ_NO = #{projNo}
+</delete>
+
+<select id="projStatus" resultType="projVO" parameterType="String">
+SELECT
+C.CD_NM AS PROJ_STTS_CD
+,A.PROJ_NM
+, A.PROJ_EXPLN
+, A.PROJ_STTR
+, A.PROJ_TECH
+, A.PROJ_STTS_CD AS CD_NM
+, a.PROJ_BGNG_DT
+, A.PROJ_DDLN_DT
+, A.PROJ_TNOPE
+FROM TB_PROJ A
+JOIN TB_CM_CD C ON C.CD_TYPE_ID = SUBSTR(A.PROJ_STTS_CD, 1, INSTR(A.PROJ_STTS_CD, '-') -1)
+    AND C.CD_VL = SUBSTR(A.PROJ_STTS_CD, INSTR(A.PROJ_STTS_CD, '-') + 1)
+    AND C.CD_TYPE_ID = 'P002'
+    AND C.CD_C_USE_YN = 'Y'
+WHERE PROJ_NO = #{projNo}
+</select>
+
+<select id="projUpdate" resultType="projVO" parameterType="String">
+SELECT
+PROJ_NM
+, PROJ_EXPLN
+, PROJ_STTS_CD
+, PROJ_TECH
+, PROJ_STTR
+, PROJ_BGNG_DT
+, PROJ_DDLN_DT
+FROM TB_PROJ
+WHERE PROJ_NO = #{projNo}
+</select>
+
+<delete id="projDelete" parameterType="String">
+DELETE
+FROM TB_PROJ
+WHERE PROJ_NO = #{projNo}
+</delete>
+
+<delete id="projMemDel" parameterType="String">
+DELETE
+FROM TB_PRO_MEM
+WHERE PROJ_NO = #{projNo}
+
+</delete>
+
+<update id="projMemCount" parameterType="String">
+UPDATE TB_PROJ
+SET PROJ_TNOPE = (
+    SELECT COUNT(STU_NO)
+    FROM TB_PRO_MEM
+    WHERE PROJ_NO = #{projNo}
+)
+WHERE PROJ_NO = #{projNo}
+</update>
+
+<delete id="aplyDel" parameterType="String">
+DELETE
+FROM TB_JOIN_APLY
+WHERE PROJ_NO = #{projNo}
+</delete>
+
+
+<select id="plCheck" parameterType="String" resultType = "String">
+SELECT JBTTL_CD
+FROM TB_PRO_MEM
+WHERE STU_NO = #{userName}
+</select>
+
+
+<update id="projConUpdate" parameterType="ProjVO">
+UPDATE TB_PROJ
+SET
+PROJ_NM = #{projNm}
+, PROJ_EXPLN = #{projExpln}
+, PROJ_STTS_CD = #{projSttsCd}
+, PROJ_TECH = #{projTech}
+, PROJ_STTR = #{projSttr}
+, PROJ_BGNG_DT = #{projBgngDt}
+, PROJ_DDLN_DT = #{projDdlnDt}
+WHERE
+PROJ_NO = #{projNo}
+</update>
+
+<select id="getMemJbttlCd" parameterType="hashMap" resultType="MemManagementVO">
+	SELECT
+		JBTTL_CD
+	FROM
+		TB_PRO_MEM
+	WHERE
+		STU_NO = #{userNo} AND PROJ_NO = #{projNo}
+</select>
+
+</mapper>

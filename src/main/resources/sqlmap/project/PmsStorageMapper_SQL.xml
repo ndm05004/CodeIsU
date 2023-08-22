@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.storage.mapper.PmsStorageMapper">
+
+	<resultMap 	type="StorageVO" 			id="storageMap">
+		<id 	property="strNo" 			column="STR_NO"/>
+		<result property="strTitle" 		column="STR_TITLE"/>
+		<result property="strCn" 			column="STR_CN"/>
+		<result property="stuNo" 			column="STU_NO"/>
+		<result property="strRegDt" 		column="STR_REG_DT"/>
+		<result property="atchFileNo" 		column="ATCH_FILE_NO"/>
+		<result property="projNo" 			column="PROJ_NO"/>
+		<result property="userNm" 			column="USER_NM"/>
+		<result property="strViews" 			column="STR_VIEWS"/>
+		<collection property="atchFileList" 	resultMap="atchFileMap"/>
+	</resultMap>
+
+
+	<resultMap type="AtchFileVO" 			id="atchFileMap">
+
+		<result property="atchFileNo" 		column="ATCH_FILE_NO"/>
+		<result property="atchFileSeq" 		column="ATCH_FILE_SEQ"/>
+		<result property="fileNm" 			column="FILE_NM"/>
+		<result property="fileExtn" 		column="FILE_EXTN"/>
+		<result property="fileRgtr" 		column="FILE_RGTR"/>
+		<result property="fileBengDt" 		column="FILE_BENG_DT"/>
+		<result property="filePath" 		column="FILE_PATH"/>
+		<result property="fileSize" 		column="FILE_SIZE"/>
+		<result property="fileUpdRgtr" 		column="FILE_UPD_RGTR"/>
+		<result property="fileUpdDate" 		column="FILE_UPD_DATE"/>
+		<result property="fileTbNm" 		column="FILE_TB_NM"/>
+		<result property="fileThumb" 		column="FILE_THUMB"/>
+
+	</resultMap>
+
+
+
+	<sql id="boardSearch">
+		<if test="searchType != null and searchType == 'title'">
+			and (STR_TITLE like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'writer'">
+			and (user_nm like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'titleWriter'" >
+			and (user_nm like '%'||#{searchWord}||'%') or
+			(STR_TITLE like '%'||#{searchWord}||'%')
+		</if>
+	</sql>
+
+
+	<select id="storageList" parameterType="PaginationInfoVO" resultMap="storageMap">
+			select b.*
+		from(
+			select
+				a.*
+				, DENSE_RANK() OVER (ORDER BY a.Rnumber DESC) AS rnum
+			from(
+					select
+					    a.STR_NO
+					    , a.STR_TITLE
+					    , a.STR_CN
+					    , a.STU_no
+					    , TO_char(a.STR_REG_DT, 'YYYY-MM-DD') as STR_REG_DT
+					    , a.ATCH_FILE_NO
+					    , a.PROJ_NO
+					    , b.user_nm
+                        , TO_NUMBER(SUBSTR(STR_NO, 3)) as Rnumber
+                        , str_views
+                        , b.FILE_THUMB
+                        , b.FILE_NM
+					from
+					    tb_storage a
+					    join tb_stu b on a.Stu_NO =  b.Stu_NO
+                    LEFT JOIN
+                        tb_atch_file b ON a.ATCH_FILE_NO = b.ATCH_FILE_NO
+					where
+					    proj_no = #{projNo}
+						<include refid="boardSearch"/>
+					order by RNumber desc
+			) a
+		) b
+		<![CDATA[
+			where b.rnum >= #{startRow} and b.rnum <= #{endRow}
+		]]>
+	</select>
+
+
+	<select id="selectBoardCount" parameterType="PaginationInfoVO" resultType="int">
+		select
+			count(a.STR_NO)
+			, count(a.stu_no)
+		from
+			tb_storage a
+			join tb_stu b on a.stu_no = b.stu_no
+		where
+			proj_no = #{projNo}
+		<include refid="boardSearch"/>
+	</select>
+
+
+
+	<select id="getDetailStorage" resultMap="storageMap" parameterType="string">
+		select
+		    a.STR_NO
+		    , a.STR_TITLE
+		    , a.STR_CN
+		    , a.STU_no
+		    , a.STR_REG_DT
+		    , a.ATCH_FILE_NO
+		    , a.PROJ_NO
+		    , b.ATCH_FILE_NO
+		    , b.ATCH_FILE_SEQ
+		    , b.FILE_NM
+		    , b.FILE_EXTN
+		    , b.FILE_RGTR
+		    , b.FILE_BENG_DT
+		    , b.FILE_PATH
+		    , b.FILE_SIZE
+		    , b.FILE_UPD_RGTR
+		    , b.FILE_UPD_DATE
+		    , b.FILE_TB_NM
+		    , b.FILE_THUMB
+		from
+		    tb_storage a
+		LEFT JOIN
+		    tb_atch_file b ON a.ATCH_FILE_NO = b.ATCH_FILE_NO
+		where
+		    STR_NO = #{strNo}
+	</select>
+
+	<insert id="insertStorage" parameterType="StorageVO">
+		insert into tb_storage(
+		    STR_NO
+		    , STR_TITLE
+		    , STR_CN
+		    , STU_no
+		    , STR_reg_DT
+		    , ATCH_FILE_NO
+		    , PROJ_NO
+		) values(
+		    'st' || seq_storage.nextval
+		    , #{strTitle}
+		    , #{strCn}
+		    , #{stuNo}
+		    , sysdate
+		    , 'fileNo'|| seq_fileNo.nextval
+		    , #{projNo}
+		)
+	</insert>
+
+	<update id="StorageUpdate" parameterType="StorageVO">
+		update
+		    tb_storage
+		set
+		    STR_TITLE = #{strTitle}
+		    , STR_CN = #{strCn}
+		where
+		    STR_NO = #{strNo} <!-- and
+		    stu_no = #{stuNo} -->
+	</update>
+
+	<delete id="StorageDelete" parameterType="string">
+		delete
+		from tb_storage
+		where
+		    STR_NO = #{strNo}
+	</delete>
+
+
+	<select id="getMemJbttlCd" parameterType="hashMap" resultType="MemManagementVO">
+		SELECT
+			JBTTL_CD
+		FROM
+			TB_PRO_MEM
+		WHERE
+			STU_NO = #{userNo} AND PROJ_NO = #{projNo}
+	</select>
+
+	<update id="increaseViews" parameterType="string">
+	update
+	    tb_storage
+	set
+	    str_views = str_views + 1
+	where str_no = #{strNo}
+	</update>
+
+
+</mapper>

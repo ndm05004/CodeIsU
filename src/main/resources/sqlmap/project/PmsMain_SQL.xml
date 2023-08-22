@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.main.mapper.MainMapper">
+
+
+<select id="pList" parameterType="String" resultType="ProjVO">
+        SELECT
+	     	B.PROJ_NM
+	    	,B.PROJ_NO
+		FROM
+			TB_PRO_MEM A
+        JOIN
+        	TB_PROJ B ON A.PROJ_NO = B.PROJ_NO
+		WHERE
+			A.STU_NO = #{stuNo}
+</select>
+
+<select id="aplyList" parameterType="String" resultType="MemJoinAplyVO">
+		SELECT
+            B.PROJ_NM
+            ,A.PROJ_NO
+        FROM
+        	TB_JOIN_APLY A
+        JOIN
+        	TB_PROJ B ON A.PROJ_NO = B.PROJ_NO
+        WHERE
+        	A.STU_NO = #{stuNo}
+</select>
+
+
+</mapper>

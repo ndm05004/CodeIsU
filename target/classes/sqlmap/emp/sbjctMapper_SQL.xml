@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.emp.sbjct.mapper.SbjctMapper">
+
+	<sql id="orderType">
+		<choose>
+			<!-- 과목명 정렬 -->
+			<when test="menuVal == 'sbName'">
+				<if test="selectVal == 'up'">
+					ORDER BY A.SBJCT_NM ASC
+				</if>
+				<if test="selectVal == 'down'">
+					ORDER BY A.SBJCT_NM DESC
+				</if>
+			</when>
+			<!-- 시작일 정렬 -->
+			<when test="menuVal == 'sTime'">
+				<if test="selectVal == 'up'">
+					ORDER BY A.SBJCT_BGNG ASC
+				</if>
+				<if test="selectVal == 'down'">
+					ORDER BY A.SBJCT_BGNG DESC
+				</if>
+			</when>
+			<!-- 종료일 정렬 -->
+			<when test="menuVal == 'eTime'">
+				<if test="selectVal == 'up'">
+					ORDER BY A.SBJCT_DDLB ASC
+				</if>
+				<if test="selectVal == 'down'">
+					ORDER BY A.SBJCT_DDLB DESC
+				</if>
+			</when>
+			<!-- 시간대 정렬 -->
+			<when test="menuVal == 'hour'">
+				<if test="selectVal == 'am'">
+					AND A.SCDU_HR = '오전'
+				</if>
+				<if test="selectVal == 'pm'">
+					AND A.SCDU_HR = '오후'
+				</if>
+			</when>
+			<!-- 연수과정 과목 목록 -->
+			<when test="menuVal == 'svlf'">
+				AND A.SVLF_NO = #{selectVal}
+			</when>
+		</choose>
+	</sql>
+
+	<!-- 수업 목록 가져오기 -->
+	<select id="sbjctList" resultType="SbjctVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.sbjctList -->
+	SELECT
+	    A.SBJCT_CD
+	    , A.SBJCT_NM
+	    , A.SBJCT_BGNG
+	    , A.SBJCT_DDLB
+	    , A.SCDU_HR
+	    , A.EMP_NO
+	    , A.SVLF_NO
+	    , B.SVLF_NM
+	FROM TB_SBJCT A
+	LEFT OUTER JOIN TB_SVLF B ON A.SVLF_NO = B.SVLF_NO
+	WHERE A.SVLF_NO = B.SVLF_NO
+	ORDER BY A.SVLF_NO ASC, A.SBJCT_BGNG ASC
+	</select>
+
+	<!-- 조건에 따라 과목 목록 가져오기 -->
+	<select id="resbjctlist" parameterType="SbjctVO" resultType="SbjctVO">
+	/* team.tttt.pms.emp.sbjct.mapper.SbjctMapper.resbjctlist */
+	SELECT
+	    A.SBJCT_CD
+	    , A.SBJCT_NM
+	    , A.SBJCT_BGNG
+	    , A.SBJCT_DDLB
+	    , A.SCDU_HR
+	    , A.EMP_NO
+	    , A.SVLF_NO
+	    , B.SVLF_NM
+	FROM TB_SBJCT A
+	LEFT OUTER JOIN TB_SVLF B ON A.SVLF_NO = B.SVLF_NO
+	WHERE A.SVLF_NO = B.SVLF_NO
+	<include refid="orderType" />
+	</select>
+
+	<!-- 연수과정 목록 가져오기 -->
+	<select id="svlfNmList" resultType="SvlfVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.svlfNmList -->
+	SELECT
+		A.SVLF_NO
+		, A.SVLF_NM
+	FROM TB_SVLF A
+	ORDER BY A.SVLF_NO DESC
+	</select>
+
+	<!-- 부서 코드가 T00인 강사목록 가져오기 -->
+	<select id="empNmList" resultType="EmpVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.empNmList -->
+	SELECT A.EMP_NO
+		   , A.USER_NM
+	FROM TB_EMP A
+	WHERE A.DEPART_CD = 'T00'
+	</select>
+
+	<!-- 연수과정에 따른 기간 정보 가져오기 -->
+	<select id="svlfTime" parameterType="String" resultType="SvlfVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.sbjctTime -->
+	SELECT
+		A.SVLF_BGNG_DT
+		, A.SVLF_DDLB_DT
+	FROM TB_SVLF A
+	WHERE A.SVLF_NO = #{svlfNo}
+	</select>
+
+	<!-- 연수과정과 시간대에 맞는 수업이 있는지 찾기 -->
+	<select id="sbjctListInfo" parameterType="SbjctVO" resultType="SbjctVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.sbjctListInfo -->
+	SELECT
+	    A.SBJCT_CD
+	    , A.SBJCT_NM
+	    , A.SBJCT_BGNG
+	    , A.SBJCT_DDLB
+	    , A.SCDU_HR
+	    , A.EMP_NO
+	    , A.SVLF_NO
+	FROM TB_SBJCT A
+	LEFT OUTER JOIN TB_SVLF B ON A.SVLF_NO = B.SVLF_NO
+	WHERE A.SVLF_NO = #{svlfNo}
+	AND A.SCDU_HR = #{scduHr}
+	ORDER BY A.SBJCT_DDLB DESC
+	</select>
+
+	<!-- 해당 수업을 듣는 연수과정의 모든 학생 목록 가져오기 -->
+	<select id="sbjctStuList" parameterType="String" resultType="StuVO">
+	SELECT
+	    A.STU_NO
+	    , A.USER_NM
+	FROM TB_STU A
+	WHERE A.SVLF_NO = (SELECT
+	                        B.SVLF_NO
+	                   FROM TB_SBJCT B
+	                   WHERE B.SBJCT_CD = #{sbjctCd})
+	</select>
+
+	<!-- 상세보기 수업 제외 연수과정과 시간대에 맞는 수업이 있는지 찾기 -->
+	<select id="sbjctListInfo2" parameterType="SbjctVO" resultType="SbjctVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.sbjctListInfo2 -->
+	SELECT
+	    A.SBJCT_CD
+	    , A.SBJCT_NM
+	    , A.SBJCT_BGNG
+	    , A.SBJCT_DDLB
+	    , A.SCDU_HR
+	    , A.EMP_NO
+	    , A.SVLF_NO
+	FROM TB_SBJCT A
+	LEFT OUTER JOIN TB_SVLF B ON A.SVLF_NO = B.SVLF_NO
+	WHERE A.SVLF_NO = #{svlfNo}
+	AND A.SCDU_HR = #{scduHr}
+	AND A.SBJCT_CD NOT IN (#{sbjctCd})
+	ORDER BY A.SBJCT_DDLB DESC
+	</select>
+
+	<!-- 수업 등록 -->
+	<insert id="sbjctInsert" parameterType="SbjctVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.sbjctInsert -->
+	INSERT INTO TB_SBJCT(
+		SBJCT_CD
+		, SBJCT_NM
+		, SBJCT_BGNG
+		, SBJCT_DDLB
+		, SCDU_HR
+		, EMP_NO
+		, SVLF_NO
+	)VALUES(
+		'SBJ'||SEQ_SBJCT.NEXTVAL
+		 , #{sbjctNm}
+		 , #{sbjctBgng}
+		 , #{sbjctDdlb}
+		 , #{scduHr}
+		 , #{empNo}
+		 , #{svlfNo}
+	)
+	</insert>
+
+	<!-- 수업 업데이트 -->
+	<update id="sbjctUpdate" parameterType="SvlfVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.sbjctUpdate -->
+	UPDATE TB_SBJCT
+	SET
+		SBJCT_BGNG = #{sbjctBgng}
+		, SBJCT_DDLB = #{sbjctDdlb}
+		, SCDU_HR = #{scduHr}
+		, SBJCT_NM = #{sbjctNm}
+		, EMP_NO = #{empNo}
+	WHERE SBJCT_CD = #{sbjctCd}
+	</update>
+
+	<!-- 수업 정보 가져오기 -->
+	<select id="sbjctInfo" parameterType="String" resultType="SbjctVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.sbjctInfo -->
+	SELECT
+	    A.SBJCT_CD
+	    , A.SBJCT_NM
+	    , A.SBJCT_BGNG
+	    , A.SBJCT_DDLB
+	    , A.SCDU_HR
+	    , A.EMP_NO
+	    , A.SVLF_NO
+	    , B.SVLF_NM
+	    , C.USER_NM
+	FROM TB_SBJCT A
+	LEFT OUTER JOIN TB_SVLF B ON A.SVLF_NO = B.SVLF_NO
+	LEFT OUTER JOIN TB_EMP C ON A.EMP_NO = C.EMP_NO
+	WHERE A.SBJCT_CD = #{sbjCd}
+	</select>
+
+	<!-- 강사 기간이 중복되지 않는 강사 목록 가져오기 -->
+	<select id="scduInfo" parameterType="SbjctVO" resultType="SbjctVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.scduInfo -->
+	SELECT
+	    A.USER_NM
+	    , A.EMP_NO
+	FROM TB_EMP A
+	WHERE A.USER_NM NOT IN (SELECT DISTINCT B.USER_NM
+	                        FROM TB_EMP B
+	                        LEFT OUTER JOIN TB_SBJCT C ON B.EMP_NO = C.EMP_NO
+	                        WHERE (#{sbjctBgng} BETWEEN C.SBJCT_BGNG AND C.SBJCT_DDLB
+	                               OR #{sbjctDdlb} BETWEEN C.SBJCT_BGNG AND C.SBJCT_DDLB)
+	                        AND SCDU_HR = #{scduHr})
+	AND A.DEPART_CD = 'T00'
+	</select>
+
+	<!-- 상세보기 수업 강사 제외 강사 기간이 중복되지 않는 강사 목록 가져오기 -->
+	<select id="scduInfo2" parameterType="SbjctVO" resultType="SbjctVO">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.scduInfo2 -->
+	SELECT
+	    A.USER_NM
+	    , A.EMP_NO
+	FROM TB_EMP A
+	WHERE A.USER_NM NOT IN (SELECT DISTINCT B.USER_NM
+	                        FROM TB_EMP B
+	                        LEFT OUTER JOIN TB_SBJCT C ON B.EMP_NO = C.EMP_NO
+	                        WHERE (#{sbjctBgng} BETWEEN C.SBJCT_BGNG AND C.SBJCT_DDLB
+	                               OR #{sbjctDdlb} BETWEEN C.SBJCT_BGNG AND C.SBJCT_DDLB)
+	                        AND SCDU_HR = '오전'
+	                        AND EXISTS (
+	                            SELECT 1
+	                            FROM TB_EMP D
+	                            LEFT OUTER JOIN TB_SBJCT C ON D.EMP_NO = C.EMP_NO
+	                            WHERE (#{sbjctBgng} BETWEEN C.SBJCT_BGNG AND C.SBJCT_DDLB
+	                                   OR #{sbjctDdlb} BETWEEN C.SBJCT_BGNG AND C.SBJCT_DDLB)
+	                              AND SCDU_HR = '오후'
+	                              AND B.USER_NM = D.USER_NM)
+	                        AND B.USER_NM &lt;&gt; #{userNm}
+	                        )
+	AND A.DEPART_CD = 'T00'
+	</select>
+
+
+	<!-- 수업 삭제 -->
+	<delete id="sbjctDel" parameterType="String">
+	<!-- team.tttt.pms.emp.sbjct.mapper.SbjctMapper.sbjctDel -->
+	DELETE FROM TB_SBJCT
+	WHERE SBJCT_CD = #{sbjctCd}
+	</delete>
+
+	<!-- 과목이 있는 연수과정 목록 가져오기 -->
+	<select id="svlfList" resultType="SvlfVO">
+	SELECT
+	    A.SVLF_NO
+	    , A.SVLF_NM
+	FROM TB_SVLF A
+	WHERE A.SVLF_NO IN (SELECT DISTINCT
+	                        SVLF_NO
+	                    FROM TB_SBJCT)
+	</select>
+
+</mapper>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CodeIsU 스마트 출석체크</title>
+<style></style>
+<link rel="stylesheet" href="../dist/css/font.css" />
+<style>
+body {
+  background-color: black;
+  font-family: 'Noto Sans KR', "Rubik", sans-serif;
+}
+.wraper {
+  margin: auto auto auto auto;
+  width: 700px;
+  text-align: center;
+}
+
+.wraper img {
+    display: block;
+    margin: 0 auto;
+  }
+.wraper p {
+  color: white;
+  font-size: 18px;
+}
+  
+
+
+#divClock {
+  font-size: 24px;
+  color: white;
+}
+
+</style>
+</head>
+<body>
+<div class="wraper">
+<img src="../resources/common/img/nav_logo.png" alt="CodeIsU 로고" >
+<p>스마트 QR 출석체크</p>
+
+<img src="https://chart.apis.google.com/chart?cht=qr&chs=540x540&chl=e9815dec-5db3-444c-be0c-32c514676f0e" alt="qr코드"  >
+
+
+<div id="divClock" class="clock">
+</div>
+<p>30초 마다 QR코드가 갱신됩니다.</p>
+<script>
+  var currentDate = new Date().toLocaleDateString();
+document.write(currentDate)</script>날짜
+<div id="divClock" class="clock">
+</div>
+</div>
+</body>
+<script>
+
+</script>
+<script type="text/javascript">
+showClock();
+  function showClock(){
+    var currentDate = new Date();
+    var divClock = document.getElementById('divClock');
+
+    var msg = "현재 시간 : ";
+    
+    msg += currentDate.getFullYear() +"년 ";
+    msg += currentDate.getMonth() + "월 ";
+    msg += currentDate.getDay() + "일 ";
+    msg += currentDate.getHours()+"시 ";
+  
+
+    msg += currentDate.getMinutes()+"분 ";
+    msg += currentDate.getSeconds()+"초";
+
+    divClock.innerText = msg;
+
+    if (currentDate.getMinutes()>58) {    //정각 1분전부터 빨강색으로 출력
+      divClock.style.color="red";
+    }
+    setTimeout(showClock,1000);  //1초마다 갱신
+  }
+</script>
+</html>

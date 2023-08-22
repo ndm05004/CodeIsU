@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.tch.damdang.mapper.TchStuListMapper">
+	<select id="selectStuList" parameterType="String" resultType="StuVO">
+		SELECT
+		    TB_STU.STU_NO AS STU_NO
+		    , TB_STU.USER_NM AS USER_NM
+		    , TB_STU.SVLF_NO AS SVLF_NO
+		    , TB_STU.USER_EML_ADDR AS USER_EML_ADDR
+		    , TB_STU.USER_PHONENO AS USER_PHONENO
+		    , TB_STU.USER_ZIP AS USER_ZIP
+		    , TB_STU.USER_ADDR AS USER_ADDR
+		    , TB_STU.USER_DADDR AS USER_DADDR
+		    , TB_STU.REG_DT AS REG_DT
+		    , TB_STU.FNSH_DT AS FNSH_DT
+		    , TB_STU.FNSH_YN AS FNSH_YN
+		    , TB_STU.ABD_YN AS ABD_YN
+		    , TB_STU.JOIN_DT AS JOIN_DT
+		    , TB_STU.USER_PROFILE AS USER_PROFILE
+		    , TB_STU.USER_PRVC_YN AS USER_PRVC_YN
+		    , TB_STU.USER_BRDT AS USER_BRDT
+		    , TB_STU.USER_GENDER AS USER_GENDER
+		    , TB_SVLF.EMP_NO AS EMP_NO
+		FROM
+		    TB_STU
+		FULL OUTER JOIN TB_SVLF ON TB_SVLF.SVLF_NO = TB_STU.SVLF_NO
+		WHERE
+		    TB_SVLF.EMP_NO = #{userNo}
+		ORDER BY TB_STU.USER_NM
+	</select>
+</mapper>

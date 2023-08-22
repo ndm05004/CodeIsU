@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.myProjects.mapper.myProjectsMapper">
+
+
+
+<!-- Type별 프로젝트 리스트 가져오기 -->
+<sql id="statusType">
+	<if test ="projSttsCd != null and projSttsCd =='P002-1'">
+		AND (PROJ_STTS_CD = 'P002-1')
+	</if>
+	<if test ="projSttsCd != null and projSttsCd == 'P002-2'">
+		AND (PROJ_STTS_CD = 'P002-2')
+	</if>
+	<if test ="projSttsCd != null and projSttsCd == 'P002-3'">
+		AND (PROJ_STTS_CD = 'P002-3')
+	</if>
+	<if test ="projSttsCd != null and projSttsCd == 'P002-4'">
+		AND (PROJ_STTS_CD = 'P002-4')
+	</if>
+	<if test ="projNm != null">
+		AND (PROJ_NM like '%' || #{projNm} || '%')
+	</if>
+</sql>
+
+<!-- 내 프로젝트 리스트 가져오기 -->
+<select id="myProjList" resultType="ProjVO" parameterType="ProjVO" >
+SELECT
+	C.CD_NM AS PROJ_STTS_CD
+	, A.PROJ_NO
+	, B.STU_NO
+	, A.PROJ_NM
+	, A.PROJ_EXPLN
+	, A.PROJ_TNOPE
+	, A.PROJ_BGNG_DT
+	, A.PROJ_DDLN_DT
+	, A.PROJ_STTR
+	, A.PROJ_STTS_CD
+	, D.cd_nm as JBTTL_CD
+
+FROM TB_PROJ A
+	JOIN TB_PRO_MEM B ON A.PROJ_NO = B.PROJ_NO
+	JOIN TB_CM_CD C ON C.CD_TYPE_ID = SUBSTR(A.PROJ_STTS_CD, 1, INSTR(A.PROJ_STTS_CD, '-') -1)
+	AND C.CD_VL = SUBSTR(A.PROJ_STTS_CD, INSTR(A.PROJ_STTS_CD, '-') + 1)
+	AND C.CD_TYPE_ID = 'P002'
+	AND C.CD_C_USE_YN = 'Y'
+
+    JOIN TB_CM_CD D ON d.CD_TYPE_ID = SUBSTR(B.JBTTL_CD, 1, INSTR(B.JBTTL_CD, '-') -1)
+	AND D.CD_VL = SUBSTR(B.JBTTL_CD, INSTR(B.JBTTL_CD, '-') + 1)
+	AND D.CD_TYPE_ID = 'P001'
+	AND D.CD_C_USE_YN = 'Y'
+
+
+	WHERE STU_NO = #{stuNo}
+    <include refid="statusType" />
+	ORDER BY PROJ_NO DESC
+</select>
+
+<delete id="delMyProj" parameterType="ProjVO">
+	DELETE
+	FROM
+	TB_PRO_MEM
+	WHERE
+	PROJ_NO = #{projNo} AND STU_NO = #{stuNo}
+	<!--  AND PROJ_NO IN (SELECT PROJ_NO FROM TB_PROJ) -->
+</delete>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.emp.schedule.mapper.ScheduleMapper">
+
+	<!-- 모든 연수과정 정보 가져오기(오늘을 기준으로 시작일과 종료일 안에 포함되지 않으면 조회되지 않음) -->
+	<select id="svlfAllList" resultType="SvlfVO">
+	<!-- team.tttt.pms.emp.schedule.mapper.ScheduleMapper.svlfAllList -->
+	SELECT
+		A.SVLF_NO
+		, A.SVLF_BGNG_DT
+		, A.SVLF_DDLB_DT
+		, A.SVLF_NM
+		, A.SVLF_CN
+		, A.SVLF_DT
+		, A.EMP_NO
+		, A.LECTURE_ROOM_CD
+	FROM TB_SVLF A
+	WHERE
+		A.SVLF_BGNG_DT &lt;= CURRENT_DATE AND
+		A.SVLF_DDLB_DT &gt;= CURRENT_DATE
+	ORDER BY A.SVLF_BGNG_DT ASC
+	</select>
+
+	<!-- 선택한 연수과정의 수업 목록 가져오기 -->
+	<select id="sbjctInfoList" parameterType="String" resultType="SbjctVO">
+	<!-- team.tttt.pms.emp.schedule.mapper.ScheduleMapper.sbjctInfoList -->
+	SELECT
+    	A.SBJCT_NM
+	    , A.SBJCT_BGNG
+	    , A.SBJCT_DDLB
+	    , A.SCDU_HR
+	FROM TB_SBJCT A
+	WHERE A.SVLF_NO = #{svlfNo}
+	ORDER BY A.SCDU_HR ASC
+	</select>
+</mapper>

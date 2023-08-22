@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.stu.notice.mapper.StuNoticeMapper">
+
+	<sql id="boardSearch">
+		<if test="searchType != null and searchType == 'title'">
+			and (HNTC_NM like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'writer'">
+			and (B.USER_NM like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'titleWriter'" >
+			and (HNTC_NM like '%'||#{searchWord}||'%') or
+			(B.USER_NM like '%'||#{searchWord}||'%')
+		</if>
+	</sql>
+
+
+	<select id="selectBoardCount" resultType="int" parameterType="PaginationInfoVO">
+		select
+			count(A.HNTC_NO)
+			, count(B.USER_NM)
+		FROM
+			TB_HNTC A
+			LEFT OUTER JOIN TB_EMP B ON B.EMP_NO = A.EMP_NO
+		where
+			1=1
+		<include refid="boardSearch"/>
+	</select>
+
+	<!-- 공지사항 전체 조회 -->
+	<select id="selectHntc" parameterType="PaginationInfoVO" resultType="hntcVO">
+	<!-- team.tttt.pms.emp.hntc.mapper.HntcMapper.selectHntc -->
+		SELECT b.*
+		from(
+			select
+				a.*
+				, row_number() over ( order by TO_NUMBER(SUBSTR(A.HNTC_NO, 3))DESC) rnum
+				from(
+					SELECT
+							A.HNTC_NO
+							, B.USER_NM AS EMP_NO
+							, A.HNTC_NM
+							, to_char(A.HNTC_DT, 'yyyy-mm-dd') as HNTC_DT
+							, A.CHECK_NO
+					FROM TB_HNTC A
+					LEFT OUTER JOIN TB_EMP B ON B.EMP_NO = A.EMP_NO
+					where 1=1
+					<include refid="boardSearch"/>
+					ORDER BY TO_NUMBER(SUBSTR(A.HNTC_NO, 3)) DESC
+				) a
+			) b
+		<![CDATA[
+			where b.rnum >= #{startRow} and b.rnum <= #{endRow}
+		]]>
+		ORDER BY RNUM DESC
+	</select>
+
+	<select id="detailNotice" parameterType="String" resultType="hntcVO">
+		SELECT
+		    A.HNTC_NO
+		    , A.EMP_NO
+		    , A.HNTC_NM
+		    , to_char(A.HNTC_DT, 'yyyy-mm-dd') as HNTC_DT
+		    , A.HNTC_CN
+		    , A.ATCH_FILE_NO
+		    , A.CHECK_NO
+		    , B.USER_NM
+		FROM TB_HNTC A
+		JOIN TB_EMP B ON A.EMP_NO = B.EMP_NO
+		WHERE HNTC_NO =  #{boNo}
+	</select>
+
+	<!-- 공지사항 조회수 업데이트 -->
+	<update id="hntcCheckNoUp" parameterType="String">
+		UPDATE TB_HNTC A
+		SET
+			A.CHECK_NO = A.CHECK_NO+1
+		WHERE A.HNTC_NO = #{bono}
+	</update>
+
+</mapper>

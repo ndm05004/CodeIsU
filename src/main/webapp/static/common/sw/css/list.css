@@ -1,0 +1,901 @@
+
+/* 회원관련 */
+
+/* -----------------------------
+	Common
+-------------------------------- */
+
+h4.style1 {
+	color: #095cc3;
+	font-size: 17px
+}
+
+h4.style2 {
+	color: #000;
+	font-size: 17px
+}
+
+/* -----------------------------
+	Login - 로그인
+-------------------------------- */
+#login {
+	padding: 100px 100px;
+	overflow: hidden
+}
+
+#login h1 {
+	display: block;
+	width: 539px;
+	height: 37px;
+	overflow: hidden;
+}
+
+#login .login-wrap {}
+
+#login .formbox {
+	float: left;
+	width: 580px;
+	/* height: 278px; */
+	margin-right: 2px;
+	/* border: 1px solid #e1e1e1; */
+	/* border-top: 5px solid #000; */
+	overflow: hidden
+}
+
+#login .formbox .inner {
+	/* padding: 75px 60px */
+}
+
+#login .formbox .input {
+	width: 430px;
+	height: 66px;
+	line-height: 34px;
+	padding: 0;
+	text-indent: 10px;
+	font-size: 18px;
+	/* border-radius: 6px; */
+	border: 1px solid #d5d5d5
+}
+
+#login .formbox li {
+	overflow: hidden;
+	display: block;
+	clear: both;
+	margin-bottom: 11px
+}
+
+#login .formbox li label {
+	text-align: right;
+	font-size: 16px;
+	width: 70px;
+	display: block;
+	float: left;
+	position: relative;
+	top: 9px;
+	padding-right: 15px;
+	left: -3px
+}
+
+#login .formbox li.auto label {
+	font-size: 12px;
+	margin-left: 90px;
+	color: #555;
+	padding-top: 1px
+}
+
+#login .formbox li.auto input {
+	margin-right: 5px
+}
+
+#login .formbox li.link {
+	padding-top: 20px;
+	padding-left: 90px
+}
+
+#login .formbox li.link a {
+	font-size: 14px;
+	color: #555
+}
+
+#login .formbox li.link .line {
+	padding: 0 11px;
+	color: #555
+}
+
+#login .bnbox {
+	float: left;
+	width: 336px;
+	height: 280px
+}
+
+#login .label_check {
+	background: url(../images/logoff_03.png) no-repeat 0 4px;
+	overflow: hidden;
+	display: block;
+	width: 127px;
+	height: 26px;
+	float: left
+}
+
+#login .label_check span {
+	color: #555;
+	margin-left: 5px;
+
+}
+
+#login .label_check.c_on {
+	background-image: url(../images/logon_03.png)
+}
+
+
+
+/* -----------------------------
+	Recruit - 채용정보
+-------------------------------- */
+#recruit {}
+
+/* 상단검색 */
+#recruit .searchbox {
+	padding: 0
+}
+
+#recruit .searchbox .form {}
+
+#recruit .searchbox .form .top {
+	padding: 35px 25px;
+	padding-bottom: 20px;
+	overflow: hidden;
+	border: 1px solid #dcdcdc;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	text-align: center
+}
+
+#recruit .searchbox .form .all {
+	padding: 35px 25px;
+	padding-bottom: 20px;
+	overflow: hidden;
+	border: 1px solid #dcdcdc;
+	border-radius: 10px;
+	text-align: center
+}
+
+#recruit .searchbox .group {
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	margin-right: 12px
+}
+
+#recruit .searchbox .group label,
+#recruit .searchbox .group select {
+	display: inline-block;
+	zoom: 1;
+	*display: inline
+}
+
+#recruit .searchbox .group label {
+	font-size: 15px;
+	color: #333;
+	padding-right: 10px
+}
+
+#recruit .searchbox .group select {
+	margin-right: 3px;
+	width: 110px;
+	font-family: gulim, 굴림;
+	font-size: 12px;
+	padding: 2px
+}
+
+#recruit .searchbox .middle {
+	padding: 0
+}
+
+#recruit .searchbox .middle .text {
+	width: 290px;
+	height: 22px;
+	line-height: 22px;
+	border-radius: 20px;
+	color: #888;
+	padding-left: 10px
+}
+
+#recruit .searchbox .bottom {
+	clear: both;
+	background: #8d8d8d;
+	text-align: center;
+	overflow: hidden;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px
+}
+
+#recruit .searchbox .bottom .inner {
+	padding: 12px;
+	background: url(../images/ico_search.png) no-repeat 37% center
+}
+
+#recruit .searchbox .bottom .type_submit {
+	background: none;
+	color: #fff;
+	font-size: 16px;
+	font-weight: bold;
+	border: none;
+	cursor: pointer
+}
+
+/* 전국병원 채용정보 */
+#recruit .news {
+	margin-top: 30px
+}
+
+#recruit .news h4 {
+	display: block;
+	margin-bottom: 13px
+}
+
+#recruit .news .contbox {
+	clear: both
+}
+
+#recruit .news .contbox .cont {
+	float: left;
+	width: 49.7%
+}
+
+#recruit .news .contbox .cont .inner {
+	border: 1px solid #c82b5f;
+}
+
+#recruit .news .contbox .body {
+	padding: 10px;
+	padding-top: 15px;
+	height: 70px
+}
+
+#recruit .news .contbox .body .img {
+	float: left
+}
+
+#recruit .news .contbox .body .info {
+	float: left;
+	padding-top: 12px;
+	padding-left: 10px;
+	position: relative
+}
+
+#recruit .news .contbox .body .info .time {
+	position: absolute;
+	right: 0;
+	top: 0;
+	color: #555;
+	font-size: 13px
+}
+
+#recruit .news .contbox .body strong {
+	font-size: 16px;
+	color: #1458ac
+}
+
+#recruit .news .contbox .body .description {
+	font-size: 13px;
+	color: #444;
+	padding-top: 5px
+}
+
+#recruit .news .contbox .foot {
+	background: #c82b5f;
+	color: #fff;
+	text-align: center;
+	clear: both;
+	height: 36px;
+	line-height: 36px
+}
+
+#recruit .news .contbox .foot span {
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	margin: 0 3px
+}
+
+#recruit .news .contbox .foot .line {
+	font-size: 11px
+}
+
+#recruit .news .contbox .cont.right {
+	float: right
+}
+
+/* 일반채용정보 */
+#recruit #bbslist {
+	overflow: hidden
+}
+
+#recruit #bbslist .tt {
+	border-bottom: 1px solid #ddd;
+	padding: 15px 0;
+	padding-top: 25px;
+	padding-bottom: 0px;
+	overflow: hidden;
+}
+
+#recruit #bbslist .tt h4 {
+	font-weight: normal !important
+}
+
+#recruit #bbslist .tt .info_more {
+	float: right;
+	position: relative;
+	top: -10px;
+	padding-right: 15px
+}
+
+#recruit #bbslist .tt .info_more a {
+	text-decoration: underline;
+	color: #333;
+	font-size: 14px
+}
+
+#recruit #bbslist table {
+	margin-top: 2px
+}
+
+/* -----------------------------
+	Recruit2 - 병원취업정보
+-------------------------------- */
+#recruit .hospital {
+	margin-bottom: 20px
+}
+
+#recruit .hospital .top {
+	background: #eb5a69;
+	padding: 15px;
+	color: #fff
+}
+
+#recruit .hospital .top h3 {
+	font-size: 15px;
+	font-weight: bold
+}
+
+#recruit .hospital .top .more {
+	float: right;
+	position: relative;
+	top: -20px;
+	font-weight: bold;
+	font-size: 15px
+}
+
+#recruit .hospital .top .more a {
+	display: block;
+	text-indent: -1000em;
+	overflow: hidden;
+	background: url(../images/btn_show_hospital_off.png) no-repeat 0 0;
+	width: 87px;
+	height: 28px
+}
+
+#recruit .hospital .top .more a.off {
+	background: url(../images/btn_show_hospital_on.png)
+}
+
+#recruit .hospital .body {
+	clear: both
+}
+
+#recruit .hospital .inner {
+	border: 1px solid #ddd;
+	padding: 35px;
+	position: relative;
+	overflow: hidden
+}
+
+#recruit .hospital .body .checkAll {
+	text-align: right
+}
+
+#recruit .hospital .body .checkAll .label_check {
+	background: url(../images/btn_hospital_all.png) no-repeat 0 0;
+	text-indent: -1000em;
+	overflow: hidden;
+	display: block;
+	width: 75px;
+	height: 35px;
+	float: right;
+	position: relative;
+	top: -20px;
+	right: -20px
+}
+
+#recruit .hospital .body .checkAll .label_check span {
+	display: none
+}
+
+#recruit .hospital .body .checkAll .label_check.c_on {
+	background-image: url(../images/btn_hospital_all_on.png)
+}
+
+#recruit .hospital .hospital_list {
+	clear: both;
+	margin-top: 20px;
+	padding-left: 10px
+}
+
+#recruit .hospital .hospital_list .group {
+	float: left;
+	width: 20%;
+	height: 170px
+}
+
+#recruit .hospital .hospital_list .group h4 {
+	font-size: 14px;
+	display: block;
+	padding-bottom: 5px
+}
+
+#recruit .hospital .hospital_list .group li {
+	line-height: 200%;
+	color: #555;
+	letter-spacing: -1px
+}
+
+#recruit .hospital .hospital_list .label_check {
+	background: url(../images/checkbox_1_off.png) no-repeat right 2px;
+	padding: 0;
+	margin-right: 0px;
+	padding-right: 15px
+}
+
+#recruit .hospital .hospital_list .label_check.c_on {
+	background-image: url(../images/checkbox_1_on.png);
+	color: #eb5a69;
+	text-decoration: underline
+}
+
+#recruit .hospital .button {
+	clear: both;
+	text-align: center
+}
+
+#recruit .hospital .button .type_submit {
+	background: #ff586b;
+	color: #fff;
+	border-radius: 10px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 18px;
+	padding: 11px 22px;
+	border: none
+}
+
+/* -----------------------------
+	Recruit3 - 졸업예정자 채용공고
+-------------------------------- */
+#recruit #hospitalSearch {
+	border-top: 2px solid #eb5a69;
+	padding-top: 60px
+}
+
+#recruit #hospitalSearch .searchform {
+	padding: 10px;
+	width: 300px;
+	border-radius: 8px
+}
+
+#recruit #hospitalSearch .searchform input {
+	color: #666;
+	font-size: 15px;
+	padding: 1px;
+	height: 20px;
+	line-height: 20px
+}
+
+#recruit #hospitalSearch .searchform .btn_search {
+	float: right;
+	position: relative;
+	top: 2px;
+	background: url(../images/btn_search2.png) no-repeat 0 0;
+	width: 27px;
+	height: 21px
+}
+
+#recruit #bbslist .fa-circle {
+	font-size: 22px;
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	margin: 0 3px
+}
+
+#recruit #bbslist table.style2 a {
+	font-size: 13px
+}
+
+
+/* -----------------------------
+	Mypage - 마이페이지
+-------------------------------- */
+#mypage.container {
+	background: #f0f0f0;
+	padding: 0
+}
+
+#mypage .wrap {
+	background: #fff;
+	overflow: hidden
+}
+
+#mypage .content {
+	width: 998px;
+	border-right: 1px solid #ddd;
+	min-height: 1200px
+}
+
+#mypage .snb .inner {
+	border: none
+}
+
+/* 게시판 */
+#mypage #bbslist,
+#mypage #bbsview {
+	padding: 30px 20px
+}
+
+#mypage #bbslist th {
+	font-size: 12px
+}
+
+#mypage #bbslist .date {
+	font-size: 11px
+}
+
+#mypage #bbslist .bottom .btn {
+	position: relative;
+	position: relative;
+	top: -7px
+}
+
+#mypage #bbslist .bottom .btn.left {
+	margin-right: 2px
+}
+
+#mypage #bbslist .bottom .btn.right {}
+
+#mypage #bbslist td a.blue {
+	color: blue
+}
+
+#mypage #bbsview {
+	border: 0;
+	border-top: 0;
+	margin-bottom: 0px
+}
+
+#mypage #bbsview .btn {
+	border: 0;
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	text-align: center
+}
+
+#mypage #bbsview .btn a {
+	display: block;
+	border-right: 0px solid #dcdcdc;
+	border-bottom: 0px solid #dcdcdc;
+	color: #fff;
+	padding: none;
+	font-size: none
+}
+
+#mypage #bbsview .btn a:hover {
+	text-decoration: none
+}
+
+#mypage #bbsview table {
+	border-top: 2px solid #eb5a69
+}
+
+#mypage #bbsview th {
+	background: #fffafa
+}
+
+#mypage #bbsview th,
+#mypage #bbsview td {
+	padding: 20px
+}
+
+#mypage #bbsview .sbj {
+	text-align: left;
+	line-height: 150%
+}
+
+#mypage #bbsview .bbs-top-wrap {
+	padding: 20px 0;
+	overflow: hidden
+}
+
+#mypage #bbsview .bbs-top-wrap .tabArea span {
+	font-size: 18px;
+	color: #555;
+	padding-left: 10px
+}
+
+#mypage #bbsview .bbs-top-wrap .mentArea span {
+	font-size: 14px;
+	color: #555
+}
+
+#mypage #bbsview .bottom {
+	position: relative;
+	text-aling: center;
+	padding: 20px 0
+}
+
+#mypage #bbsview .bottom .left {
+	position: absolute;
+	left: 10px;
+	top: 10px
+}
+
+#mypage #bbsview .bottom .btn.center {
+	text-align: center;
+	width: 100%
+}
+
+#mypage #bbsview .bottom .btn.center a {
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	padding: 6px 14px;
+	font-size: 13px
+}
+
+#mypage #bbsview .memberSearch {
+	background: url(../images/btn_memberSearch.png) no-repeat 0 0;
+	text-indent: -1000em;
+	overflow: hidden;
+	width: 81px;
+	height: 25px;
+	border: none;
+	cursor: pointer
+}
+
+/* 오른쪽 나의정보 */
+#mypage .snb ul li a {
+	border-bottom: 1px solid #ebebeb
+}
+
+#snb-mypage li a {
+	padding: 22px 0;
+	text-align: center;
+	background: none;
+	font-size: 18px
+}
+
+#snb-mypage li a:hover {
+	background: #eb5a68;
+	color: #fff;
+	text-decoration: none
+}
+
+#snb-mypage .active a {
+	background: #eb5a68;
+	color: #fff
+}
+
+#snb-mypage ul.submenu {
+	display: none;
+	background: #f7f7f7;
+	padding: 15px 0;
+	border-bottom: 1px solid #ebebeb
+}
+
+#snb-mypage ul.submenu li a {
+	border-bottom: 0;
+	padding: 10px;
+	font-size: 14px;
+	background: none;
+	color: #555
+}
+
+#snb-mypage ul.submenu li a:hover {
+	background: none;
+	color: #eb5a69;
+	text-decoration: underline
+}
+
+#side .myinfo {
+	border-bottom: 1px solid #ebebeb;
+	padding: 15px;
+	padding-top: 55px;
+	overflow: hidden
+}
+
+#side .myinfo .top {
+	border-bottom: 1px solid #424a52;
+	text-align: center;
+	padding-bottom: 20px;
+	padding-top: 20px
+}
+
+#side .myinfo .top .level {
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	background: #63a9e4;
+	color: #fff;
+	text-align: center;
+	font-size: 15px;
+	padding: 3px 7px
+}
+
+#side .myinfo .top .name {
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 0 0px;
+	margin-left: 5px
+}
+
+#side .myinfo .top .btn {
+	position: relative;
+	top: 7px;
+	display: inline-block;
+	zoom: 1;
+	*display: inline
+}
+
+#side .myinfo .top2 {
+	text-align: center;
+	padding-bottom: 20px;
+	padding-top: 20px
+}
+
+#side .myinfo .top2 .level {
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	background: #63a9e4;
+	color: #fff;
+	text-align: center;
+	font-size: 15px;
+	padding: 3px 7px
+}
+
+#side .myinfo .top2 .name {
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 0 0px;
+	margin-left: 5px
+}
+
+#side .myinfo .top2 .btn {
+	position: relative;
+	top: 7px;
+	display: inline-block;
+	zoom: 1;
+	*display: inline
+}
+
+
+#side .myinfo .bottom {
+	clear: both;
+	padding: 10px;
+	text-align: center;
+	font-size: 12px;
+	padding-top: 30px;
+	overflow: hidden;
+	padding-bottom: 30px
+}
+
+#side .myinfo .bottom span {
+	display: inline
+}
+
+#side .myinfo .bottom .text {
+	font-size: 16px;
+	border: none;
+	color: #555;
+	text-decoration: none
+}
+
+#side .myinfo .bottom .num {
+	display: inline-block;
+	text-align: center;
+	background: #ff1d38;
+	width: 18px;
+	height: 18px;
+	line-height: 18px;
+	color: #fff;
+	-moz-border-radius: 50px;
+	-webkit-border-radius: 50px;
+	border-radius: 50px
+}
+
+#side .myinfo .level.company {
+	background: #818181
+}
+
+/* 타이틀 */
+#mypage #titleArea {
+	height: 83px;
+	/* border-bottom: 1px solid #424a52; */
+	padding-top: 47px;
+	padding-left: 50px
+}
+
+#mypage #titleArea h2 {
+	font-size: 45px;
+	display: inline-block;
+	zoom: 1;
+	*display: inline
+}
+
+#mypage #titleArea h3 {
+	font-size: 20px;
+	font-weight: normal;
+	display: inline;
+	padding-left: 25px
+}
+
+/* -----------------------------
+	공무원
+-------------------------------- */
+/* 공무원시험공고 */
+#bbslist .topSearchBox {
+	border-top: 2px solid #eb5a69;
+	clear: both
+}
+
+#bbslist .topSearchBox .inside {
+	padding: 20px;
+	padding-top: 40px
+}
+
+#bbslist .topSearchBox .box {
+	float: left;
+	font-size: 14px;
+	color: #464444
+}
+
+#bbslist .topSearchBox .box label {
+	width: 100px;
+	display: block;
+	float: left;
+	text-align: center;
+	color: #666
+}
+
+#bbslist .topSearchBox .box select {
+	font-size: 11px;
+	width: 83px;
+	display: block;
+	float: left;
+	color: #777 !important;
+	font-family: dotum, 돋움 !important;
+}
+
+#bbslist .topSearchBox .box option {
+	font-size: 11px;
+	width: 83px;
+	color: #777 !important;
+	font-family: dotum, 돋움 !important;
+	text-align: center !important
+}
+
+#bbslist .topSearchBox .box .btn {
+	float: right;
+	margin-left: 30px;
+	margin-top: -4px
+}
+
+#bbslist .topSearchBox .searchbox {
+	padding: 25px 0
+}

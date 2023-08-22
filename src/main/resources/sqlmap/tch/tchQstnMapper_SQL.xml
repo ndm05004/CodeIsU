@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.tch.classroom.mapper.TchQstnMapper">
+	<!-- 전체 리스트 출력 -->
+	<select id="selectQstnList" parameterType="String" resultType="QstnVO">
+		SELECT
+		    TB_QSTN.QSTN_NO AS QSTN_NO
+		    , TB_QSTN.SBJCT_CD AS SBJCT_CD
+		    , TB_QSTN.QSTN_TTL AS QSTN_TTL
+		    , TO_CHAR(TB_QSTN.QSTN_DT, 'YYYY-MM-DD') AS QSTN_DT
+		    , TB_QSTN.QSTN_ANS AS QSTN_ANS
+		    , TB_QSTN.QSTN_ANS_DT AS QSTN_ANS_DT
+		    , TB_QSTN.EMP_NO AS EMP_NO
+		    , TB_QSTN.STU_NO AS STU_NO
+		    , TB_STU.USER_NM AS STU_NM
+		    , TB_STU.USER_PROFILE AS STU_PROFILE
+		    , TB_EMP.USER_PROFILE AS EMP_PROFILE
+		    , TB_EMP.USER_NM AS EMP_NM
+		FROM
+		    TB_QSTN
+		JOIN TB_STU ON TB_STU.STU_NO = TB_QSTN.STU_NO
+		JOIN TB_SBJCT ON TB_SBJCT.SBJCT_CD = TB_QSTN.SBJCT_CD
+		JOIN TB_EMP ON TB_EMP.EMP_NO = TB_SBJCT.EMP_NO
+		WHERE
+		    TB_QSTN.SBJCT_CD = #{sbjctCd}
+		ORDER BY TB_QSTN.QSTN_DT DESC
+	</select>
+
+	<!-- 미답변 리스트 출력 -->
+	<select id="selectQstnListAnsNo" parameterType="String" resultType="QstnVO">
+		SELECT
+		    TB_QSTN.QSTN_NO AS QSTN_NO
+		    , TB_QSTN.SBJCT_CD AS SBJCT_CD
+		    , TB_QSTN.QSTN_TTL AS QSTN_TTL
+		    , TO_CHAR(TB_QSTN.QSTN_DT, 'YYYY-MM-DD') AS QSTN_DT
+		    , TB_QSTN.QSTN_ANS AS QSTN_ANS
+		    , TB_QSTN.QSTN_ANS_DT AS QSTN_ANS_DT
+		    , TB_QSTN.EMP_NO AS EMP_NO
+		    , TB_QSTN.STU_NO AS STU_NO
+		    , TB_STU.USER_NM AS STU_NM
+		    , TB_STU.USER_PROFILE AS STU_PROFILE
+		    , TB_EMP.USER_PROFILE AS EMP_PROFILE
+		    , TB_EMP.USER_NM AS EMP_NM
+		FROM
+		    TB_QSTN
+		JOIN TB_STU ON TB_STU.STU_NO = TB_QSTN.STU_NO
+		JOIN TB_SBJCT ON TB_SBJCT.SBJCT_CD = TB_QSTN.SBJCT_CD
+		JOIN TB_EMP ON TB_EMP.EMP_NO = TB_SBJCT.EMP_NO
+		WHERE
+		    TB_QSTN.SBJCT_CD = #{sbjctCd}
+		    AND TB_QSTN.QSTN_ANS IS NULL
+		ORDER BY TB_QSTN.QSTN_DT DESC
+	</select>
+
+	<!-- 답변 리스트 출력 -->
+	<select id="selectQstnListAnsYes" parameterType="String" resultType="QstnVO">
+		SELECT
+		    TB_QSTN.QSTN_NO AS QSTN_NO
+		    , TB_QSTN.SBJCT_CD AS SBJCT_CD
+		    , TB_QSTN.QSTN_TTL AS QSTN_TTL
+		    , TO_CHAR(TB_QSTN.QSTN_DT, 'YYYY-MM-DD') AS QSTN_DT
+		    , TB_QSTN.QSTN_ANS AS QSTN_ANS
+		    , TB_QSTN.QSTN_ANS_DT AS QSTN_ANS_DT
+		    , TB_QSTN.EMP_NO AS EMP_NO
+		    , TB_QSTN.STU_NO AS STU_NO
+		    , TB_STU.USER_NM AS STU_NM
+		    , TB_STU.USER_PROFILE AS STU_PROFILE
+		    , TB_EMP.USER_PROFILE AS EMP_PROFILE
+		    , TB_EMP.USER_NM AS EMP_NM
+		FROM
+		    TB_QSTN
+		JOIN TB_STU ON TB_STU.STU_NO = TB_QSTN.STU_NO
+		JOIN TB_SBJCT ON TB_SBJCT.SBJCT_CD = TB_QSTN.SBJCT_CD
+		JOIN TB_EMP ON TB_EMP.EMP_NO = TB_SBJCT.EMP_NO
+		WHERE
+		    TB_QSTN.SBJCT_CD = #{sbjctCd}
+		    AND TB_QSTN.QSTN_ANS IS NOT NULL
+		ORDER BY TB_QSTN.QSTN_DT DESC
+	</select>
+
+	<!-- 질문답변 상세보기 출력 -->
+	<select id="selectQstn" parameterType="int" resultType="QstnVO">
+		SELECT
+		    TB_QSTN.QSTN_NO AS QSTN_NO
+		    , TB_QSTN.SBJCT_CD AS SBJCT_CD
+		    , TB_QSTN.QSTN_TTL AS QSTN_TTL
+		    , TB_QSTN.QSTN_CN AS QSTN_CN
+		    , TO_CHAR(TB_QSTN.QSTN_DT, 'YYYY-MM-DD') AS QSTN_DT
+		    , TB_QSTN.QSTN_ANS AS QSTN_ANS
+		    , TO_CHAR(TB_QSTN.QSTN_ANS_DT, 'YYYY-MM-DD') AS QSTN_ANS_DT
+		    , TB_QSTN.EMP_NO AS EMP_NO
+		    , TB_QSTN.STU_NO AS STU_NO
+		    , TB_STU.USER_NM AS STU_NM
+		    , TB_STU.USER_PROFILE AS STU_PROFILE
+		    , TB_EMP.USER_PROFILE AS EMP_PROFILE
+		    , TB_EMP.USER_NM AS EMP_NM
+
+		FROM
+		    TB_QSTN
+		JOIN TB_STU ON TB_STU.STU_NO = TB_QSTN.STU_NO
+		JOIN TB_SBJCT ON TB_SBJCT.SBJCT_CD = TB_QSTN.SBJCT_CD
+		JOIN TB_EMP ON TB_EMP.EMP_NO = TB_SBJCT.EMP_NO
+		WHERE
+		    TB_QSTN.QSTN_NO = #{qstnNo}
+		ORDER BY TB_QSTN.QSTN_DT DESC
+	</select>
+
+	<update id="insertAns" parameterType="QstnVO">
+		UPDATE TB_QSTN
+		SET
+			QSTN_ANS = #{qstnAns}
+			, QSTN_ANS_DT = SYSDATE
+			, EMP_NO = #{empNo}
+		WHERE
+			QSTN_NO = #{qstnNo}
+	</update>
+
+	<update id="deleteAns" parameterType="int">
+		UPDATE TB_QSTN
+		SET
+			QSTN_ANS = ''
+			, QSTN_ANS_DT = ''
+			, EMP_NO = ''
+		WHERE
+			QSTN_NO = #{qstnNo}
+	</update>
+</mapper>

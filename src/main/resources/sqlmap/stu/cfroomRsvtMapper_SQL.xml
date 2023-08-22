@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.stu.hakup.mapper.CfroomRsvtMapper">
+    <select id="selectMettingRoomList" resultType="MettingRoomVO">
+		SELECT
+		    CFROOM_CD
+		    , METTING_ROOM_NM
+		FROM TB_METTING_ROOM
+		WHERE METTING_ROOM_USE = 'Y'
+		ORDER BY METTING_ROOM_NM
+    </select>
+    <!-- 등록 -->
+    <insert id="insertCfroomRsvt" parameterType="CfroomRsvtVO">
+		INSERT INTO TB_CFROOM_RSVT(
+              CFROOM_CD
+            , RSVT_DT
+            , RSVT_HR
+            , STU_NO)
+        VALUES(
+              #{cfroomCd}
+            , #{rsvtDt}
+            , #{rsvtHr}
+            , #{stuNo}
+        )
+    </insert>
+
+    <!-- 예약내역 불러오기 -->
+    <select id="selectCfroomRsvtList" resultType="CfroomRsvtVO" parameterType="String">
+        SELECT
+            TB_METTING_ROOM.CFROOM_CD AS CFROOM_CD
+            , TB_CFROOM_RSVT.RSVT_DT
+            , TB_STU.USER_NM AS USER_NM
+            , TB_CFROOM_RSVT.RSVT_HR
+            , TB_STU.STU_NO AS STU_NO
+            , TB_LECTURE_ROOM.LECTURE_ROOM_NM AS LECTURE_ROOM_NM
+        FROM
+            TB_CFROOM_RSVT
+        JOIN TB_STU ON (TB_STU.STU_NO = TB_CFROOM_RSVT.STU_NO)
+        JOIN TB_SVLF ON (TB_STU.SVLF_NO = TB_SVLF.SVLF_NO)
+        JOIN TB_LECTURE_ROOM ON (TB_LECTURE_ROOM.LECTURE_ROOM_CD =TB_SVLF.LECTURE_ROOM_CD )
+        JOIN TB_METTING_ROOM ON (TB_METTING_ROOM.CFROOM_CD = TB_CFROOM_RSVT.CFROOM_CD)
+        <if test="rsvtDt == null">
+	        WHERE RSVT_DT = TO_CHAR(sysdate,'yyyy-mm-dd')
+        </if>
+        <if test="rsvtDt != null">
+	        WHERE RSVT_DT = #{rsvtDt}
+        </if>
+    </select>
+
+    <delete id="deleteCfroom" parameterType="CfroomRsvtVO">
+        delete
+        from TB_CFROOM_RSVT
+        where
+           CFROOM_CD = #{cfroomCd}
+           and RSVT_DT = #{rsvtDt}
+           and RSVT_HR = #{rsvtHr}
+    </delete>
+</mapper>

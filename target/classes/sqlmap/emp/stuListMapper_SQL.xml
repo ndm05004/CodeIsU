@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.emp.stulist.mapper.StuListMapper">
+
+<!-- 학생 전체 리스트를 가져옴 -->
+<select id="getStuListAll" resultType="StuVO">
+/* team.tttt.pms.emp.stulist.mapper.StuListMapper.getStuListAll() */
+	SELECT
+	STU_NO
+	, USER_NM
+	, SVLF_NO
+	, USER_EML_ADDR
+	, USER_PHONENO
+	, USER_ZIP
+	, USER_ADDR
+	, USER_DADDR
+	, REG_DT
+	, FNSH_DT
+	, FNSH_YN
+	, ABD_YN
+	, JOIN_DT
+	, USER_PROFILE
+	, USER_BRDT
+	, USER_GENDER
+	FROM TB_STU
+	ORDER BY SVLF_NO DESC, STU_NO
+</select>
+
+<!-- 연수과정 전체를 읽어온다 -->
+<select id="getSvlfAll" resultType="SvlfVO">
+/* team.tttt.pms.emp.stulist.mapper.StuListMapper.getSvlfAll() */
+	SELECT
+	SVLF_NO
+	, SVLF_BGNG_DT
+	, SVLF_DDLB_DT
+	, SVLF_NM
+	, SVLF_CN
+	, SVLF_DT
+	, EMP_NO
+	, LECTURE_ROOM_CD
+	FROM TB_SVLF
+	ORDER BY SVLF_NO ASC
+</select>
+
+<insert id="insertStuOne" parameterType="StuVO">
+		<selectKey keyProperty="stuNo" resultType="String" order="BEFORE">
+			<if test="stuNo != ''">
+			/* !null 사용자가 직접 입력한 원생번호를 넣어준다. */
+			SELECT #{stuNo} AS STU_NO FROM DUAL
+			</if>
+			<if test="stuNo == ''">
+
+			SELECT
+				/* 첫번째 SELECT는 기존에 부여된 STU_NO가 있는지 확인 */
+    			NVL2((SELECT STU_NO
+	            FROM (
+	              SELECT STU_NO
+	              FROM TB_STU
+	              WHERE SVLF_NO = #{svlfNo}
+	              ORDER BY STU_NO DESC
+	            )
+	            WHERE ROWNUM = 1)
+	            /* 만약 기존에 STU_NO가 있다면, 기존 번호에 +1을 붙인 새로운 번호 생성 */
+        		, (SELECT 'S' || (SUBSTR(STU_NO,2,7) + 1) AS STU_NO
+		            FROM (
+		              SELECT STU_NO
+		              FROM TB_STU
+		              WHERE SVLF_NO = #{svlfNo}
+		              ORDER BY STU_NO DESC
+		            )
+		            WHERE ROWNUM = 1
+		        )
+		        /* 만약 기존에 STU_NO가 없다면, 새로운 번호 생성 (SVLF_NO의 일부와 '01'을 결합) */
+		        , (SELECT 'S' || SUBSTR(#{svlfNo}, 3, 4) || SUBSTR(#{svlfNo}, 8, 1) || '01' AS NEW_STRING FROM DUAL) /* StuNo가 부여되지않았을대 번호 */
+		        ) AS STU_NO
+			FROM DUAL
+			</if>
+		</selectKey>
+		INSERT ALL
+			INTO TB_USER (USER_NO, USER_TYPE) VALUES (#{stuNo}, 'STU')
+			INTO TB_ROLE_ASSIGN (USER_NO, ROLE_CD) VALUES (#{stuNo}, 'S01')
+			INTO TB_STU (STU_NO, USER_NM, SVLF_NO, USER_GENDER, USER_BRDT, USER_PHONENO, REG_DT) VALUES (#{stuNo}, #{userNm}, #{svlfNo}, #{userGender}, #{userBrdt}, #{userPhoneno}, SYSDATE)
+		SELECT * FROM DUAL
+</insert>
+
+
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.alarm.mapper.AlarmMapper">
+
+<insert id="saveAlarm" parameterType="AlarmVO">
+ 	insert into
+		TB_ALARM(
+		    ALARM_NO
+		    , STU_NO
+		    , ALARM_CN
+		    , ALARM_CD
+		    , ALARM_DT
+		    , ALARM_CHECK_CD
+		    , PROJ_NO)
+		values(
+		   seq_alarm.nextval, #{stuNo},#{alarmCn},#{alarmCd},sysdate,'N',#{projNo}
+		    )
+
+
+</insert>
+
+<select id="alarmList" parameterType="String" resultType="AlarmVO">
+
+    <![CDATA[
+	    SELECT
+		    MJ.ALARM_NO,
+		    MJ.STU_NO,
+		    MJ.ALARM_CN,
+		    MJ.ALARM_CD,
+		    MJ.ALARM_DT,
+		    MJ.ALARM_CHECK_CD,
+		    MJ.PROJ_NO,
+		    MJ.USER_NM,
+		    MJ.PROJ_NM,
+		    MJ.USER_PROFILE
+
+		FROM
+		    (SELECT
+		        A.ALARM_NO,
+		        A.STU_NO,
+		        A.ALARM_CN,
+		        A.ALARM_CD,
+		        A.ALARM_DT,
+		        A.ALARM_CHECK_CD,
+		        A.PROJ_NO,
+		        S.USER_NM,
+		        P.PROJ_NM,
+		        S.USER_PROFILE
+		    FROM
+		        TB_ALARM A
+		    JOIN TB_STU S ON S.STU_NO = A.STU_NO
+		    JOIN TB_PROJ P ON P.PROJ_NO = A.PROJ_NO
+		    ORDER BY
+		        A.ALARM_NO DESC) MJ
+		WHERE
+		    ROWNUM <= 5
+
+	]]>
+
+
+
+	  <!-- SELECT
+		    MJ.ALARM_NO,
+		    MJ.STU_NO,
+		    MJ.ALARM_CN,
+		    MJ.ALARM_CD,
+		    MJ.ALARM_DT,
+		    MJ.ALARM_CHECK_CD,
+		    MJ.PROJ_NO,
+		    MJ.USER_NM,
+		    MJ.PROJ_NM,
+		    MJ.USER_PROFILE
+
+		FROM
+		    (SELECT
+		        A.ALARM_NO,
+		        A.STU_NO,
+		        A.ALARM_CN,
+		        A.ALARM_CD,
+		        A.ALARM_DT,
+		        A.ALARM_CHECK_CD,
+		        A.PROJ_NO,
+		        S.USER_NM,
+		        P.PROJ_NM,
+		        S.USER_PROFILE
+		    FROM
+		        TB_ALARM A
+		    JOIN TB_STU S ON S.STU_NO = A.STU_NO
+		    JOIN TB_PROJ P ON P.PROJ_NO = A.PROJ_NO
+		    WHERE
+		        A.PROJ_NO = #{PROJNO}
+		    ORDER BY
+		        A.ALARM_NO DESC) MJ
+		WHERE
+		    ROWNUM <= 5 -->
+</select>
+
+
+
+
+
+</mapper>

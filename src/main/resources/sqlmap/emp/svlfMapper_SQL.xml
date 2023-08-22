@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.emp.svlf.mapper.SvlfMapper">
+
+	<!-- 부서코드 확인 -->
+	<select id="checkDepartCd" resultType="empVO">
+	<!-- team.tttt.pms.mapper.SvlfMapper.checkDepartCd -->
+	SELECT
+		A.EMP_NO
+		, A.USER_NM
+	FROM TB_EMP A
+	LEFT OUTER JOIN TB_SVLF B
+	ON A.EMP_NO = B.EMP_NO
+	WHERE B.EMP_NO IS NULL
+	AND A.DEPART_CD = 'T00'
+	</select>
+
+	<!-- 연수과정 정보 및 목록 조회(강의실 명과 담임 이름 가져옴) -->
+	<select id="svlfList" resultType="svlfVO">
+	<!-- team.tttt.pms.mapper.SvlfMapper.svlfList -->
+	SELECT
+		A.SVLF_NO
+		, A.SVLF_BGNG_DT
+		, A.SVLF_DDLB_DT
+		, A.SVLF_NM
+		, A.SVLF_CN
+		, A.SVLF_DT
+		, A.EMP_NO
+		, A.LECTURE_ROOM_CD
+		, B.USER_NM
+		, C.LECTURE_ROOM_NM
+	FROM TB_SVLF A
+	LEFT OUTER JOIN TB_EMP B ON A.EMP_NO = B.EMP_NO
+	LEFT OUTER JOIN TB_LECTURE_ROOM C ON A.LECTURE_ROOM_CD = C.LECTURE_ROOM_CD
+	WHERE A.EMP_NO = B.EMP_NO
+	AND (A.SVLF_BGNG_DT &lt;= SYSDATE AND A.SVLF_DDLB_DT &gt;= SYSDATE)
+	ORDER BY A.SVLF_BGNG_DT DESC
+	</select>
+
+	<!-- 현재 날짜를 기준으로 종료된 연수과정 목록 가져오기 -->
+	<select id="noSvlfList" resultType="SvlfVO">
+	/* team.tttt.pms.mapper.SvlfMapper.noSvlfList */
+	SELECT
+	    A.SVLF_NO,
+	    A.SVLF_BGNG_DT,
+	    A.SVLF_DDLB_DT,
+	    A.SVLF_NM,
+	    A.SVLF_CN,
+	    A.SVLF_DT,
+	    A.EMP_NO,
+	    A.LECTURE_ROOM_CD,
+	    B.USER_NM,
+	    C.LECTURE_ROOM_NM
+	FROM TB_SVLF A
+	LEFT OUTER JOIN TB_EMP B ON A.EMP_NO = B.EMP_NO
+	LEFT OUTER JOIN TB_LECTURE_ROOM C ON A.LECTURE_ROOM_CD = C.LECTURE_ROOM_CD
+	WHERE A.EMP_NO = B.EMP_NO
+	AND A.SVLF_NO NOT IN (
+	    SELECT SVLF_NO
+	    FROM TB_SVLF
+	    WHERE A.SVLF_BGNG_DT &lt;= SYSDATE AND A.SVLF_DDLB_DT &gt;= SYSDATE
+	)
+	ORDER BY A.SVLF_BGNG_DT DESC
+	</select>
+
+
+	<!-- 연수과정 등록 -->
+	<insert id="svlfInsert" parameterType="svlfVO">
+	<!-- team.tttt.pms.mapper.SvlfMapper.svlfInsert -->
+	INSERT INTO TB_SVLF(
+		SVLF_NO
+		, SVLF_BGNG_DT
+		, SVLF_DDLB_DT
+		, SVLF_NM
+		, LECTURE_ROOM_CD
+		, SVLF_CN
+		, EMP_NO
+	)VALUES(
+		#{svlfNo}
+		, #{svlfBgngDt}
+		, #{svlfDdlbDt}
+		, #{svlfNm}
+		, #{lectureRoomCd}
+		, #{svlfCn}
+		, #{empNo}
+	)
+	</insert>
+
+	<!-- 선택한 기간 동안 사용하지 않는 강의실 조회 -->
+	<select id="roomList" parameterType="SvlfVO" resultType="LectureRoomVO">
+	/* team.tttt.pms.mapper.SvlfMapper.roomList */
+	SELECT
+	    A.LECTURE_ROOM_NM
+	    , A.LECTURE_ROOM_CD
+	FROM TB_LECTURE_ROOM A
+	WHERE A.LECTURE_ROOM_CD NOT IN (
+	    SELECT B.LECTURE_ROOM_CD
+	    FROM TB_SVLF B
+	    WHERE (B.SVLF_BGNG_DT &lt;= #{svlfBgngDt} AND B.SVLF_DDLB_DT &gt;= #{svlfBgngDt})
+	       OR (B.SVLF_BGNG_DT &lt;= #{svlfDdlbDt} AND B.SVLF_DDLB_DT &gt;= #{svlfDdlbDt})
+	       OR (B.SVLF_BGNG_DT &gt;= #{svlfBgngDt} AND B.SVLF_DDLB_DT &lt;= #{svlfDdlbDt})
+	)
+	ORDER BY A.LECTURE_ROOM_CD ASC
+	</select>
+
+	<!-- 선택한 기간 동안 담임을 맡지 않고 있는 강사 목록 -->
+	<select id="teachList" parameterType="SvlfVO" resultType="EmpVO">
+	/* team.tttt.pms.mapper.SvlfMapper.roomList */
+	SELECT
+	    A.EMP_NO
+	    , A.USER_NM
+	FROM TB_EMP A
+	WHERE A.EMP_NO NOT IN (
+	    SELECT B.EMP_NO
+	    FROM TB_SVLF B
+	    WHERE (B.SVLF_BGNG_DT &lt;= #{svlfBgngDt} AND B.SVLF_DDLB_DT &gt;= #{svlfBgngDt})
+	       OR (B.SVLF_BGNG_DT &lt;= #{svlfDdlbDt} AND B.SVLF_DDLB_DT &gt;= #{svlfDdlbDt})
+	       OR (B.SVLF_BGNG_DT &gt;= #{svlfBgngDt} AND B.SVLF_DDLB_DT &lt;= #{svlfDdlbDt})
+	)
+	AND A.DEPART_CD = 'T00'
+	ORDER BY A.EMP_NO ASC
+	</select>
+
+	<!-- 선택한 연수과정 정보 가져오기 -->
+	<select id="svlfInfo" parameterType="String" resultType="svlfVO">
+	/* team.tttt.pms.mapper.SvlfMapper.svlfInfo */
+ 	SELECT
+		A.SVLF_NO
+		, A.SVLF_BGNG_DT
+		, A.SVLF_DDLB_DT
+		, A.SVLF_NM
+		, A.SVLF_CN
+		, A.SVLF_DT
+		, A.EMP_NO
+		, A.LECTURE_ROOM_CD
+		, B.USER_NM
+		, C.lecture_room_NM
+	FROM TB_SVLF A
+	LEFT OUTER JOIN TB_EMP B ON A.EMP_NO = B.EMP_NO
+	LEFT OUTER JOIN tb_lecture_room C ON A.LECTURE_ROOM_CD = C.LECTURE_ROOM_CD
+	WHERE A.SVLF_NO = #{svlfNo}
+	</select>
+
+	<!-- 미사용 강의실 목록 조회 -->
+	<!-- <select id="lectureRoomList" resultType="LectureRoomVO">
+	team.tttt.pms.mapper.SvlfMapper.svlflectureRoomListList
+	SELECT A.LECTURE_ROOM_CD
+	       , A.LECTURE_ROOM_NM
+	FROM TB_LECTURE_ROOM A
+	WHERE A.LECTURE_ROOM_USE = '미사용'
+	</select>
+
+	강의실 사용여부를 사용중으로 변경
+	<update id="lectureRoomUpdate" parameterType="String">
+	team.tttt.pms.mapper.SvlfMapper.lectureRoomUpdate
+	UPDATE TB_LECTURE_ROOM
+	SET
+    LECTURE_ROOM_USE = '사용중'
+	WHERE LECTURE_ROOM_CD = #{classCode}
+	</update>
+
+	강의실 사용여부를 미사용으로 변경
+	<update id="lectureRoomUpdate2" parameterType="String">
+	team.tttt.pms.mapper.SvlfMapper.lectureRoomUpdate2
+	UPDATE TB_LECTURE_ROOM
+	SET
+    LECTURE_ROOM_USE = '미사용'
+	WHERE LECTURE_ROOM_CD = #{classCode}
+	</update>
+
+	선택한 연수과정 수정(연수과정번호는 수정하지 못함)
+	<update id="svlfUPdate" parameterType="SvlfVO">
+	team.tttt.pms.mapper.SvlfMapper.svlfUPdate
+	UPDATE TB_SVLF
+	SET
+		SVLF_BGNG_DT = #{svlfBgngDt}
+		, SVLF_DDLB_DT = #{svlfDdlbDt}
+		, SVLF_NM = #{svlfNm}
+		, SVLF_CN = #{svlfCn}
+		, SVLF_DT = #{svlfDt}
+		, EMP_NO = #{empNo}
+		, LECTURE_ROOM_CD = #{lectureRoomCd}
+	WHERE SVLF_NO = #{svlfNo}
+	</update>
+
+	선택한 연수과정 삭제
+	<delete id="svlfDel" parameterType="String">
+	team.tttt.pms.mapper.SvlfMapper.svlfUPdate
+	DELETE FROM TB_SVLF
+ 	WHERE SVLF_NO = #{svlfNo}
+	</delete> -->
+</mapper>

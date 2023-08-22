@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.project.task.mapper.ProjectTaskMapper">
+
+
+	<resultMap type="taskVO" id="taskMap">
+		<id 	property="taskNo" 		column="task_no" />
+		<result property="taskNo" 		column="task_no"/>
+		<result property="taskTitle" 	column="task_title"/>
+		<result property="taskPriority" column="task_priority"/>
+		<result property="taskBengDt" 	column="task_beng_dt"/>
+		<result property="taskDdlnDt" 	column="task_ddln_dt"/>
+		<result property="taskRegDt" 	column="task_reg_dt"/>
+		<result property="taskCn" 		column="task_cn"/>
+		<result property="projNo" 		column="proj_no"/>
+		<result property="taskStts" 	column="task_stts"/>
+		<result property="upperTask" 	column="upper_task"/>
+		<result property="taskSttr" 	column="task_sttr"/>
+		<result property="projNm" 		column="proj_nm"/>
+		<result property="projBgngDt" 	column="PROJ_BGNG_DT"/>
+		<result property="projDdlnDt" 	column="PROJ_DDLN_DT"/>
+		<result property="projSttr" 	column="proj_sttr"/>
+		<collection property="asgList" 	resultMap="ASGMap"/>
+	</resultMap>
+
+	<resultMap type="asgVO" id="ASGMap">
+		<result property="taskNo" 		column="task_no"/>
+		<result property="stuNo" 		column="stu_no"/>
+		<result property="userNm" 		column="user_nm"/>
+		<result property="userProfile" 	column="user_Profile"/>
+	</resultMap>
+
+<!--               업무 생성                                               -->
+<!-- 상위 업무 생성 -->
+<insert id="insertUpperTask" parameterType="taskVO">
+/* team.tttt.pms.mapper.ProjectTaskMapper.insertUpperTask */
+insert into tb_task(
+	task_no
+	, task_title
+	, task_priority
+	, task_beng_dt
+	, task_ddln_dt
+	, task_reg_dt
+	, task_cn
+	, proj_no
+	, task_stts
+	, task_sttr
+	, stu_no
+) values(
+	'T'||seq_task.nextval
+	, #{taskTitle}
+	, #{taskPriority}
+	, #{taskBengDt}
+	, #{taskDdlnDt}
+	, sysdate
+	, #{taskCn}
+	, #{projNo}
+	, #{taskStts}
+	, #{taskSttr}
+	, #{stuNo}
+)
+</insert>
+
+<!-- 하위 업무 생성 -->
+<insert id="insertLowerTask" parameterType="taskVO">
+/* team.tttt.pms.mapper.ProjectTaskMapper.insertLowerTask */
+
+insert into tb_task(
+	task_no
+	, task_title
+	, task_priority
+	, task_beng_dt
+	, task_ddln_dt
+	, task_reg_dt
+	, task_cn
+	, proj_no
+	, task_stts
+	, task_sttr
+	, upper_task
+	, stu_no
+) values(
+	'T'||seq_task.nextval
+	, #{taskTitle}
+	, #{taskPriority}
+	, #{taskBengDt}
+	, #{taskDdlnDt}
+	, sysdate
+	, #{taskCn}
+	, #{projNo}
+	, #{taskStts}
+	, #{taskSttr}
+	, #{upperTask}
+	, #{stuNo}
+)
+</insert>
+
+
+<!-- 일감 생성 시 실시간 알람 생성 -->
+<!-- <insert id="insertAlarm" parameterType="AlarmVO">
+		INSERT INTO TB_ALARM
+		(ALARM_NO
+		,STU_NO
+		,ALARM_CN
+		,ALARM_CD
+		,ALARM_DT
+		,ALARM_CHECK_CD
+		,PROJ_NO) values (seq_alarm.nextval,#{stuNo},#{taskTitle},'일감 게시판',sysdate,'N',#{projNo})
+</insert>
+ -->
+
+
+<!-- 업무 담당자 추가 -->
+<insert id="insertTaskPic" parameterType="asgVO">
+/* team.tttt.webapp.mapper.ProjectTaskMapper.insertTaskPic  */
+
+	insert into tb_asg
+	values(
+	    'T'||seq_task.currval,
+	    #{stuNo}
+	)
+</insert>
+
+<!--               업무 생성 끝                                              -->
+
+<!-- 업무 목록 조회 -->
+<select id="taskList" parameterType="string" resultMap="taskMap">
+
+
+/* team.tttt.pms.mapper.ProjectTaskMapper.TaskList */
+
+	SELECT
+	    t.task_no,
+	    t.task_title,
+	    c.cd_nm AS task_priority,
+	    TO_CHAR(TO_DATE(t.task_beng_dt, 'yyyymmdd'), 'yyyy-mm-dd') AS task_beng_dt,
+	    TO_CHAR(TO_DATE(t.task_ddln_dt, 'yyyymmdd'), 'yyyy-mm-dd') AS task_ddln_dt,
+	    TO_CHAR(t.task_reg_dt, 'yyyy-mm-dd') AS task_reg_dt,
+	    t.task_cn,
+	    t.proj_no,
+	    s.cd_nm AS task_stts,
+	    t.upper_task,
+	    t.task_sttr,
+	    stu.user_nm,
+	    stu.stu_no,
+	    p.proj_nm,
+	    TO_CHAR(TO_DATE(p.PROJ_BGNG_DT, 'yyyymmdd'), 'yyyy-mm-dd') AS PROJ_BGNG_DT,
+	    TO_CHAR(TO_DATE(p.PROJ_DDLN_DT, 'yyyymmdd'), 'yyyy-mm-dd') AS PROJ_DDLN_DT,
+	    p.proj_sttr,
+	    stu.user_profile
+
+	FROM
+	    tb_task t
+	JOIN tb_proj p ON p.proj_no = t.proj_no
+	JOIN tb_asg a ON t.task_no = a.task_no
+	JOIN tb_stu stu ON a.stu_no = stu.stu_no
+	LEFT JOIN tb_cm_cd c ON c.cd_type_id = SUBSTR(t.task_priority, 1, INSTR(t.task_priority, '-') - 1)
+	    AND c.cd_vl = SUBSTR(t.task_priority, INSTR(t.task_priority, '-') + 1)
+	    AND c.cd_type_id = 'P005'
+	    AND c.cd_c_use_yn = 'Y'
+	LEFT JOIN tb_cm_cd s ON s.cd_type_id = SUBSTR(t.task_stts, 1, INSTR(t.task_stts, '-') - 1)
+	    AND s.cd_vl = SUBSTR(t.task_stts, INSTR(t.task_stts, '-') + 1)
+	    AND s.cd_type_id = 'P003'
+	    AND s.cd_c_use_yn = 'Y'
+	WHERE
+	    t.proj_no = #{projNo}
+
+
+</select>
+
+
+<!-- 업무 상세조회 -->
+<select id="taskDetail" parameterType="string" resultMap="taskMap">
+/* team.tttt.pms.mapper.ProjectTaskMapper.taskDetail */
+
+	select
+	    tb_task.task_no
+	    , tb_task.task_title
+	    , c.cd_nm as task_priority
+	    , tb_task.task_beng_dt
+	    , tb_task.task_ddln_dt
+	    , to_char(tb_task.task_reg_dt, 'yyyy-mm-dd') as task_reg_dt
+	    , tb_task.task_cn
+	    , tb_task.proj_no
+	    , e.cd_nm as task_stts
+	    , tb_task.upper_task
+	    , tb_task.task_sttr
+	    , tb_stu.user_nm
+	    , tb_stu.stu_no
+	from
+	    tb_task
+	    join tb_asg on tb_task.task_no = tb_asg.task_no
+	    join tb_stu on tb_asg.stu_no = tb_stu.stu_no
+	    join (
+	        select
+	            a.cd_nm
+	            , a.cd_vl
+	            , a.cd_type_id
+	        from
+	            tb_cm_cd a
+	            join tb_cm_type b on a.cd_type_id = b.cd_type_id
+	            join tb_task t on a.cd_type_id = substr(t.task_priority, 1, instr(t.task_priority, '-') - 1)
+	        where
+	            a.cd_type_id = 'P005'
+	            and a.cd_c_use_yn = 'Y'
+	            and a.cd_vl = substr(t.task_priority, instr(t.task_priority, '-') + 1)
+	        group by
+	            a.cd_nm
+	            , a.cd_vl
+	            , a.cd_type_id
+	    ) c on c.cd_type_id = substr(tb_task.task_priority, 1, instr(tb_task.task_priority, '-') - 1)
+	       and c.cd_vl = substr(tb_task.task_priority, instr(tb_task.task_priority, '-') + 1)
+
+	        join (
+	        select
+	            a.cd_nm
+	            , a.cd_vl
+	            , a.cd_type_id
+	        from
+	            tb_cm_cd a
+	            join tb_cm_type b on a.cd_type_id = b.cd_type_id
+	            join tb_task t on a.cd_type_id = substr(t.task_stts, 1, instr(t.task_stts, '-') - 1)
+	        where
+	            a.cd_type_id = 'P003'
+	            and a.cd_c_use_yn = 'Y'
+	            and a.cd_vl = substr(t.task_stts, instr(t.task_stts, '-') + 1)
+	        group by
+	            a.cd_nm
+	            , a.cd_vl
+	            , a.cd_type_id
+	    ) e on e.cd_type_id = substr(tb_task.task_stts, 1, instr(tb_task.task_stts, '-') - 1)
+	       and e.cd_vl = substr(tb_task.task_stts, instr(tb_task.task_stts, '-') + 1)
+	where tb_task.task_no = #{taskNo}
+</select>
+
+
+<!-- 업무 삭제 -->
+<delete id="taskDelete" parameterType="string">
+/* team.tttt.webapp.mapper.ProjectTaskMapper.taskDelete */
+
+	delete
+	from
+		tb_task
+	where
+		task_no = #{taskNo}
+</delete>
+
+
+<!-- 업무 업데이트 -->
+<update id="taskUpdate" parameterType="TaskVO">
+/* team.tttt.webapp.mapper.ProjectTaskMapper.taskUpdate  */
+
+	update
+		tb_task
+	set
+		task_title = #{taskTitle}
+		, TASK_PRIORITY= #{taskPriority}
+		, TASK_BENG_DT =#{taskBengDt}
+		, TASK_DDLN_DT= #{taskDdlnDt}
+		, task_stts= #{taskStts}
+		, task_sttr= #{taskSttr}
+		, task_cn= #{taskCn}
+	where
+		task_no = #{taskNo}
+</update>
+
+<!-- 업무 담당자 삭제 -->
+<delete id="deleteTaskPic" parameterType="asgVO">
+/* team.tttt.webapp.mapper.ProjectTaskMapper.deleteTaskPic  */
+	delete
+	from
+		tb_asg
+	where
+		task_no = #{taskNo}
+</delete>
+
+<!-- 업무 담당자 추가 -->
+<insert id="updateTaskPic" parameterType="asgVO">
+/* team.tttt.webapp.mapper.ProjectTaskMapper.insertTaskPic  */
+
+	insert into tb_asg
+	values(
+	    #{taskNo},
+	    #{stuNo}
+	)
+</insert>
+
+<!-- 업무 담당자 확인 -->
+<select id="searchTaskPic" parameterType="String" resultType="ASGVO">
+/* team.tttt.webapp.mapper.ProjectTaskMapper.searchTaskPic  */
+
+ 	select
+		task_no, stu_no
+	from
+		tb_asg
+	where
+		task_no = #{taskNo}
+
+</select>
+
+<!-- 업무 업데이트 끝-->
+
+
+<!-- 상위업무검색 -->
+<select id="upperTask" parameterType="String" resultType="TaskVO">
+	select
+		task_no, task_title
+	from
+		tb_task
+	where
+		proj_no = #{projNo}
+</select>
+
+<select id="getMemJbttlCd" parameterType="hashMap" resultType="MemManagementVO">
+select jbttl_cd
+from tb_pro_mem
+where stu_no = #{userNo} and proj_no = #{projNo}
+</select>
+
+<select id="getProjNm" parameterType="String" resultType="ProjVO">
+	 SELECT
+	 	PROJ_NM
+        , count(m.STU_NO) as proj_tnope
+	 FROM
+	    TB_PROJ p, TB_PRO_MEM m
+	 WHERE p.PROJ_NO = #{projNo} and m.PROJ_NO = p.PROJ_NO
+     group by PROJ_NM
+</select>
+
+</mapper>

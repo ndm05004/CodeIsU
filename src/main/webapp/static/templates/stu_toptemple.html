@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
+    <title>Code is U</title>
+    <!-- Custom CSS -->
+    <link href="../dist/css/style.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+
+    <!-- :: Topjs 시작 :: -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
+        integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css"
+        integrity="sha512-ELV+xyi8IhEApPS/pSj66+Jiw+sOT1Mqkzlh8ExXihe4zfqbWkxPRi8wptXIO9g73FSlhmquFlUOuMSoXz5IRw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="../assets/libs/popper.js/dist/umd/popper.min.js"></script>
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom $t Js -->
+    <script>
+        var $t = {
+            header: "${_csrf.headerName}",
+            token: "${_csrf.token}",
+            csrfq: "${_csrf.parameterName }=${_csrf.token}",
+            cpath: "${pageContext.request.contextPath}"
+        };
+    </script>
+    <script src="../resources/common/js/common.js" type="text/javascript"></script>
+    <!-- :: Topjs 끝 :: -->
+    <style>
+        .res-div {
+            font-size: 1.125rem;
+        }
+
+        .res-remote {
+            position: relative;
+            right: 10px;
+        }
+
+        .res-remote-menu {
+            position: fixed;
+            z-index: 50;
+            background-color: white;
+        }
+
+        .photo-box {
+            padding: 16px;
+            /* top: 31px; */
+            width: 146px;
+            /* float: left; */
+            /* position: absolute; */
+            border: 1px solid #dfe0e5;
+        }
+
+        .photo-box .btn-open {
+            background: #fafafc;
+            width: 100%;
+            height: 149px;
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            cursor: pointer;
+            position: relative;
+        }
+        .row-con {
+            max-width: 100%;
+            --bs-gutter-x: 30px;
+            --bs-gutter-y: 0;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0;
+
+        }
+        .row-con > * {
+            flex-shrink: 0;
+            max-width: 100%;
+            padding-right: calc(var(--bs-gutter-x) * .5);
+            padding-left: calc(var(--bs-gutter-x) * .5);
+            margin-top: var(--bs-gutter-y);
+        }
+        .del-btn {
+            font-size: 12px;
+            position: absolute;
+            right: -2px;
+            top: 12px;
+            width: 15px;
+            height: 15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+        <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <!-- ::: TOPbar 시작 ::: -->
+        <div class="center-wrap">
+            <header class="topbar center-wrap" data-navbarbg="skin6">
+                <nav class="navbar top-navbar navbar-expand-lg">
+                    <div class="navbar-header" data-logobg="skin6">
+                        <!-- This is for the sidebar toggle which is visible on mobile only -->
+                        <a class="nav-toggler waves-effect waves-light d-block d-lg-none" href="javascript:void(0)"><i
+                                class="ti-menu ti-close"></i></a>
+                        <!-- ============================================================== -->
+                        <!-- Logo -->
+                        <!-- ============================================================== -->
+                        <div class="navbar-brand">
+                            <!-- Logo icon -->
+                            <a href="index.html">
+                                <img src="../resources/common/img/nav_logo.png" alt="" class="img-fluid">
+                            </a>
+                        </div>
+                        <!-- ============================================================== -->
+                        <!-- End Logo -->
+                        <!-- ============================================================== -->
+                        <!-- ============================================================== -->
+                        <!-- Toggle which is visible on mobile only -->
+                        <!-- ============================================================== -->
+                        <a class="topbartoggler d-block d-lg-none waves-effect waves-light" href="javascript:void(0)"
+                            data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false"
+                            aria-label="Toggle navigation"><i class="ti-more"></i></a>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- End Logo -->
+                    <!-- ============================================================== -->
+                    <div class="navbar-collapse collapse" id="navbarSupportedContent">
+                        <!-- ============================================================== -->
+                        <!-- toggle and nav items -->
+                        <!-- ============================================================== -->
+                        <ul class="navbar-nav float-left me-auto ms-3 ps-1">
+                            <!-- ============================================================== -->
+                            <!-- create new -->
+                            <!-- ============================================================== -->
+                            <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav pt-0 py-md-0">
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold" href="/"
+                                        onclick="ga('send', 'event', 'Navbar', 'Community links', 'Bootstrap');">Home</a>
+                                </li>
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold active"
+                                        aria-current="true" href="/docs/5.0/getting-started/introduction/"
+                                        onclick="ga('send', 'event', 'Navbar', 'Community links', 'Docs');">학업지원</a>
+                                </li>
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold"
+                                        href="/docs/5.0/examples/"
+                                        onclick="ga('send', 'event', 'Navbar', 'Community links', 'Examples');">클래스룸</a>
+                                </li>
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold"
+                                        href="https://icons.getbootstrap.com/"
+                                        onclick="ga('send', 'event', 'Navbar', 'Community links', 'Icons');"
+                                        target="_blank" rel="noopener">프로젝트</a></li>
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold"
+                                        href="https://themes.getbootstrap.com/"
+                                        onclick="ga('send', 'event', 'Navbar', 'Community links', 'Themes');"
+                                        target="_blank" rel="noopener">공지사항</a></li>
+                                <li class="nav-item col-4 col-md-auto"><a class="nav-link fw-bold"
+                                        href="https://themes.getbootstrap.com/"
+                                        onclick="ga('send', 'event', 'Navbar', 'Community links', 'Themes');"
+                                        target="_blank" rel="noopener">마이페이지</a></li>
+                            </ul>
+                            <!-- 언어 변경 -->
+                            <li class="nav-item d-none">
+                                <a class="nav-link" href="javascript:void(0)">
+                                    <div class="customize-input">
+                                        <select
+                                            class="custom-select form-control bg-white custom-radius custom-shadow border-0">
+                                            <option selected>EN</option>
+                                            <option value="1">AB</option>
+                                            <option value="2">AK</option>
+                                            <option value="3">BE</option>
+                                        </select>
+                                    </div>
+                                </a>
+                            </li>
+                            <!-- 언어 변경 끝-->
+                        </ul>
+                        <!-- ============================================================== -->
+                        <!-- Right side toggle and nav items -->
+                        <!-- ============================================================== -->
+                        <ul class="navbar-nav float-end">
+                            <!-- ============================================================== -->
+                            <!-- Search -->
+                            <!-- ============================================================== -->
+                            <li class="nav-item d-none">
+                                <a class="nav-link" href="javascript:void(0)">
+                                    <form>
+                                        <div class="customize-input">
+                                            <input class="form-control custom-shadow custom-radius border-0 bg-white"
+                                                type="search" placeholder="Search" aria-label="Search">
+                                            <i class="form-control-icon" data-feather="search"></i>
+                                        </div>
+                                    </form>
+                                </a>
+                            </li>
+                            <!-- ============================================================== -->
+                            <!-- User profile and search -->
+                            <!-- ============================================================== -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    <img src="../assets/images/users/profile-pic.jpg" alt="user" class="rounded-circle"
+                                        width="40">
+                                    <span class="ms-2 d-none d-lg-inline-block"><span class="text-dark">
+                                            <sec:authentication property="principal.member.userNo" />
+                                        </span><span>님 (
+                                            <sec:authentication property="principal.member.userType" />)
+                                        </span> <i data-feather="chevron-down" class="svg-icon"></i></span>
+                                </a>
+                                <div
+                                    class="dropdown-menu dropdown-menu-end dropdown-menu-right user-dd animated flipInY">
+                                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="user"
+                                            class="svg-icon me-2 ms-1"></i>
+                                        My Profile</a>
+                                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="credit-card"
+                                            class="svg-icon me-2 ms-1"></i>
+                                        My Balance</a>
+                                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="mail"
+                                            class="svg-icon me-2 ms-1"></i>
+                                        Inbox</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="settings"
+                                            class="svg-icon me-2 ms-1"></i>
+                                        Account Setting</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="javascript:void(0)"><i data-feather="power"
+                                            class="svg-icon me-2 ms-1"></i>
+                                        Logout</a>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="pl-4 p-3"><a href="javascript:void(0)" class="btn btn-sm btn-info">View
+                                            Profile</a></div>
+                                </div>
+                            </li>
+                            <!-- ============================================================== -->
+                            <!-- User profile and search -->
+                            <!-- ============================================================== -->
+                            <!-- Notification -->
+
+                            <!-- End Notification -->
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+        </div>
+        <!-- ::: TOPbar 끝 ::: -->
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <div class="center-wrap">
+            <!-- ::: LeftNav 시작 ::: -->
+            <!-- ::: LeftNav 끝 ::: -->
+            <!-- ============================================================== -->
+            <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Page wrapper  -->
+            <!-- ============================================================== -->
+            <div class="page-wrapper page-wrapper2 px-0 res-div">
+                <!-- ============================================================== -->
+                <!-- Bread crumb and right sidebar toggle -->
+                <!-- ============================================================== -->
+                <div class="row mt-4 mx-2">
+                    <div class="col-10">
+                        <div class="col">
+                            <label for="">
+                                <h3>이력서 제목</h3>
+                            </label>
+                        </div>
+                        <div class="card">
+                            <input class="form-control" type="text" name="resumeNm" placeholder="나를 가장 잘 소개할 수 있는 이력서 제목을 입력해주세요">
+                        </div>
+                        <div class="col">
+                            <h3>기본사항</h3>
+                        </div>
+                        <div class="card py-3"> <!-- 기본사항 -->
+                            <div class="row">
+                                <div class="col-3 d-flex justify-content-center">
+                                    <div class="photo-box pull-right mt-3">
+                                        <div class="btn-open">
+                                            <p>사진추가</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-9">
+                                    <div class="row me-1 py-2 ">
+                                        <div class="col-1 d-flex align-items-center">이름</div>
+                                        <div class="col-3"> <input class="form-control" type="text" /></div>
+                                        <div class="col-2 ps-4 d-flex align-items-center justify-content-end ">생년월일</div>
+                                        <div class="col-3 px-0"> <input class="form-control" type="text" /></div>
+                                        <div class="col-1  d-flex align-items-center justify-content-end">성별</div>
+                                        <div class="col-2">
+                                            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                                                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
+                                                    checked>
+                                                <label class="btn btn-outline-primary" for="btnradio1">남성</label>
+                                                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                                                <label class="btn btn-outline-primary" for="btnradio2">여성</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row me-1 py-2 ">
+                                        <div class="col-1">주소</div>
+                                        <div class="col-11">
+                                            <div class="row g-3 ">
+                                                <div class="col-10 mb-2">
+                                                    <input class="form-control" type="text" />
+                                                </div>
+                                                <div class="col-2"><input class="form-control" type="text" /></div>
+                                            </div>
+                
+                                            <input class="form-control" type="text" />
+                                        </div>
+                                    </div>
+                                    <div class="row me-1 py-2 ">
+                                        <div class="col-1 d-flex align-items-center">전화</div>
+                                        <div class="col-4 pe-0"><input class="form-control" type="text" /></div>
+                                        <div class="col-2 d-flex align-items-center justify-content-end">이메일</div>
+                                        <div class="col-5"><input class="form-control" type="text" /></div>
+                                    </div>
+                                </div>
+                            </div>
+                
+                        </div>
+                
+                        <div class="col">
+                            <h3>학력사항</h3>
+                        </div>
+                        <div class="card py-3"> <!-- 학력사항 -->
+                            <div class="row mx-1 py-2" style="border-bottom: solid 1px #888;">
+                                <div class="col-3 text-center">구분</div>
+                                <div class="col-4 text-center" id="">학교명</div>
+                                <div class="col-3 text-center">계열</div>
+                                <div class="col-2 text-center">졸업년월</div>
+                            </div>
+                            <div class="row mx-1 py-2 ">
+                                <div class="col-3 text-center"> <!--학력사항-고등학교-구분(readonly)-->
+                                    <input class="form-control" type="text" value="고등학교" readonly />
+                                </div>
+                                <div class="col-4"><input class="form-control" name="highschNm" id="highschNm" type="text" /></div><!--학력사항-고등학교-학교명-->
+                                <div class="col-3"><!--학력사항-고등학교-계열-->
+                                    <select class="form-select mr-sm-2" name="highschType" id="highschType">
+                                        <option selected="">계열 구분</option>
+                                        <option value="100">일반</option>
+                                        <option value="200">특성화</option>
+                                        <option value="300">특수목적</option>
+                                    </select>
+                                </div>
+                                <div class="col-2 text-end position-relative"><input class="form-control" name="highschGrdtnYm" id="highschGrdtnYm" type="month" /><!--학력사항-고등학교-졸업년월-->
+                            </div>
+                
+                
+                            </div>
+                            <hr />
+                            <div class="row mx-1 py-2" style="border-bottom: solid 1px #888;">
+                                <div class="col-2 text-center">대학(원) 구분</div>
+                                <div class="col-2 text-center">학교명</div>
+                                <div class="col-1 text-center">학과</div>
+                                <div class="col-4 text-center">기간</div>
+                                <div class="col-1 text-center">상태</div>
+                                <div class="col-2 text-center">학점</div>
+                            </div>
+                            <div id="input-acbg" class="row mx-1 py-2 ">
+                                <div class="col-2 text-center"> <!--학력사항-대학(원)-구분-->
+                                    <select class="form-select mr-sm-2" name="acbgList[0].schlSeCd"> 
+                                        <option selected="">대학(원) 구분</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                </div>
+                                <div class="col-2"><input class="form-control" type="text" name="acbgList[0].schlNm"/></div>
+                                <div class="col-1"><input class="form-control" type="text" name="acbgList[0].departNm"/></div>
+                                <div class="col-4"><input class="form-control d-inline-block" style="width: 45%;" type="month" name="acbgList[0].mtcltnYm"/> ~
+                                    <input class="form-control d-inline-block" name="acbgList[0].grdtnYm" style="width: 45%;" type="month" />
+                                </div>
+                                <div class="col-1">
+                                    <select class="form-control mr-sm-2" name="acbgList[0].grdtnState">
+                                        <option selected="">졸업</option>
+                                        <option value="1">재학중</option>
+                                        <option value="2">휴학</option>
+                                        <option value="3">수료</option>
+                                    </select>
+                                </div>
+                                <div class="col-2 text-end position-relative" >
+                                    <input class="form-control d-inline-block" style="width: 40%;" type="text" name="acbgList[0].userCredit"/> /
+                                    <select class="d-inline-block form-control mr-sm-2" style="width: 40%;" name="acbgList[0].baseCredit">
+                                        <option selected="4.5">4.5</option>
+                                        <option value="4.3">4.3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x form-control-icon del-btn"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </div>
+                            </div>
+                            <div id="add-acbg-div" class="row mx-1 py-2">
+                                <div class="col-12 text-end">
+
+                                    <button type="button" id="add-acbg-btn" class="btn btn-sm waves-effect waves-light btn-outline-info">대학(원) 추가</button>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="col">
+                            <h3>면허/자격증</h3>
+                        </div>
+                        <div class="card py-3">
+                            <div class="row mx-1 py-2" style="border-bottom: solid 1px #888;">
+                                <div class="col-5 text-center">면허/자격증</div>
+                                <div class="col-4 text-center">발급기관명</div>
+                                <div class="col-3 text-center">발급일</div>
+                            </div>
+                            <div id="input-crtfct" class="row mx-1 py-2">
+                                <div class="col-5 text-center"><input class="form-control" type="text" name="crtfctList[0].crtfctNm" /></div>
+
+                                <div class="col-4"><input class="form-control" type="text" name="crtfctList[0].issuInstNm" /></div>
+                                <div class="col-3 position-relative"><input class="form-control" type="date"  name="crtfctList[0].rtfctDt"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x form-control-icon del-btn"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </div>
+                            </div>
+                            <div id="add-crtfct-div" class="row mx-1 py-2">
+                                <div class="col-12 text-end position-relative">
+                                    <button type="button" id="add-crtfct-btn" class="btn btn-sm waves-effect waves-light btn-outline-info">자격(면허)
+                                        추가</button>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="col">
+                            <h3>경력사항</h3>
+                        </div>
+                        <div class="card py-3">
+                            <div class="row mx-1 py-2" style="border-bottom: solid 1px #888;">
+                                <div class="col-3 text-center">회사명</div>
+                                <div class="col-4 text-center">입사월 ~ 퇴사월</div>
+                                <div class="col-2 text-center">근무부서</div>
+                                <div class="col-1 text-center">직급명</div>
+                                <div class="col-2 text-center">재직여부</div>
+                            </div>
+                            <div  id="input-career" class="row mx-1 py-2 ">
+                                <div class="col-3 text-center"><input class="form-control" type="text" name="careerList[0].coNm" /></div>
+                                <div class="col-4"><input class="form-control d-inline-block" style="width: 45%;" type="month" name="careerList[0].jncmpYm" /> ~
+                                    <input class="form-control d-inline-block" style="width: 45%;" type="month" name="careerList[0].rsgntnYm" />
+                                </div>
+                                <div class="col-2"><input class="form-control" type="text" name="careerList[0].deptNm"/></div>
+                                <div class="col-1"><input class="form-control" type="text" name="careerList[0].jbgdNm" /></div>
+                                <div class="col-2 position-relative">
+                                    <select class="form-control mr-sm-2" name="careerList[0].hdofYn">
+                                        <option value="100">재직중</option>
+                                        <option selected="200">퇴사</option>
+
+                                    </select>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x form-control-icon del-btn"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </div>
+                
+                            </div>
+                            <div id="add-career-div" class="row mx-1 py-2">
+                                <div class="col-12 text-end">
+                                    <button type="button" id="add-career-btn" class="btn btn-sm waves-effect waves-light btn-outline-info">경력사항 추가</button>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="col">
+                            <h3>기술 숙련도</h3>
+                        </div>
+                        <div class="card py-3">
+                            <div class="row mx-1 py-2" style="border-bottom: solid 1px #888;">
+                                <div class="col-3 text-center">기술 스택명</div>
+                                <div class="col-2 text-center">숙련도</div>
+                                <div class="col-1 text-center"></div>
+                                <div class="col-3 text-center">기술 스택명</div>
+                                <div class="col-2 text-center">숙련도</div>
+                                <div class="col-1 text-center"></div>
+                            </div>
+                
+                            <div id="add-tech-div" class="row mx-1 py-2 ">
+                
+                                <div id="input-tech" class="row-con" style="width: 50%;">
+                                    <div class="col-6 text-center"><input class="form-control" name="TechInfoList[0].techNm"
+                                            type="text" /></div>
+                                    <div class="col-4">
+                                        <select class="form-control mr-sm-2" name="TechInfoList[0].skillLevel">
+                                            <option selected="">선택하세요</option>
+                                            <option value="1">상</option>
+                                            <option value="2">중</option>
+                                            <option value="3">하</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x form-control-icon del-btn2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
+                                </div>
+                
+                            </div>
+                
+                            <div class="row mx-1 py-2">
+                                <div class="col-12 text-end">
+                                    <button type="button" id="add-tech-btn" class="btn btn-sm waves-effect waves-light btn-outline-info">기술스택 추가</button>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="col">
+                            <h3>자기소개서</h3>
+                        </div>
+                        <div class="card py-3">
+                            <div class="row mx-1 py-2">
+                                <textarea class="form-control" rows="7" id="resumeIntroConn" name="resumeIntroConn"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="card py-0">
+                            <button type="button" class="btn btn-lg waves-effect waves-light btn-primary">작성완료</button>
+                        </div>
+                
+                    </div>
+                    <div class="col-2 res-remote"> <!-- 메뉴리모컨 -->
+                        <br><br>
+                        <div class="list-group res-remote-menu" style="background-color: white;">
+                            <a href="javascript:void(0)" class="list-group-item active">　이력서 작성　</a>
+                            <a href="javascript:void(0)" class="list-group-item"><i class="form-control-icon"
+                                    data-feather="search"></i>기본사항</a>
+                            <a href="javascript:void(0)" class="list-group-item">학력사항</a>
+                            <a href="javascript:void(0)" class="list-group-item">면허/자격증</a>
+                            <a href="javascript:void(0)" class="list-group-item">경력사항</a>
+                            <a href="javascript:void(0)" class="list-group-item">기술숙련도</a>
+                            <a href="javascript:void(0)" class="list-group-item">자기소개서</a>
+                        </div>
+                
+                    </div>
+                
+                
+                </div>
+
+
+                    <!-- ============================================================== -->
+                    <!-- footer -->
+                    <!-- ============================================================== -->
+                    <footer class="footer text-center text-muted">
+                        All Rights Reserved by <a href="https://adminmart.com/">TTTT</a>.
+                    </footer>
+                    <!-- ============================================================== -->
+                    <!-- End footer -->
+                    <!-- ============================================================== -->
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Page wrapper  -->
+            <!-- ============================================================== -->
+        </div>
+<script defer> // 항목 동적 추가 스크립트
+window.onload = function(){
+    // 배열 index 값 counter
+    var acbgCounter = 1;
+    var crtfctCounter = 1;
+    var careerCounter = 1;
+    var techCounter = 1;
+
+    // Get the template for the new elements
+    var acbg_template = document.querySelector("#input-acbg").cloneNode(true);
+    var crtfct_template = document.querySelector("#input-crtfct").cloneNode(true);
+    var career_template = document.querySelector("#input-career").cloneNode(true);
+    var tech_template = document.querySelector("#input-tech").cloneNode(true);
+
+    // 학력사항
+    document.getElementById('add-acbg-btn').addEventListener('click', function() {
+    
+    var newDiv = acbg_template.cloneNode(true);
+    resetForm(newDiv);
+
+    
+    var addButtonDiv = document.querySelector("#add-acbg-div");
+
+    
+    addButtonDiv.parentNode.insertBefore(newDiv, addButtonDiv);
+
+    acbgCounter++;
+    });
+
+    // 자격사항
+    document.getElementById('add-crtfct-btn').addEventListener('click', function() {
+    
+    var newDiv = crtfct_template.cloneNode(true);
+    resetForm(newDiv);
+
+    
+    var addButtonDiv = document.querySelector("#add-crtfct-div");
+
+    
+    addButtonDiv.parentNode.insertBefore(newDiv, addButtonDiv);
+
+    crtfctCounter++;
+    });
+
+    // 경력사항
+    document.getElementById('add-career-btn').addEventListener('click', function() {
+    
+    var newDiv = career_template.cloneNode(true);
+    resetForm(newDiv);
+
+    
+    var addButtonDiv = document.querySelector("#add-career-div");
+
+    
+    addButtonDiv.parentNode.insertBefore(newDiv, addButtonDiv);
+
+    careerCounter++;
+    });
+
+    // 기술숙련도
+    document.getElementById('add-tech-btn').addEventListener('click', function() {
+    
+    var newDiv = tech_template.cloneNode(true);
+    resetForm(newDiv);
+
+    
+    var addButtonDiv = document.querySelector("#add-tech-div");
+
+    
+    // addButtonDiv.parentNode.insertBefore(newDiv, addButtonDiv);
+
+    addButtonDiv.insertAdjacentElement("beforeend", newDiv);
+    techCounter++;
+    });
+
+    // Function to handle click event on the "delete" button
+    document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('del-btn')) {
+        // Remove the parent div of the clicked button
+        e.target.closest('.row').remove();
+    }
+    });
+
+
+        // Function to handle click event on the "delete" button
+    document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('del-btn2')) {
+        // Remove the parent div of the clicked button
+        e.target.closest('.row-con').remove();
+    }
+    });
+
+ 
+
+
+    
+    function resetForm(newDiv) {
+    
+           // input과 select의 value값 초기화
+    var inputs = newDiv.querySelectorAll('input');
+    inputs.forEach(input => input.value = '');
+    
+    var selects = newDiv.querySelectorAll('select');
+    selects.forEach(select => select.selectedIndex = 0);
+    
+    // index값 변경
+    var formElements = newDiv.querySelectorAll('select, input');
+    formElements.forEach(function(element) {
+        var name = element.getAttribute('name');
+        if (name) {
+        name = name.replace('[0]', '[' + acbgCounter + ']');
+        element.setAttribute('name', name);
+        }
+    });
+    }
+}
+
+        </script>
+        <!-- ============================================================== -->
+        <!-- End Wrapper -->
+        <!-- ============================================================== -->
+        <!-- End Wrapper -->
+        <!-- ============================================================== -->
+        <!-- All Jquery -->
+        <!-- ============================================================== -->
+        <!-- ::: Footjs 시작 ::: -->
+        <!-- apps -->
+        <!-- apps -->
+        <script src="../dist/js/app-style-switcher.js"></script>
+        <script src="../dist/js/feather.min.js"></script>
+        <!-- slimscrollbar scrollbar JavaScript -->
+        <script src="../assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+        <script src="../assets/extra-libs/sparkline/sparkline.js"></script>
+        <!--Wave Effects -->
+        <!-- themejs -->
+        <!--Menu sidebar -->
+        <script src="../dist/js/sidebarmenu.js"></script>
+        <!--Custom JavaScript -->
+        <script src="../dist/js/custom.min.js"></script>
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.all.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.min.css" rel="stylesheet">
+        <!-- ::: Footjs 끝 ::: -->
+</body>
+
+</html>

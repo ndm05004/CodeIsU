@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.stu.resume.mapper.ResumeMapper">
+
+	<insert id="tbResumeInsert" parameterType="ResumeVO" useGeneratedKeys="true">
+		<selectKey keyProperty="resumeNo"  resultType="String" order="BEFORE">
+			SELECT 'R'||TO_CHAR(SYSDATE, 'YYMMDD')||LPAD(SEQ_TB_RESUME.NEXTVAL,4,0) FROM DUAL
+		</selectKey>
+	INSERT INTO TB_RESUME (
+	    RESUME_NO
+	    , STU_NO
+	    , RESUME_NM
+	    , ATCH_FILE_NO
+	    , HIGHSCH_NM
+	    , HIGHSCH_TYPE
+	    , HIGHSCH_GRDTN_YM
+	    , RESUME_INTRO_CONN
+	    , REG_DT
+	    )
+	VALUES (
+	    #{resumeNo}
+	    , #{stuNo}
+	    , #{resumeNm}
+	    , #{atchFileNo}
+	    , #{highschNm}
+	    , #{highschType}
+	    , #{highschGrdtnYm}
+	    , #{resumeIntroConn}
+	    , SYSDATE
+		)
+
+	</insert>
+
+	<insert id="tbAcbgInsert" parameterType="ResAcbgInfoVO">
+	INSERT INTO TB_ACBG_INFO (
+	    RESUME_NO
+	    , ACBG_NO
+	    , SCHL_SE_CD
+	    , SCHL_NM
+	    , DEPART_NM
+	    , MTCLTN_YM
+	    , GRDTN_YM
+	    , GRDTN_STATE
+	    , SCHL_CREDIT
+	    )
+	    VALUES (
+	    #{resumeNo}
+	    , #{acbgNo}
+	    , #{schlSeCd}
+	    , #{schlNm}
+	    , #{departNm}
+	    , #{mtcltnYm}
+	    , #{grdtnYm}
+	    , #{grdtnState}
+	    , #{userCredit}||'/'||#{baseCredit}
+	    )
+	</insert>
+
+	<insert id="tbCrtfctInsert" parameterType="ResCrtfctInfoVO">
+	INSERT INTO TB_CRTFCT_INFO (
+	    CRTFCT_NO
+		, RESUME_NO
+		, CRTFCT_NM
+		, ISSU_INST_NM
+		, CRTFCT_DT
+		) VALUES (
+		#{crtfctNo}
+		, #{resumeNo}
+		, #{crtfctNm}
+		, #{issuInstNm}
+		, #{crtfctDt}
+		)
+	</insert>
+
+	<insert id="tbCareerInsert" parameterType="ResCareerInfoVO">
+	INSERT INTO TB_CAREER_INFO  (
+		CAREER_NO
+		, RESUME_NO
+		, CO_NM
+		, JNCMP_YM
+		, RSGNTN_YM
+		, DEPT_NM
+		, JBGD_NM
+		, HDOF_YN
+		) VALUES (
+		#{careerNo}
+		, #{resumeNo}
+		, #{coNm}
+		, #{jncmpYm}
+		, #{rsgntnYm}
+		, #{deptNm}
+		, #{jbgdNm}
+		, #{hdofYn}
+	)
+	</insert>
+
+	<insert id="tbTechInsert" parameterType="ResTechInfoVO">
+	INSERT INTO TB_TECH_INFO  (
+		TECH_NO
+		, RESUME_NO
+		, TECH_NM
+		, SKILL_LEVEL
+		) VALUES (
+		#{techNo}
+		, #{resumeNo}
+		, #{techNm}
+		, #{skillLevel}
+	)
+	</insert>
+
+
+
+	<!-- Resume View -->
+		<!-- Resume View :: ResumeVO (이력서)-->
+	<select id="selectResume" parameterType="String" resultType="ResumeVO">
+	/* team.tttt.pms.stu.resume.mapper.ResumeMapper.selectResume */
+		SELECT
+			RESUME_NO
+			, STU_NO
+			, RESUME_NM
+			, ATCH_FILE_NO
+			, HIGHSCH_NM
+			, HIGHSCH_TYPE
+			, HIGHSCH_GRDTN_YM
+			, RESUME_INTRO_CONN
+			, REG_DT
+			, DEL_YN
+		FROM TB_RESUME
+		WHERE RESUME_NO = #{resumeNo}
+			AND DEL_YN = 'N'
+	</select>
+	<select id="getUserInfo" parameterType="string" resultType="UserVO">
+		SELECT
+			STU_NO
+			, USER_NM
+			, USER_EML_ADDR
+			, USER_PHONENO
+			, USER_ZIP
+			, USER_ADDR
+			, USER_DADDR
+			, USER_BRDT
+			, USER_GENDER
+		FROM TB_STU
+		WHERE STU_NO = #{stuNo}
+	</select>
+
+		<!-- Resume View :: ResAcbgInfoVO (이력서-학력사항) -->
+	<select id="selectAcbgList" parameterType="String" resultType="ResAcbgInfoVO">
+	/* team.tttt.pms.stu.resume.mapper.ResumeMapper.selectAcbgList */
+		SELECT
+			A.RESUME_NO AS RESUME_NO
+			, A.ACBG_NO AS ACBG_NO
+			, C1.CD_NM AS SCHL_SE_CD
+			, A.SCHL_NM AS SCHL_NM
+			, A.DEPART_NM AS DEPART_NM
+			, A.MTCLTN_YM AS MTCLTN_YM
+			, A.GRDTN_YM AS GRDTN_YM
+			, C2.CD_NM AS GRDTN_STATE
+			, A.SCHL_CREDIT AS SCHL_CREDIT
+		FROM TB_ACBG_INFO A
+		JOIN TB_CM_CD C1 ON C1.CD_TYPE_ID = 'R001'
+		JOIN TB_CM_CD C2 ON C2.CD_TYPE_ID = 'R003'
+		WHERE C1.CD_VL = A.SCHL_SE_CD
+			AND C2.CD_VL = A.GRDTN_STATE
+			AND A.RESUME_NO = #{resumeNo}
+	</select>
+		<!-- Resume View :: ResCrtfctInfoVO (이력서-자격사항) -->
+	<select id="selectCrtfctList" parameterType="String" resultType="ResCrtfctInfoVO">
+		SELECT
+			CRTFCT_NO
+			, RESUME_NO
+			, CRTFCT_NM
+			, ISSU_INST_NM
+			, CRTFCT_DT
+		FROM TB_CRTFCT_INFO
+		WHERE RESUME_NO = #{resumeNo}
+	</select>
+		<!-- Resume View :: ResCareerInfoVO (이력서-경력사항) -->
+	<select id="selectCareerList" parameterType="String" resultType="ResCareerInfoVO">
+	/* team.tttt.pms.stu.resume.mapper.ResumeMapper.selectCareerList */
+		SELECT
+			CAREER_NO
+			, RESUME_NO
+			, CO_NM
+			, JNCMP_YM
+			, RSGNTN_YM
+			, DEPT_NM
+			, JBGD_NM
+			, CASE WHEN HDOF_YN = 'Y' THEN '재직중' ELSE '퇴사' END AS HDOF_YN
+		FROM TB_CAREER_INFO
+		WHERE RESUME_NO = #{resumeNo}
+	</select>
+		<!-- Resume View :: ResTechInfoVO (이력서-기술 숙련도) -->
+	<select id="selectTechList" parameterType="String" resultType="ResTechInfoVO">
+	/* team.tttt.pms.stu.resume.mapper.ResumeMapper.selectTechList */
+		SELECT
+			TECH_NO
+			,RESUME_NO
+			,TECH_NM
+			,C1.CD_NM AS SKILL_LEVEL
+		FROM TB_TECH_INFO A
+		JOIN TB_CM_CD C1 ON C1.CD_TYPE_ID = 'R004'
+		WHERE C1.CD_VL = A.SKILL_LEVEL
+			AND A.RESUME_NO = #{resumeNo}
+	</select>
+
+	<!-- //Resume View -->
+
+	<!-- 본인 이력서 리스트 조회 -->
+	<select id="selectResumeList" parameterType="String" resultType="ResumeVO">
+	/* team.tttt.pms.stu.resume.mapper.ResumeMapper.selectResumeList */
+		SELECT
+			RESUME_NO
+			,STU_NO
+			,RESUME_NM
+			,RESUME_INTRO_CONN
+			,REG_DT
+			,MAIN_RESUME_YN
+		FROM TB_RESUME
+		WHERE STU_NO = #{userNo}
+		AND DEL_YN = 'N'
+		ORDER BY REG_DT DESC
+	</select>
+
+	<!-- 대표이력서 설정 -->
+		<!-- 모든이력서  MAIN_RESUME_YN 'N' 만들기-->
+	<update id="updateAllResMainN" parameterType="String">
+	/* team.tttt.pms.stu.resume.mapper.ResumeMapper.updateAllResMainN(String) */
+		UPDATE TB_RESUME
+		SET MAIN_RESUME_YN = 'N'
+		WHERE STU_NO = #{stuNo}
+	</update>
+
+		<!-- 특정 이력서만 Y값 만들기 -->
+	<update id="updateSelectResMainY" parameterType="String">
+	/* team.tttt.pms.stu.resume.mapper.ResumeMapper.updateSelectResMainY(String) */
+		UPDATE TB_RESUME
+		SET MAIN_RESUME_YN = 'Y'
+		WHERE RESUME_NO = #{resumeNo}
+	</update>
+
+
+
+
+
+
+
+</mapper>

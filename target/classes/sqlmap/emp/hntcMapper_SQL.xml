@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.emp.hntc.mapper.HntcMapper">
+
+
+	<sql id="boardSearch">
+		<if test="searchType != null and searchType == 'title'">
+			and (HNTC_NM like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'writer'">
+			and (B.USER_NM like '%'||#{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'titleWriter'" >
+			and (HNTC_NM like '%'||#{searchWord}||'%') or
+			(B.USER_NM like '%'||#{searchWord}||'%')
+		</if>
+	</sql>
+
+	<!-- 공지사항 등록 -->
+	<insert id="hntcInsert" parameterType="hntcVO">
+	<!-- team.tttt.pms.emp.hntc.mapper.HntcMapper.hntcInsert -->
+	INSERT INTO TB_HNTC(
+		HNTC_NO
+		, EMP_NO
+		, HNTC_NM
+		, HNTC_DT
+		, HNTC_CN
+		, CHECK_NO
+	)VALUES(
+		'HN'||SEQ_HNTC.NEXTVAL
+		, #{empNo}
+		, #{hntcNm}
+		, sysdate
+		, #{hntcCn}
+		, 0
+	)
+	</insert>
+
+	<!-- 공지사항 전체 조회 -->
+	<select id="selectHntc" parameterType="PaginationInfoVO" resultType="hntcVO">
+	<!-- team.tttt.pms.emp.hntc.mapper.HntcMapper.selectHntc -->
+
+		SELECT b.*
+		from(
+			select
+				a.*
+				, row_number() over ( order by TO_NUMBER(SUBSTR(A.HNTC_NO, 3))DESC) rnum
+				from(
+					SELECT
+							A.HNTC_NO
+							, B.USER_NM AS EMP_NO
+							, A.HNTC_NM
+							, to_char(A.HNTC_DT, 'yyyy-mm-dd') as HNTC_DT
+							, A.CHECK_NO
+					FROM TB_HNTC A
+					LEFT OUTER JOIN TB_EMP B ON B.EMP_NO = A.EMP_NO
+					where 1=1
+					<include refid="boardSearch"/>
+					ORDER BY TO_NUMBER(SUBSTR(A.HNTC_NO, 3)) DESC
+				) a
+			) b
+		<![CDATA[
+			where b.rnum >= #{startRow} and b.rnum <= #{endRow}
+		]]>
+		ORDER BY RNUM DESC
+
+	</select>
+
+	<select id="selectBoardCount" resultType="int" parameterType="PaginationInfoVO">
+		select
+			count(A.HNTC_NO)
+			, count(B.USER_NM)
+		FROM
+			TB_HNTC A
+			LEFT OUTER JOIN TB_EMP B ON B.EMP_NO = A.EMP_NO
+		where
+			1=1
+		<include refid="boardSearch"/>
+	</select>
+
+
+	<!-- 선택한 공지사항 조회수 업데이트 -->
+	<update id="hntcCheckNoUp" parameterType="String">
+	/* team.tttt.pms.emp.hntc.mapper.HntcMapper.hntcCheckNoUp */
+	UPDATE TB_HNTC A
+	SET
+		A.CHECK_NO = A.CHECK_NO+1
+	WHERE A.HNTC_NO = #{bono}
+	</update>
+
+	<!-- 선택한 공지사항 게시글 정보가져오기 -->
+	<select id="detailHntc" parameterType="String" resultType="hntcVO">
+	<!-- team.tttt.pms.emp.hntc.mapper.HntcMapper.detailHntc -->
+	SELECT
+	    A.HNTC_NO
+	    , A.EMP_NO
+	    , A.HNTC_NM
+	    , to_char(A.HNTC_DT, 'yyyy-mm-dd') as HNTC_DT
+	    , A.HNTC_CN
+	    , A.ATCH_FILE_NO
+	    , A.CHECK_NO
+	    , B.USER_NM
+	FROM TB_HNTC A
+	JOIN TB_EMP B ON A.EMP_NO = B.EMP_NO
+	WHERE HNTC_NO =  #{boNo}
+	</select>
+
+	<!-- 선택한 공지사항 게시글 삭제 -->
+	<delete id="hntcDel" parameterType="String">
+	<!-- team.tttt.pms.emp.hntc.mapper.HntcMapper.hntcDel -->
+	DELETE FROM TB_HNTC
+	WHERE HNTC_NO = #{boNo}
+	</delete>
+
+	<!-- 선택한 공지사항 게시글 수정 -->
+	<update id="updateHntc" parameterType="hntcVO">
+	<!-- team.tttt.pms.emp.hntc.mapper.HntcMapper.updateHntc -->
+	UPDATE TB_HNTC
+	SET
+		HNTC_NM = #{hntcNm}
+		, HNTC_CN = #{hntcCn}
+	WHERE HNTC_NO = #{hntcNo}
+	</update>
+
+	<!-- 메인에서 쓸 공지사항 리스트 -->
+	<select id="hntcList" resultType="HntcVO">
+	SELECT
+		SUBSTR(A.HNTC_NO, 3) AS HNTC_NO
+		, B.USER_NM AS EMP_NO
+		, A.HNTC_NM
+		, TO_CHAR(A.HNTC_DT, 'yyyy-mm-dd') AS HNTC_DT
+		, A.HNTC_CN
+		, A.ATCH_FILE_NO
+		, A.CHECK_NO
+	FROM TB_HNTC A
+	LEFT OUTER JOIN TB_EMP B ON B.EMP_NO = A.EMP_NO
+	ORDER BY A.HNTC_DT DESC
+	</select>
+
+	<!-- 공지사항 조회2 -->
+	<select id="detailHntc2" parameterType="String" resultType="HntcVO">
+	SELECT
+	    A.HNTC_NO
+	    , A.EMP_NO
+	    , A.HNTC_NM
+	    , to_char(A.HNTC_DT, 'yyyy-mm-dd') as HNTC_DT
+	    , A.HNTC_CN
+	    , A.ATCH_FILE_NO
+	    , A.CHECK_NO
+	    , B.USER_NM
+	FROM TB_HNTC A
+	JOIN TB_EMP B ON A.EMP_NO = B.EMP_NO
+	WHERE HNTC_NO LIKE 'HN'||#{bono}
+	</select>
+
+	<!-- 조회수 증가2 -->
+	<update id="hntcCheckNoUp2" parameterType="String">
+	UPDATE TB_HNTC A
+	SET
+		A.CHECK_NO = A.CHECK_NO+1
+	WHERE A.HNTC_NO LIKE 'HN'||#{bono}
+	</update>
+</mapper>

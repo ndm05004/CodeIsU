@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.createProj.mapper.CreateProjMapper">
+
+
+<resultMap type="ProjVO" id="projMap" >
+    <result property="projNo" column="PROJ_NO"/>
+    <result property="stuNo" column="STU_NO"/>
+</resultMap>
+
+
+
+<!-- Type별 프로젝트 리스트 가져오기 -->
+<sql id="statusType">
+	<if test ="projSttsCd != null and projSttsCd =='P002-1'">
+		AND (PROJ_STTS_CD = 'P002-1')
+	</if>
+	<if test ="projSttsCd != null and projSttsCd == 'P002-2'">
+		AND (PROJ_STTS_CD = 'P002-2')
+	</if>
+	<if test ="projSttsCd != null and projSttsCd == 'P002-3'">
+		AND (PROJ_STTS_CD = 'P002-3')
+	</if>
+	<if test ="projSttsCd != null and projSttsCd == 'P002-4'">
+		AND (PROJ_STTS_CD = 'P002-4')
+	</if>
+	<if test ="projNm != null">
+		AND (PROJ_NM like '%' || #{projNm} || '%')
+	</if>
+</sql>
+
+<!-- 프로젝트 리스트 가져오기 -->
+<select id="projList" resultType="ProjVO" parameterType="ProjVO">
+SELECT
+    C.CD_NM AS PROJ_STTS_CD
+    , A.PROJ_NO
+	, A.PROJ_NM
+	, A.PROJ_EXPLN
+	, A.PROJ_TNOPE
+	, A.PROJ_BGNG_DT
+	, A.PROJ_DDLN_DT
+	, A.PROJ_STTR
+	, A.PROJ_STTS_CD
+	, A.PROJ_TECH
+FROM TB_PROJ A
+    JOIN TB_CM_CD C ON C.CD_TYPE_ID = SUBSTR(A.PROJ_STTS_CD, 1, INSTR(A.PROJ_STTS_CD, '-') -1)
+    AND C.CD_VL = SUBSTR(A.PROJ_STTS_CD, INSTR(A.PROJ_STTS_CD, '-') + 1)
+    AND (C.CD_TYPE_ID = 'P002' OR C.CD_TYPE_ID = 'P004')
+    AND C.CD_C_USE_YN = 'Y'
+    <include refid="statusType" />
+	ORDER BY PROJ_NO DESC
+</select>
+
+<!-- 프로젝트 생성 -->
+<insert id="insertProj" parameterType="ProjVO">
+INSERT INTO TB_PROJ(
+	PROJ_NO
+	,PROJ_NM
+	, PROJ_EXPLN
+	, PROJ_BGNG_DT
+	, PROJ_DDLN_DT
+	, PROJ_TECH
+
+) VALUES(
+	'a0' || seq_tb_proj.nextval
+	, #{projNm}
+	, #{projExpln}
+	, #{projBgngDt}
+	, #{projDdlnDt}
+	, #{projTech}
+
+)
+</insert>
+
+<insert id="insertPL" parameterType="string">
+
+	INSERT INTO TB_PRO_MEM (
+	STU_NO
+	, TEAM_JOIN_DT
+	, JBTTL_CD
+	, PROJ_NO)
+	VALUES(
+	#{stuNo}
+	, sysdate
+	, 'P001-1'
+	, 'a0'||seq_tb_proj.currval)
+
+
+</insert>
+
+
+<insert id="insertAply" parameterType="MemJoinAplyVO">
+INSERT INTO TB_JOIN_APLY(
+	STU_NO
+	, PROJ_NO
+	, APLY_CN
+	, APLY_TECH
+	, APPLY_DATE
+)VALUES(
+	#{stuNo}
+	,#{projNo}
+	,#{aplyCn}
+	,#{aplyTech}
+	,sysdate
+)
+</insert>
+
+<select id="detail" parameterType="String" resultType="ProjVO">
+SELECT
+PROJ_NO
+, PROJ_NM
+, PROJ_EXPLN
+, PROJ_BGNG_DT
+, PROJ_DDLN_DT
+, PROJ_TNOPE
+, PROJ_STTS_CD
+, PROJ_CD
+, PROJ_STTR
+, PROJ_TECH
+FROM TB_PROJ
+WHERE PROJ_NO  = #{projNo}
+
+</select>
+
+<select id="aplyYn" parameterType="String" resultMap="projMap">
+SELECT p.proj_no, m.stu_no , p.proj_nm
+FROM tb_proj p
+JOIN tb_pro_mem m ON m.proj_no = p.proj_no
+WHERE m.stu_no = #{stuNo}
+
+UNION
+
+SELECT j.proj_no, j.stu_no, p2.proj_nm
+FROM TB_JOIN_APLY j
+JOIN tb_proj p2 ON p2.proj_no = j.proj_no
+WHERE stu_no = #{stuNo}
+
+</select>
+
+
+</mapper>

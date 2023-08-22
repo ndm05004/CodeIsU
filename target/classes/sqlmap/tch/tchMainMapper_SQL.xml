@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.tch.main.mapper.TchMainMapper">
+	<select id="selectClassList" parameterType="String" resultType="TchVO">
+		SELECT
+		    TB_SBJCT.SBJCT_NM AS SBJCT_NM
+		    , TB_SBJCT.SBJCT_CD AS SBJCT_CD
+		    , TB_LECTURE_ROOM.LECTURE_ROOM_NM AS LECTURE_ROOM_NM
+		    , TB_LECTURE_ROOM.LECTURE_ROOM_CD
+		    , TB_SBJCT.SBJCT_BGNG AS SBJCT_BGNG
+		    , TB_SBJCT.SBJCT_DDLB AS SBJCT_DDLB
+		    , TB_SBJCT.SCDU_HR AS SCDU_HR
+		FROM TB_EMP
+		JOIN TB_SBJCT ON TB_SBJCT.EMP_NO = TB_EMP.EMP_NO
+		JOIN TB_SVLF ON TB_SVLF.SVLF_NO = TB_SBJCT.SVLF_NO
+		JOIN TB_LECTURE_ROOM ON TB_LECTURE_ROOM.LECTURE_ROOM_CD = TB_SVLF.LECTURE_ROOM_CD
+		WHERE TB_EMP.EMP_NO =#{empNo}
+			AND TO_CHAR( SYSDATE, 'YYYY-MM-DD') BETWEEN TB_SBJCT.SBJCT_BGNG AND  TB_SBJCT.SBJCT_DDLB
+		ORDER BY TB_SBJCT.SBJCT_BGNG, TB_SBJCT.SCDU_HR
+    </select>
+
+    <select id="selectQntnAnsNoList" parameterType="String" resultType="QstnVO">
+		SELECT *
+		FROM (
+			SELECT
+			    TB_QSTN.QSTN_NO AS QSTN_NO
+			    , TB_QSTN.SBJCT_CD AS SBJCT_CD
+			    , TB_QSTN.QSTN_TTL AS QSTN_TTL
+			    , TO_CHAR(TB_QSTN.QSTN_DT, 'YYYY-MM-DD') AS QSTN_DT
+			    , TB_QSTN.QSTN_ANS AS QSTN_ANS
+			    , TB_QSTN.QSTN_ANS_DT AS QSTN_ANS_DT
+			    , TB_QSTN.EMP_NO AS EMP_NO
+			    , TB_QSTN.STU_NO AS STU_NO
+			    , TB_STU.USER_NM AS STU_NM
+			    , TB_STU.USER_PROFILE AS STU_PROFILE
+			    , TB_EMP.USER_PROFILE AS EMP_PROFILE
+			    , TB_EMP.USER_NM AS EMP_NM
+			FROM
+			    TB_QSTN
+			JOIN TB_STU ON TB_STU.STU_NO = TB_QSTN.STU_NO
+			JOIN TB_SBJCT ON TB_SBJCT.SBJCT_CD = TB_QSTN.SBJCT_CD
+			JOIN TB_EMP ON TB_EMP.EMP_NO = TB_SBJCT.EMP_NO
+			WHERE
+			    TB_SBJCT.EMP_NO = #{empNo}
+			    AND TB_QSTN.QSTN_ANS IS NULL
+			ORDER BY TB_QSTN.QSTN_DT DESC
+		)
+		<![CDATA[
+		WHERE ROWNUM <= 5
+		]]>
+    </select>
+
+    <select id="selectAsmtList" parameterType="String" resultType="AsmtVO">
+    	SELECT *
+		FROM (
+	    	SELECT
+			    TB_ASMT.ASMT_NO AS ASMT_NO
+			    , TB_ASMT.ASMT_TTL AS ASMT_TTL
+			    , TB_ASMT.ASMT_EXPLN AS ASMT_EXPLN
+			    , TO_CHAR(TB_ASMT.ASMT_DDLN, 'YYYY-MM-DD HH24:MI') AS ASMT_DDLN
+			    , TO_CHAR(TB_ASMT.ASMT_DT, 'YYYY-MM-DD HH24:MI') AS ASMT_DT
+			    , TB_ASMT.SBJCT_CD AS SBJCT_CD
+			    , TB_SBJCT.SVLF_NO AS SVLF_NO
+			    , (
+			            SELECT
+	                        COUNT(TB_STU.STU_NO)
+	                    FROM
+	                        TB_SBJCT sb
+	                    JOIN TB_STU ON sb.SVLF_NO = TB_STU.SVLF_NO
+	                    WHERE
+	                        sb.SBJCT_CD = TB_SBJCT.SBJCT_CD
+
+			        ) AS STU_ALL_CNT
+			    , (
+			            SELECT
+			                COUNT(DISTINCT(TB_QST_SBMSN.STU_NO))
+			            FROM TB_QST_SBMSN
+			            JOIN TB_QST ON TB_QST.QST_NO = TB_QST_SBMSN.QST_NO
+			            WHERE TB_QST.ASMT_NO = TB_ASMT.ASMT_NO
+	                        AND TB_QST_SBMSN.QST_SBMSN_YN != 'N'
+			    ) AS STU_SBMSN_CNT
+			FROM TB_ASMT
+			JOIN TB_SBJCT ON TB_SBJCT.SBJCT_CD = TB_ASMT.SBJCT_CD
+			WHERE TB_ASMT.EMP_NO = #{empNo} AND TB_ASMT.ASMT_YN ='Y'
+			ORDER BY TB_ASMT.ASMT_DT DESC
+		)
+		<![CDATA[
+		WHERE ROWNUM <= 3
+		]]>
+    </select>
+</mapper>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.emp.cmcode.mapper.CmCodeMapper">
+
+	<!-- 코드 그룹 목록 가져오기 -->
+	<select id="cmtyList" resultType="cmTypeVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.cmtyList -->
+	SELECT
+	    CD_TYPE_ID
+	    , CD_TYPE_NM
+	    , CD_T_USE_YN
+	FROM TB_CM_TYPE
+	ORDER BY CD_TYPE_ID ASC
+	</select>
+
+	<!-- 코드 그룹 목록 가져오기(본인 제외) -->
+	<select id="noMecodeTypeList" parameterType="String" resultType="cmTypeVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.cmtyList -->
+	SELECT
+	    A.CD_TYPE_ID
+	    , A.CD_TYPE_NM
+	    , A.CD_T_USE_YN
+	FROM TB_CM_TYPE A
+	WHERE A.CD_TYPE_ID NOT IN (#{codeTypeId})
+	ORDER BY A.CD_TYPE_ID ASC
+	</select>
+
+	<!-- 코드 그룹에 속하는 코드 목록 가져오기 -->
+	<select id="codeList" parameterType="String" resultType="CmCdVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.codeList -->
+	SELECT
+	    A.CD_VL
+	    , A.CD_TYPE_ID
+	    , A.CD_NM
+	    , A.CD_EXPLN
+	    , A.CD_C_USE_YN
+	FROM TB_CM_CD A
+	LEFT OUTER JOIN TB_CM_TYPE B ON A.CD_TYPE_ID = B.CD_TYPE_ID
+	WHERE A.CD_TYPE_ID = #{cdTypeId}
+	ORDER BY TO_NUMBER(A.CD_VL) ASC
+	</select>
+
+	<!-- 코드 그룹에 속하는 코드 목록 가져오기(본인 제외) -->
+	<select id="noMeCodeList" parameterType="CmCdVO" resultType="CmCdVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.noMeCodeList -->
+	SELECT
+	    A.CD_VL
+	    , A.CD_TYPE_ID
+	    , A.CD_NM
+	    , A.CD_EXPLN
+	    , A.CD_C_USE_YN
+	FROM TB_CM_CD A
+	WHERE A.CD_TYPE_ID = #{cdTypeId}
+	AND A.CD_VL NOT IN (#{cdVl})
+	ORDER BY TO_NUMBER(A.CD_VL) ASC
+	</select>
+
+	<!-- 코드 그룹 등록 -->
+	<insert id="codeTypeInsert" parameterType="cmTypeVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.codeTypeInsert -->
+	INSERT INTO TB_CM_TYPE(
+		CD_TYPE_ID
+		, CD_TYPE_NM
+		, CD_T_USE_YN
+	)VALUES(
+		#{cdTypeId}
+		, #{cdTypeNm}
+		, 'Y'
+	)
+	</insert>
+
+	<!-- 코드 그룹 수정 -->
+	<update id="codeTypeUpdate" parameterType="cmTypeVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.codeTypeUpdate -->
+	UPDATE TB_CM_TYPE
+	SET
+		CD_TYPE_NM = #{cdTypeNm}
+		, CD_T_USE_YN = #{cdTUseYn}
+	WHERE CD_TYPE_ID = #{cdTypeId}
+	</update>
+
+	<!-- 코드 등록 -->
+	<insert id="codeInsert" parameterType="CmCdVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.codeInsert -->
+	INSERT INTO TB_CM_CD(
+		CD_VL
+		, CD_TYPE_ID
+		, CD_NM
+		, CD_EXPLN
+		, CD_C_USE_YN
+	)VALUES(
+		(SELECT MAX(CD_VL) + 1
+			 FROM TB_CM_CD
+			 WHERE CD_TYPE_ID = #{cdTypeId})
+		, #{cdTypeId}
+		, #{cdNm}
+		, #{cdExpln}
+		, 'Y'
+	)
+	</insert>
+
+	<!-- 목록이 없는 코드 그릅의 코드 등록 -->
+	<insert id="noneCodeInsert" parameterType="CmCdVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.noneCodeInsert -->
+	INSERT INTO TB_CM_CD(
+		CD_VL
+		, CD_TYPE_ID
+		, CD_NM
+		, CD_EXPLN
+		, CD_C_USE_YN
+	)VALUES(
+		#{cdVl}
+		, #{cdTypeId}
+		, #{cdNm}
+		, #{cdExpln}
+		, 'Y'
+	)
+	</insert>
+
+	<!-- 코드 업데이트 -->
+	<update id="codeUpdate" parameterType="CmCdVO">
+	<!-- team.tttt.pms.emp.cmcode.mapper.CmCodeMapper.codeUpdate -->
+	UPDATE TB_CM_CD
+	SET
+		CD_NM = #{cdNm}
+		, CD_C_USE_YN = #{cdCUseYn}
+		, CD_EXPLN = #{cdExpln}
+	WHERE CD_TYPE_ID = #{cdTypeId}
+	AND CD_VL = #{cdVl}
+	</update>
+
+</mapper>

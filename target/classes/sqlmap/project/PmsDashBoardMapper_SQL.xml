@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.tttt.pms.project.dashBoard.mapper.PmsDashBoardMapper">
+
+<resultMap type="taskVO" id="taskMap">
+	<id 	property="taskNo" 		column="task_no" />
+	<result property="taskNo" 		column="task_no"/>
+	<result property="taskTitle" 	column="task_title"/>
+	<result property="taskPriority" column="task_priority"/>
+	<result property="taskBengDt" 	column="task_beng_dt"/>
+	<result property="taskDdlnDt" 	column="task_ddln_dt"/>
+	<result property="taskRegDt" 	column="task_reg_dt"/>
+	<result property="taskCn" 		column="task_cn"/>
+	<result property="projNo" 		column="proj_no"/>
+	<result property="taskStts" 	column="task_stts"/>
+	<result property="upperTask" 	column="upper_task"/>
+	<result property="taskSttr" 	column="task_sttr"/>
+	<collection property="asgList" 	resultMap="ASGMap"/>
+</resultMap>
+
+<resultMap type="asgVO" id="ASGMap">
+	<result property="taskNo" 		column="task_no"/>
+	<result property="stuNo" 		column="stu_no"/>
+	<result property="userNm" 		column="user_nm"/>
+</resultMap>
+
+
+<select id="getProject" parameterType="String" resultType="ProjVO">
+	select
+	a.PROJ_NO
+	, a.PROJ_NM
+	, a.PROJ_EXPLN
+	, TO_CHAR(TO_DATE(a.PROJ_BGNG_DT, 'yyyymmdd'), 'yyyy-mm-dd') AS PROJ_BGNG_DT
+	, TO_CHAR(TO_DATE(a.PROJ_DDLN_DT, 'yyyymmdd'), 'yyyy-mm-dd') AS PROJ_DDLN_DT
+	, a.PROJ_TNOPE
+	, a.PROJ_CD
+	, a.PROJ_STTR
+	, a.PROJ_TECH
+    , c.cd_nm as proj_stts_cd
+
+	from tb_proj a
+    join tb_cm_cd c on c.CD_TYPE_ID = SUBSTR(a.proj_stts_cd, 1, INSTR(a.proj_stts_cd, '-') -1)
+    and c.CD_VL = SUBSTR(a.proj_stts_cd, INSTR(a.proj_stts_cd, '-') + 1)
+    and c.CD_TYPE_ID = 'P002'
+    and c.CD_C_USE_YN = 'Y'
+	where proj_no = #{projNo}
+</select>
+
+
+<select id="getTask" parameterType="String" resultMap="taskMap">
+SELECT
+    t.task_no,
+    t.task_title,
+    c.cd_nm AS task_priority,
+    TO_CHAR(TO_DATE(t.task_beng_dt, 'yyyymmdd'), 'yyyy-mm-dd') AS task_beng_dt,
+    TO_CHAR(TO_DATE(t.task_ddln_dt, 'yyyymmdd'), 'yyyy-mm-dd') AS task_ddln_dt,
+    TO_CHAR(t.task_reg_dt, 'yyyy-mm-dd') AS task_reg_dt,
+    t.task_cn,
+    t.proj_no,
+    e.cd_nm AS task_stts,
+    t.upper_task,
+    t.task_sttr,
+    s.user_nm,
+    s.stu_no
+FROM
+    tb_task t
+JOIN tb_asg a ON t.task_no = a.task_no
+JOIN tb_stu s ON a.stu_no = s.stu_no
+JOIN tb_cm_cd c ON c.cd_type_id = 'P005' AND c.cd_c_use_yn = 'Y' AND c.cd_vl = SUBSTR(t.task_priority, INSTR(t.task_priority, '-') + 1)
+JOIN tb_cm_cd e ON e.cd_type_id = 'P003' AND e.cd_c_use_yn = 'Y' AND e.cd_vl = SUBSTR(t.task_stts, INSTR(t.task_stts, '-') + 1)
+WHERE
+    t.proj_no = #{projNo}
+
+</select>
+
+<select id="memList" resultType="memberInfoVO" parameterType="String">
+
+	WITH TaskCounts AS (
+	    SELECT
+	        s.stu_no,
+	        <![CDATA[
+	        COUNT(CASE WHEN t.task_sttr >= 100 THEN 1 END) AS complete,
+	        COUNT(CASE WHEN t.task_sttr < 100 THEN 1 END) AS progress
+	        ]]>
+	    FROM
+	        tb_task t
+	    JOIN tb_asg a ON t.task_no = a.task_no
+	    JOIN tb_stu s ON a.stu_no = s.stu_no
+	    WHERE
+	        t.proj_no = #{projNo}
+	    GROUP BY
+	        s.user_nm,
+	        s.stu_no
+	)
+	SELECT
+	    c.CD_NM AS JBTTL_CD,
+	    B.STU_NO,
+	    B.USER_NM,
+	    B.USER_EML_ADDR,
+	    a.TEAM_JOIN_DT,
+	    B.USER_PHONENO,
+	    a.JBTTL_CD AS cd_nm,
+	    B.USER_PROFILE,
+	    tc.complete,
+	    tc.progress
+	FROM
+	    TB_PRO_MEM a
+	JOIN TB_STU B ON a.STU_NO = B.STU_NO
+	JOIN TB_CM_CD c ON c.CD_TYPE_ID = SUBSTR(a.JBTTL_CD, 1, INSTR(a.JBTTL_CD, '-') - 1)
+	               AND c.CD_VL = SUBSTR(a.JBTTL_CD, INSTR(a.JBTTL_CD, '-') + 1)
+	               AND c.CD_TYPE_ID = 'P001'
+	               AND c.CD_C_USE_YN = 'Y'
+	LEFT JOIN TaskCounts tc ON a.stu_no = tc.stu_no
+	WHERE
+	    a.PROJ_NO = #{projNo}
+	ORDER BY
+	    SUBSTR(a.JBTTL_CD, INSTR(a.JBTTL_CD, '-') + 1)
+
+
+</select>
+
+
+<select id="getIssue" parameterType="String" resultType="IssueVO">
+
+    select
+	    a.PROJ_NO
+	    , a.STU_NO
+	    , TO_CHAR(a.ISSUE_REG_DT, 'yyyy-mm-dd') as ISSUE_REG_DT
+	    , d.CD_NM as ISSUE_CD
+	    , a.ISSUE_TTL
+	    , a.ISSUE_CN
+	    , c.CD_NM as ISSUE_STTS_CD
+	    , a.ISSUE_NO
+
+    from
+    	tb_issue a
+
+	    join tb_cm_cd c on c.CD_TYPE_ID = SUBSTR(a.ISSUE_STTS_CD, 1, INSTR(a.ISSUE_STTS_CD, '-') -1)
+	    and c.CD_VL = SUBSTR(a.ISSUE_STTS_CD, INSTR(a.ISSUE_STTS_CD, '-') + 1)
+	    and c.CD_TYPE_ID = 'P006'
+	    and c.CD_C_USE_YN = 'Y'
+
+	    join tb_cm_cd d on d.CD_TYPE_ID = SUBSTR(a.ISSUE_CD, 1, INSTR(a.ISSUE_CD, '-') -1)
+	    and d.CD_VL = SUBSTR(a.ISSUE_CD, INSTR(a.ISSUE_CD, '-') + 1)
+	    and d.CD_TYPE_ID = 'P007'
+	    and d.CD_C_USE_YN = 'Y'
+	where
+		proj_no = #{proj_no}
+
+</select>
+
+<select id="getMemJbttlCd" parameterType="hashMap" resultType="MemManagementVO">
+	select jbttl_cd
+	from tb_pro_mem
+	where stu_no = #{userNo} and proj_no = #{projNo}
+</select>
+
+
+
+<select id="countMyTask" parameterType="hashMap" resultType="TaskVO">
+	SELECT
+        t.TASK_TITLE
+        , c.CD_NM as task_stts
+	FROM
+	    tb_task t
+	JOIN tb_proj p ON p.proj_no = t.proj_no
+	JOIN tb_asg a ON t.task_no = a.task_no
+	JOIN tb_stu stu ON a.stu_no = stu.stu_no
+	join TB_CM_CD c on c.CD_TYPE_ID = SUBSTR(t.task_stts, 1, INSTR(t.task_stts, '-') - 1)
+	    and c.CD_VL = SUBSTR(t.task_stts, INSTR(t.task_stts, '-') + 1)
+	    and c.CD_TYPE_ID = 'P003'
+	    and c.CD_C_USE_YN = 'Y'
+	WHERE
+	<![CDATA[
+	    t.proj_no = #{projNo} and a.stu_no = #{stuNo} and rownum <=4
+	    ]]>
+    order by TO_NUMBER(SUBSTR(t.TASK_NO, 2)) desc
+
+</select>
+
+
+<select id="countMyIssue" parameterType="hashMap" resultType="IssueVO">
+		select
+            a.issue_ttl
+            , c.CD_NM as ISSUE_STTS_CD
+		from
+			tb_issue a
+            join tb_stu b on a.stu_no = b.stu_no
+            join TB_CM_CD c on c.CD_TYPE_ID = SUBSTR(a.ISSUE_STTS_CD, 1, INSTR(a.ISSUE_STTS_CD, '-') - 1)
+                and c.CD_VL = SUBSTR(a.ISSUE_STTS_CD, INSTR(a.ISSUE_STTS_CD, '-') + 1)
+                and c.CD_TYPE_ID = 'P006'
+                and c.CD_C_USE_YN = 'Y'
+		where
+		<![CDATA[
+			proj_no = #{projNo} and a.stu_no = #{stuNo} and rownum <=4
+			]]>
+        order by a.issue_no desc
+</select>
+
+
+<select id="indivisualTask" parameterType="hashMap" resultType="TaskVO">
+    SELECT
+        t.TASK_TITLE
+        , c.CD_NM as task_stts
+	FROM
+	    tb_task t
+	JOIN tb_proj p ON p.proj_no = t.proj_no
+	JOIN tb_asg a ON t.task_no = a.task_no
+	JOIN tb_stu stu ON a.stu_no = stu.stu_no
+	join TB_CM_CD c on c.CD_TYPE_ID = SUBSTR(t.task_stts, 1, INSTR(t.task_stts, '-') - 1)
+	    and c.CD_VL = SUBSTR(t.task_stts, INSTR(t.task_stts, '-') + 1)
+	    and c.CD_TYPE_ID = 'P003'
+	    and c.CD_C_USE_YN = 'Y'
+	WHERE
+		<![CDATA[
+			p.proj_no = #{projNo} and a.stu_no = #{stuNo} and rownum <= 3
+			]]>
+    order by TO_NUMBER(SUBSTR(t.TASK_NO, 2)) desc
+</select>
+
+
+<select id="indivisualIssue" parameterType="hashMap" resultType="IssueVO">
+		select
+            a.issue_ttl
+            , c.CD_NM as ISSUE_STTS_CD
+		from
+			tb_issue a
+            join tb_stu b on a.stu_no = b.stu_no
+            join TB_CM_CD c on c.CD_TYPE_ID = SUBSTR(a.ISSUE_STTS_CD, 1, INSTR(a.ISSUE_STTS_CD, '-') - 1)
+                and c.CD_VL = SUBSTR(a.ISSUE_STTS_CD, INSTR(a.ISSUE_STTS_CD, '-') + 1)
+                and c.CD_TYPE_ID = 'P006'
+                and c.CD_C_USE_YN = 'Y'
+		where
+		<![CDATA[
+			proj_no = #{projNo} and a.stu_no = #{stuNo} and rownum <= 3
+			]]>
+        order by a.issue_no desc
+</select>
+
+<select id="indivisualInfo" parameterType="hashMap" resultType="MemManagementVO">
+    select
+	 	c.CD_NM as JBTTL_CD
+		, B.STU_NO
+		, B.USER_NM
+		, B.USER_EML_ADDR
+		, a.TEAM_JOIN_DT
+		, B.USER_PHONENO
+		, a.JBTTL_CD as cd_nm
+        , B.USER_PROFILE
+        , B.USER_BRDT
+        , B.user_gender
+	from
+	    TB_PRO_MEM a
+	join TB_STU B on a.STU_NO = B.STU_NO
+	join TB_CM_CD c on c.CD_TYPE_ID = SUBSTR(a.JBTTL_CD, 1, INSTR(a.JBTTL_CD, '-') - 1)
+	    and c.CD_VL = SUBSTR(a.JBTTL_CD, INSTR(a.JBTTL_CD, '-') + 1)
+	    and c.CD_TYPE_ID = 'P001'
+	    and c.CD_C_USE_YN = 'Y'
+	where
+		proj_no = #{projNo} and a.stu_no = #{stuNo}
+
+	order by
+	 B.user_nm
+
+</select>
+
+<select id="indivisualSttr" parameterType="hashMap" resultType="ProjectMemberSttrVO">
+
+    select
+    <![CDATA[
+	    count(case when t.task_sttr >= 100 then 1 end) as complete
+	    , count(case when t.task_sttr < 100 then 1 end) as progress
+	    ]]>
+	from
+	    tb_task t
+		join tb_asg a on t.task_no = a.task_no
+		join tb_stu s on a.stu_no = s.stu_no
+	where
+		proj_no = #{projNo} and a.stu_no = #{stuNo}
+
+	group by
+	    s.user_nm,
+	    s.stu_no
+
+</select>
+
+
+<select id="getProjNm" parameterType="String" resultType="ProjVO">
+	 SELECT
+	 	PROJ_NM
+        , s.USER_PROFILE
+
+	 FROM
+	    TB_PROJ p, TB_PRO_MEM m, TB_STU s
+	 WHERE p.PROJ_NO = #{projNo} and m.PROJ_NO = p.PROJ_NO
+     and m.STU_NO = s.STU_NO
+</select>
+
+</mapper>

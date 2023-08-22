@@ -1,0 +1,21 @@
+@charset "UTF-8";
+
+ .primary{
+ 	color : #56726A
+ }
+
+ .secondary{
+ 	color : #E9D6C6
+ }
+
+ .info{
+ 	color : #495B8A
+ }
+
+ .danger {
+	color : #D71923
+ }
+
+ .warning {
+    color : #D48834
+ }

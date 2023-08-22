@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.tch.classroom.mapper.TchStorageMapper">
+	<select id="selectStorageList" parameterType="String" resultType="AtchFileVO">
+		SELECT
+		    ATCH_FILE_NO
+		    , ATCH_FILE_SEQ
+		    , FILE_NM
+		    , FILE_EXTN
+		    , FILE_RGTR
+		    , TO_CHAR(FILE_BENG_DT, 'YYYY-MM-DD') AS FILE_BENG_DT
+		    , FILE_PATH
+		    , FILE_SIZE
+		    , FILE_UPD_RGTR
+		    , FILE_UPD_DATE
+		    , FILE_TB_NM
+		FROM
+		    TB_ATCH_FILE
+		WHERE
+		    FILE_TB_NM = #{sbjctNo}
+	</select>
+	<insert id="insertStorage" parameterType="AtchFileVO">
+
+		INSERT INTO TB_ATCH_FILE(
+		    ATCH_FILE_NO
+		    , ATCH_FILE_SEQ
+		    , FILE_NM
+		    , FILE_EXTN
+		    , FILE_RGTR
+		    , FILE_BENG_DT
+		    , FILE_PATH
+		    , FILE_SIZE
+		    , FILE_TB_NM
+
+		)
+		VALUES(
+			'classStorageFile'|| seq_classStorage.nextval
+			, 'fSeq'|| seq_file_seq.nextval
+			, #{fileNm}
+		    , #{fileExtn}
+		    , #{fileRgtr}
+		    , SYSDATE
+		    , #{filePath}
+		    , #{fileSize}
+		    , #{fileTbNm}
+		)
+	</insert>
+
+	<delete id="deleteStorage" parameterType="AtchFileVO">
+		DELETE FROM TB_ATCH_FILE
+		WHERE
+			ATCH_FILE_NO = #{atchFileNo} AND ATCH_FILE_SEQ = #{atchFileSeq}
+	</delete>
+</mapper>

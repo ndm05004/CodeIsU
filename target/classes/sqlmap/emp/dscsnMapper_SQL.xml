@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="team.tttt.pms.emp.dscsn.mapper.DscsnMapper">
+
+	<!-- 상담 승인 여부 코드가 D002-1(미승인) 코드인 삼당 신청 목록 가져오기 -->
+	<select id="dscsnNoList" parameterType="String" resultType="DscsnVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.dscsnNoList */
+	SELECT
+	    A.DSCSN_NO
+	    , A.DSCSN_RSLT_DT
+	    , A.DSCSN_DT
+	    , A.DSCSN_CN
+	    , C.CD_NM AS DSCSN_YN
+	    , A.DSCSN_RSLT
+	    , D.CD_NM AS APRV_YN
+	    , E.CD_NM AS DSCSN_CD
+	    , A.DSCSNROOM_CD
+	    , F.USER_NM AS EMP_NO
+	    , B.USER_NM AS STU_NO
+	FROM TB_DSCSN A
+	LEFT OUTER JOIN TB_STU B ON A.STU_NO = B.STU_NO
+	INNER JOIN TB_CM_CD C on C.CD_TYPE_ID = SUBSTR(A.DSCSN_YN, 1, INSTR(A.DSCSN_YN, '-') -1)
+	                                            and C.CD_VL = SUBSTR(A.DSCSN_YN, INSTR(A.DSCSN_YN, '-') + 1)
+	                                            and C.CD_TYPE_ID = 'D001'
+	                                            and C.CD_C_USE_YN = 'Y'
+
+
+	INNER JOIN TB_CM_CD D on D.CD_TYPE_ID = SUBSTR(A.APRV_YN, 1, INSTR(A.APRV_YN, '-') -1)
+	                                            and D.CD_VL = SUBSTR(A.APRV_YN, INSTR(A.APRV_YN, '-') + 1)
+	                                            and D.CD_TYPE_ID = 'D002'
+	                                            and D.CD_C_USE_YN = 'Y'
+
+	INNER JOIN TB_CM_CD E on E.CD_TYPE_ID = SUBSTR(A.DSCSN_CD, 1, INSTR(A.DSCSN_CD, '-') -1)
+	                                            and E.CD_VL = SUBSTR(A.DSCSN_CD, INSTR(A.DSCSN_CD, '-') + 1)
+	                                            and E.CD_TYPE_ID = 'D003'
+	                                            and E.CD_C_USE_YN = 'Y'
+	LEFT OUTER JOIN TB_EMP F ON A.EMP_NO = F.EMP_NO
+	WHERE A.APRV_YN = 'D002-1'
+	AND A.EMP_NO = #{userNo}
+	ORDER BY A.DSCSN_DT ASC
+	</select>
+
+	<!-- 상담 승인 여부 코드가 D002-2(승인)크드와 상담전인 삼당 신청 목록 가져오기 -->
+	<select id="dscsnApprovList" parameterType="String" resultType="DscsnVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.dscsnApprovList */
+	SELECT
+	    A.DSCSN_NO
+	    , A.DSCSN_RSLT_DT
+	    , A.DSCSN_DT
+	    , A.DSCSN_CN
+	    , C.CD_NM AS DSCSN_YN
+	    , A.DSCSN_RSLT
+	    , D.CD_NM AS APRV_YN
+	    , E.CD_NM AS DSCSN_CD
+	    , A.DSCSNROOM_CD
+	    , F.USER_NM AS EMP_NO
+	    , B.USER_NM AS STU_NO
+	    , G.CONSUL_NM
+	FROM TB_DSCSN A
+	LEFT OUTER JOIN TB_STU B ON A.STU_NO = B.STU_NO
+	INNER JOIN TB_CM_CD C on C.CD_TYPE_ID = SUBSTR(A.DSCSN_YN, 1, INSTR(A.DSCSN_YN, '-') -1)
+	                                            and C.CD_VL = SUBSTR(A.DSCSN_YN, INSTR(A.DSCSN_YN, '-') + 1)
+	                                            and C.CD_TYPE_ID = 'D001'
+	                                            and C.CD_C_USE_YN = 'Y'
+
+
+	INNER JOIN TB_CM_CD D on D.CD_TYPE_ID = SUBSTR(A.APRV_YN, 1, INSTR(A.APRV_YN, '-') -1)
+	                                            and D.CD_VL = SUBSTR(A.APRV_YN, INSTR(A.APRV_YN, '-') + 1)
+	                                            and D.CD_TYPE_ID = 'D002'
+	                                            and D.CD_C_USE_YN = 'Y'
+
+	INNER JOIN TB_CM_CD E on E.CD_TYPE_ID = SUBSTR(A.DSCSN_CD, 1, INSTR(A.DSCSN_CD, '-') -1)
+	                                            and E.CD_VL = SUBSTR(A.DSCSN_CD, INSTR(A.DSCSN_CD, '-') + 1)
+	                                            and E.CD_TYPE_ID = 'D003'
+	                                            and E.CD_C_USE_YN = 'Y'
+	LEFT OUTER JOIN TB_EMP F ON A.EMP_NO = F.EMP_NO
+	LEFT OUTER JOIN TB_CONSULTING_ROOM G ON A.DSCSNROOM_CD = G.CONSUL_CD
+	WHERE A.APRV_YN = 'D002-2'
+	AND A.DSCSN_YN = 'D001-1'
+	AND A.EMP_NO = #{userNo}
+	ORDER BY A.DSCSN_DT ASC
+	</select>
+
+	<!-- 상담 승인 여부 코드가 D002-3(반려) 코드인 삼당 신청 목록 가져오기 -->
+	<select id="dscsnUnApprovList" parameterType="String" resultType="DscsnVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.dscsnUnApprovList */
+	SELECT
+	    A.DSCSN_NO
+	    , A.DSCSN_RSLT_DT
+	    , A.DSCSN_DT
+	    , A.DSCSN_CN
+	    , C.CD_NM AS DSCSN_YN
+	    , A.DSCSN_RSLT
+	    , D.CD_NM AS APRV_YN
+	    , E.CD_NM AS DSCSN_CD
+	    , A.DSCSNROOM_CD
+	    , F.USER_NM AS EMP_NO
+	    , B.USER_NM AS STU_NO
+	FROM TB_DSCSN A
+	LEFT OUTER JOIN TB_STU B ON A.STU_NO = B.STU_NO
+	INNER JOIN TB_CM_CD C on C.CD_TYPE_ID = SUBSTR(A.DSCSN_YN, 1, INSTR(A.DSCSN_YN, '-') -1)
+	                                            and C.CD_VL = SUBSTR(A.DSCSN_YN, INSTR(A.DSCSN_YN, '-') + 1)
+	                                            and C.CD_TYPE_ID = 'D001'
+	                                            and C.CD_C_USE_YN = 'Y'
+
+
+	INNER JOIN TB_CM_CD D on D.CD_TYPE_ID = SUBSTR(A.APRV_YN, 1, INSTR(A.APRV_YN, '-') -1)
+	                                            and D.CD_VL = SUBSTR(A.APRV_YN, INSTR(A.APRV_YN, '-') + 1)
+	                                            and D.CD_TYPE_ID = 'D002'
+	                                            and D.CD_C_USE_YN = 'Y'
+
+	INNER JOIN TB_CM_CD E on E.CD_TYPE_ID = SUBSTR(A.DSCSN_CD, 1, INSTR(A.DSCSN_CD, '-') -1)
+	                                            and E.CD_VL = SUBSTR(A.DSCSN_CD, INSTR(A.DSCSN_CD, '-') + 1)
+	                                            and E.CD_TYPE_ID = 'D003'
+	                                            and E.CD_C_USE_YN = 'Y'
+	LEFT OUTER JOIN TB_EMP F ON A.EMP_NO = F.EMP_NO
+	WHERE A.APRV_YN = 'D002-3'
+	AND A.EMP_NO = #{userNo}
+	ORDER BY A.DSCSN_DT ASC
+	</select>
+
+	<!-- 선택할 수 있는 상담실 -->
+	<select id="consulList" parameterType="ConsulReservationVO" resultType="ConsultingRoomVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.consulList */
+	SELECT
+	    A.CONSUL_CD
+	    , A.CONSUL_NM
+	    , A.CONSUL_USE
+	FROM TB_CONSULTING_ROOM A
+	WHERE A.CONSUL_CD NOT IN(
+	                        SELECT B.CONSUL_CD
+	                        FROM TB_CONSUL_RESERVATION B
+	                        WHERE (B.CONSUL_BGNG_HR &gt;= #{consulBgngHr} AND B.CONSUL_DDLB_HR &lt;= #{consulDdlbHr})
+	                        AND B.CONSUL_DT = #{consulDt})
+	</select>
+
+	<!-- 상담 예약 등록 -->
+	<insert id="insertReservation" parameterType="ConsulReservationVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.insertReservation */
+	INSERT INTO TB_CONSUL_RESERVATION(
+		CONSUL_DT
+		, CONSUL_BGNG_HR
+		, CONSUL_DDLB_HR
+		, CONSUL_CD
+		, DSCSN_NO
+	)VALUES(
+		#{consulDt}
+		, #{consulBgngHr}
+		, #{consulDdlbHr}
+		, #{consulCd}
+		, #{dscsnNo}
+	)
+	</insert>
+
+	<!-- 상담글의 승인여부 승인으로 업데이트 -->
+	<update id="approvalUpdate" parameterType="DscsnVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.approvalUpdate */
+	UPDATE TB_DSCSN
+	SET
+		APRV_YN = 'D002-2',
+		DSCSNROOM_CD = #{dscsnroomCd}
+	WHERE DSCSN_NO = #{dscsnNo}
+	</update>
+
+	<!-- 반려 사유 작성 -->
+	<insert id="insertReject" parameterType="RejectVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.insertReject */
+	INSERT INTO TB_REJECT(
+		DSCSN_NO
+		, REJECT_CN
+	)VALUES(
+		#{dscsnNo}
+		, #{rejectCn}
+	)
+	</insert>
+
+	<!-- 상담글의 승인여부를 반려로 업데이트 -->
+	<update id="unApprovalUpdate" parameterType="int">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.unApprovalUpdate */
+	UPDATE TB_DSCSN
+	SET
+		APRV_YN = 'D002-3',
+		DSCSN_YN = 'D001-3'
+	WHERE DSCSN_NO = #{dscsnNo}
+	</update>
+
+	<!-- 해당 학생의 상담 내역을 가져오기 -->
+	<select id="myDscsnList" parameterType="String" resultType="DscsnVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.myDscsnList */
+	SELECT
+	    A.DSCSN_NO
+	    , A.DSCSN_RSLT_DT
+	    , A.DSCSN_DT
+	    , A.DSCSN_CN
+	    , C.CD_NM AS DSCSN_YN
+	    , A.DSCSN_RSLT
+	    , D.CD_NM AS APRV_YN
+	    , E.CD_NM AS DSCSN_CD
+	    , A.DSCSNROOM_CD
+	    , F.USER_NM AS EMP_NO
+	    , B.USER_NM AS STU_NO
+	    , G.CONSUL_NM
+	FROM TB_DSCSN A
+	LEFT OUTER JOIN TB_STU B ON A.STU_NO = B.STU_NO
+	INNER JOIN TB_CM_CD C on C.CD_TYPE_ID = SUBSTR(A.DSCSN_YN, 1, INSTR(A.DSCSN_YN, '-') -1)
+	                                            and C.CD_VL = SUBSTR(A.DSCSN_YN, INSTR(A.DSCSN_YN, '-') + 1)
+	                                            and C.CD_TYPE_ID = 'D001'
+	                                            and C.CD_C_USE_YN = 'Y'
+
+
+	INNER JOIN TB_CM_CD D on D.CD_TYPE_ID = SUBSTR(A.APRV_YN, 1, INSTR(A.APRV_YN, '-') -1)
+	                                            and D.CD_VL = SUBSTR(A.APRV_YN, INSTR(A.APRV_YN, '-') + 1)
+	                                            and D.CD_TYPE_ID = 'D002'
+	                                            and D.CD_C_USE_YN = 'Y'
+
+	INNER JOIN TB_CM_CD E on E.CD_TYPE_ID = SUBSTR(A.DSCSN_CD, 1, INSTR(A.DSCSN_CD, '-') -1)
+	                                            and E.CD_VL = SUBSTR(A.DSCSN_CD, INSTR(A.DSCSN_CD, '-') + 1)
+	                                            and E.CD_TYPE_ID = 'D003'
+	                                            and E.CD_C_USE_YN = 'Y'
+	LEFT OUTER JOIN TB_EMP F ON A.EMP_NO = F.EMP_NO
+	LEFT OUTER JOIN TB_CONSULTING_ROOM G ON A.DSCSNROOM_CD = G.CONSUL_CD
+	WHERE B.USER_NM = #{stuName}
+	ORDER BY A.DSCSN_DT DESC
+	</select>
+
+	<!-- 상담완료인 상담결과 가져오기 -->
+	<select id="selectResult" parameterType="int" resultType="String">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.selectResult */
+	SELECT
+	    A.DSCSN_RSLT
+	FROM TB_DSCSN A
+	WHERE A.DSCSN_NO = #{no}
+	</select>
+
+	<!-- 상담 결과 등록 -->
+	<update id="resultInsert" parameterType="DscsnVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.resultInsert */
+	UPDATE TB_DSCSN
+	SET
+		DSCSN_RSLT_DT = #{dscsnRsltDt},
+		DSCSN_RSLT = #{dscsnRslt},
+		DSCSN_YN = 'D001-3'
+	WHERE DSCSN_NO = #{dscsnNo}
+	</update>
+
+	<!-- 상담 승인한 모든 목록 가져오기 -->
+	<select id="allapprolist" resultType="DscsnVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.allapprolist */
+	SELECT
+	    A.DSCSN_NO
+	    , A.DSCSN_RSLT_DT
+	    , A.DSCSN_DT
+	    , A.DSCSN_CN
+	    , C.CD_NM AS DSCSN_YN
+	    , A.DSCSN_RSLT
+	    , D.CD_NM AS APRV_YN
+	    , E.CD_NM AS DSCSN_CD
+	    , A.DSCSNROOM_CD
+	    , F.USER_NM AS EMP_NO
+	    , B.USER_NM AS STU_NO
+	    , G.CONSUL_NM
+	FROM TB_DSCSN A
+	LEFT OUTER JOIN TB_STU B ON A.STU_NO = B.STU_NO
+	INNER JOIN TB_CM_CD C on C.CD_TYPE_ID = SUBSTR(A.DSCSN_YN, 1, INSTR(A.DSCSN_YN, '-') -1)
+	                                            and C.CD_VL = SUBSTR(A.DSCSN_YN, INSTR(A.DSCSN_YN, '-') + 1)
+	                                            and C.CD_TYPE_ID = 'D001'
+	                                            and C.CD_C_USE_YN = 'Y'
+
+
+	INNER JOIN TB_CM_CD D on D.CD_TYPE_ID = SUBSTR(A.APRV_YN, 1, INSTR(A.APRV_YN, '-') -1)
+	                                            and D.CD_VL = SUBSTR(A.APRV_YN, INSTR(A.APRV_YN, '-') + 1)
+	                                            and D.CD_TYPE_ID = 'D002'
+	                                            and D.CD_C_USE_YN = 'Y'
+
+	INNER JOIN TB_CM_CD E on E.CD_TYPE_ID = SUBSTR(A.DSCSN_CD, 1, INSTR(A.DSCSN_CD, '-') -1)
+	                                            and E.CD_VL = SUBSTR(A.DSCSN_CD, INSTR(A.DSCSN_CD, '-') + 1)
+	                                            and E.CD_TYPE_ID = 'D003'
+	                                            and E.CD_C_USE_YN = 'Y'
+	LEFT OUTER JOIN TB_EMP F ON A.EMP_NO = F.EMP_NO
+	LEFT OUTER JOIN TB_CONSULTING_ROOM G ON A.DSCSNROOM_CD = G.CONSUL_CD
+	WHERE A.APRV_YN = 'D002-2'
+	ORDER BY A.DSCSN_DT ASC
+	</select>
+
+	<!-- 상담을 승인했고 상담을 완료한 모든 목록 가져오기 -->
+	<select id="dscsnClearList" parameterType="String" resultType="DscsnVO">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.dscsnClearList */
+	SELECT
+	    A.DSCSN_NO
+	    , A.DSCSN_RSLT_DT
+	    , A.DSCSN_DT
+	    , A.DSCSN_CN
+	    , C.CD_NM AS DSCSN_YN
+	    , A.DSCSN_RSLT
+	    , D.CD_NM AS APRV_YN
+	    , E.CD_NM AS DSCSN_CD
+	    , A.DSCSNROOM_CD
+	    , F.USER_NM AS EMP_NO
+	    , B.USER_NM AS STU_NO
+	    , G.CONSUL_NM
+	FROM TB_DSCSN A
+	LEFT OUTER JOIN TB_STU B ON A.STU_NO = B.STU_NO
+	INNER JOIN TB_CM_CD C on C.CD_TYPE_ID = SUBSTR(A.DSCSN_YN, 1, INSTR(A.DSCSN_YN, '-') -1)
+	                                            and C.CD_VL = SUBSTR(A.DSCSN_YN, INSTR(A.DSCSN_YN, '-') + 1)
+	                                            and C.CD_TYPE_ID = 'D001'
+	                                            and C.CD_C_USE_YN = 'Y'
+
+
+	INNER JOIN TB_CM_CD D on D.CD_TYPE_ID = SUBSTR(A.APRV_YN, 1, INSTR(A.APRV_YN, '-') -1)
+	                                            and D.CD_VL = SUBSTR(A.APRV_YN, INSTR(A.APRV_YN, '-') + 1)
+	                                            and D.CD_TYPE_ID = 'D002'
+	                                            and D.CD_C_USE_YN = 'Y'
+
+	INNER JOIN TB_CM_CD E on E.CD_TYPE_ID = SUBSTR(A.DSCSN_CD, 1, INSTR(A.DSCSN_CD, '-') -1)
+	                                            and E.CD_VL = SUBSTR(A.DSCSN_CD, INSTR(A.DSCSN_CD, '-') + 1)
+	                                            and E.CD_TYPE_ID = 'D003'
+	                                            and E.CD_C_USE_YN = 'Y'
+	LEFT OUTER JOIN TB_EMP F ON A.EMP_NO = F.EMP_NO
+	LEFT OUTER JOIN TB_CONSULTING_ROOM G ON A.DSCSNROOM_CD = G.CONSUL_CD
+	WHERE A.DSCSN_YN = 'D001-3'
+    AND A.APRV_YN = 'D002-2'
+    AND A.EMP_NO = #{userNo}
+	ORDER BY A.DSCSN_DT DESC
+	</select>
+
+	<!-- 대표 이력서 번호 가져오기 -->
+	<select id="selectResume" parameterType="String" resultType="String">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.selectResume */
+	SELECT
+	    A.RESUME_NO
+	FROM TB_RESUME A
+	JOIN TB_STU B ON A.STU_NO = B.STU_NO
+	WHERE B.USER_NM = #{stuName}
+	AND MAIN_RESUME_YN = 'Y'
+	</select>
+
+	<!-- 미승인 상담 가져오기 -->
+	<select id="noapprovdscsn" parameterType="String" resultType="int">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.noapprovdscsn */
+	SELECT
+	    COUNT(*)
+	FROM TB_DSCSN A
+	WHERE A.EMP_NO = #{userNo}
+	AND A.APRV_YN = 'D002-1'
+	</select>
+
+	<!-- 오늘의 상담 건수 가져오기 -->
+	<select id="todaydscsn" parameterType="String" resultType="int">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.todaydscsn */
+	SELECT
+	    COUNT(*)
+	FROM TB_DSCSN A
+	WHERE A.EMP_NO = #{userNo}
+	AND A.APRV_YN = 'D002-2'
+	AND A.DSCSN_DT = TRUNC(SYSDATE)
+	</select>
+
+	<!-- 내일 상담 건수 가져오기 -->
+	<select id="tomorrowdscsn" parameterType="String" resultType="int">
+	/* team.tttt.pms.emp.dscsn.mapper.DscsnMapper.tomorrowdscsn */
+	SELECT
+	    COUNT(*)
+	FROM TB_DSCSN A
+	WHERE A.EMP_NO = #{userNo}
+	AND A.APRV_YN = 'D002-2'
+	AND A.DSCSN_DT = TRUNC(SYSDATE+1)
+	</select>
+
+</mapper>
