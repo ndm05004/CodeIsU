@@ -7,7 +7,7 @@
 **
 **
 
-| 홍기태 | 박승우 | 정은지 | 김동혁 | 김민정
+| 홍기태 | 박승우 | 정은지 | 김동혁 | 김민정 |
 | ---------------------------------- | ------------------------------------- | ------------------------------------ | ----------------------------------- |
 | <img src="https://avatars.githubusercontent.com/u/78784909?v=4" width="100"/> | <img src="https://avatars.githubusercontent.com/u/108390441?v=4" width="100"/> | <img src="https://avatars.githubusercontent.com/u/108384663?v=4" width="100"/> | <img src="https://avatars.githubusercontent.com/u/59228361?s=400&u=06e6fbcaa714661228a5ac953afe63cb98362f0a&v=4" width="100"/>
 | ![leader](https://img.shields.io/badge/-Leader-ff69b4) ![Frontend](https://img.shields.io/badge/-Frontend-9cf) ![Backend](https://img.shields.io/badge/-Backend-FFD133) | ![Frontend](https://img.shields.io/badge/-Frontend-9cf) ![Backend](https://img.shields.io/badge/-Backend-FFD133) | ![Frontend](https://img.shields.io/badge/-Frontend-9cf) ![Backend](https://img.shields.io/badge/-Backend-FFD133) | ![Frontend](https://img.shields.io/badge/-Frontend-9cf) ![Backend](https://img.shields.io/badge/-Backend-FFD133) | ![Frontend](https://img.shields.io/badge/-Frontend-9cf) ![Backend](https://img.shields.io/badge/-Backend-FFD133) |
