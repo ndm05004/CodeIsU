@@ -41,8 +41,8 @@
 - CKEditor        5.0
 - Chart.js        4.0
 - AG Grid 30.0.2
-- FullCalander 6.1.8
+- FullCalander    6.1.8
 - jKanban
-- dhtmlxgantt 6.1.7
-- jszip-utils 0.1.0
-- FileSaver 2.0.5
+- dhtmlxgantt     6.1.7
+- jszip-utils     0.1.0
+- FileSaver       2.0.5
