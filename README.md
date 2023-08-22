@@ -20,11 +20,11 @@
 </br>
 ##  2. 개발환경 및 언어
 ####  Tool
-- language    : Java 8, HTML5, CSS3, JavaScript 
-- Framework   : Spring3, Mybatis, Tiles, BootStrap, Log4j
-- DB          : oracle Database XE   11g
-- Server      : Apache Tomcat        8.5
-- Code Editor : Visual Studio Code   1.79.2
+- **language**    : Java 8, HTML5, CSS3, JavaScript 
+- **Framework**   : Spring3, Mybatis, Tiles, BootStrap, Log4j
+- **DB**          : oracle Database XE   11g
+- **Server**      : Apache Tomcat        8.5
+- **Code Editor** : Visual Studio Code   1.79.2
 
 #### API & Library
 - lombok          1.18.22
@@ -44,9 +44,9 @@
 
 
 ### 프로젝트 목표
-1. 
+1. 인재개발원
 
-2.. 프로젝트 팀장과 팀원이 해당 사이트를 이용하여 프로젝트 업무와 일정 관리 기능을 사용하여 프로젝트 업무를 기록하고 공유하게 하여 팀 단위 프로젝트 활동을 활성화한다.(프로젝트 관리 부분) </br>
+2. 프로젝트 팀장과 팀원이 해당 사이트를 이용하여 프로젝트 업무와 일정 관리 기능을 사용하여 프로젝트 업무를 기록하고 공유하게 하여 팀 단위 프로젝트 활동을 활성화한다.(프로젝트 관리 부분) </br>
 
 ■ 업무관리 : PMS의 주요 기능인 업무관리를 테이블, 간트차트, 캘린더로 시각화해 프로젝트의 진행 상황을 한눈에 파악하고 필요시 작업 일정을 조정할 수 있음 </br>
 ■ 이슈관리 : 프로젝트, 업무를 진행하며 생긴 이슈들을 체계적으로 관리해 문제점을 신속하게 파악하고 해결해 프로젝트의 진행에 영향을 최소화함 </br>
