@@ -9,9 +9,10 @@
 
 | 홍기태 | 박승우 | 정은지 | 김동혁 | 김민정 |
 | ---------------------------------- | ------------------------------------- | ------------------------------------ | ----------------------------------- |
-| <img src="https://avatars.githubusercontent.com/u/78784909?v=4" width="100"/> | <img src="https://avatars.githubusercontent.com/u/108390441?v=4" width="100"/> | <img src="https://avatars.githubusercontent.com/u/108384663?v=4" width="100"/> | <img src="https://avatars.githubusercontent.com/u/108384664?v=4" width="100"/> |
+| <img src="https://avatars.githubusercontent.com/u/78784909?v=4" width="100"/> | <img src="https://avatars.githubusercontent.com/u/108390441?v=4" width="100"/> | <img src="https://avatars.githubusercontent.com/u/108384663?v=4" width="100"/> | <img src="https://avatars.githubusercontent.com/u/108384664?v=4" width="100"/> | <img src="https://avatars.githubusercontent.com/u/108384664?v=4" width="100"/> 
 | github: [prtey](https://github.com/prtey) | github: [doxxxdim](https://github.com/doxxxdim) | github: [rokatee](https://github.com/rokatee) | github: [jp0301](https://github.com/jp0301) |
 | ![leader](https://img.shields.io/badge/-Leader-ff69b4) ![Frontend](https://img.shields.io/badge/-Frontend-9cf) ![Backend](https://img.shields.io/badge/-Backend-FFD133) | ![Frontend](https://img.shields.io/badge/-Frontend-9cf) ![Backend](https://img.shields.io/badge/-Backend-FFD133) | ![Frontend](https://img.shields.io/badge/-Frontend-9cf) ![Backend](https://img.shields.io/badge/-Backend-FFD133) | ![Frontend](https://img.shields.io/badge/-Frontend-9cf) ![Backend](https://img.shields.io/badge/-Backend-FFD133) | ![Frontend](https://img.shields.io/badge/-Frontend-9cf) ![Backend](https://img.shields.io/badge/-Backend-FFD133) |
+
 
 
 
