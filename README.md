@@ -28,18 +28,18 @@
 - Code Editor : Visual Studio Code   1.79.2
 
 #### API & Library
-- Mybatis 3.54
-- Log4j 1.2.15
-- lombok 1.18.22
-- Commons IO 2.13
-- Apache-POI 4.12
-- javax.mail 1.4.7
-- Tiles 3.0.8
-- BootStrap 5
-- jQuery 3.7.0
+- Mybatis         3.54
+- Log4j           1.2.15
+- lombok          1.18.22
+- Commons IO      2.13
+- Apache-POI      4.12
+- javax.mail      1.4.7
+- Tiles           3.0.8
+- BootStrap       5
+- jQuery          3.7.0
 - Toast UI Editor 5.0
-- CKEditor 5.0
-- Chart.js 4.0
+- CKEditor        5.0
+- Chart.js        4.0
 - AG Grid 30.0.2
 - FullCalander 6.1.8
 - jKanban
